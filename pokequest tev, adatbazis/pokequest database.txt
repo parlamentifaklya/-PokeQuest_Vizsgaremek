@@ -1,0 +1,86 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+
+Table User{
+  id integer [primary key]
+  username varchar
+  password varchar
+  level integer
+  inventory list //(foreign) kesz
+  coinAmount integer
+}
+
+Table Feyling{
+  id integer [primary key]
+  name varchar
+  image varchar
+  type varchar //(foreign) kesz
+  ability varchar //(abilityid) kesz (foreign)
+  unlocked bool
+  hp integer
+  atk integer
+  item integer //(itemid)kesz(foreign)
+  weaknessType varchar //(typeid)kesz(foreign)
+  strengthType varchar //(typeid)kesz(foreign)
+  price integer //(itemid)kesz(foreign)
+}
+
+Table Ability{
+  id integer [primary key]
+  name varchar
+  damage integer
+  type varchar //(typeid)kesz(foreign)
+}
+
+Table Item{
+  id integer [primary key]
+  name varchar
+  itemAbility varchar
+}
+
+Table Type{
+  id integer [primary key]
+  name varchar
+}
+
+Table OwnedItem{
+  userid integer [primary key]
+  itemid integer [primary key]
+  amount integer
+}
+
+Table OwnedFeyling{
+  userid integer [primary key] //?
+  feylingid integer [primary key] //?
+}
+
+Table Inventory{
+  id integer [primary key]
+  ownedFeyling list //
+  ownedItem list //
+  user user
+}
+
+
+//User kotogetesek
+Ref: Inventory.id < User.inventory
+
+//Feyling kotogetesek
+Ref: Type.id < Feyling.type
+Ref: Ability.id < Feyling.ability
+Ref: Item.id < Feyling.item
+Ref: Type.id < Feyling.weaknessType
+Ref: Type.id < Feyling.strengthType
+Ref: Item.id < Feyling.price
+
+// Ability kotogetesek
+Ref: Ability.type < Type.id
+
+//OwnedFeyling
+Ref: OwnedFeyling.userid < User.id
+Ref: OwnedFeyling.feylingid < Feyling.id
+
+//OwnedItem
+Ref: OwnedItem.userid < User.id
+Ref: OwnedItem.itemid < Item.id
