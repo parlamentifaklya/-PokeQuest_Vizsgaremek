@@ -174,7 +174,6 @@ D:\!!!PokeQuest - vizsgaremek\backend\PokeQuestAPI\PokeQuestAPI\obj\Debug\net8.0
 D:\!!!PokeQuest - vizsgaremek\backend\PokeQuestAPI\PokeQuestAPI\obj\Debug\net8.0\ref\PokeQuestAPI.dll
 C:\Users\kokenyesi.andor\Desktop\-PokeQuest_Vizsgaremek\backend\PokeQuestAPI\PokeQuestAPI\bin\Debug\net8.0\appsettings.Development.json
 C:\Users\kokenyesi.andor\Desktop\-PokeQuest_Vizsgaremek\backend\PokeQuestAPI\PokeQuestAPI\bin\Debug\net8.0\appsettings.json
-C:\Users\kokenyesi.andor\Desktop\-PokeQuest_Vizsgaremek\backend\PokeQuestAPI\PokeQuestAPI\bin\Debug\net8.0\PokeQuestAPI.staticwebassets.endpoints.json
 C:\Users\kokenyesi.andor\Desktop\-PokeQuest_Vizsgaremek\backend\PokeQuestAPI\PokeQuestAPI\bin\Debug\net8.0\PokeQuestAPI.exe
 C:\Users\kokenyesi.andor\Desktop\-PokeQuest_Vizsgaremek\backend\PokeQuestAPI\PokeQuestAPI\bin\Debug\net8.0\PokeQuestAPI.deps.json
 C:\Users\kokenyesi.andor\Desktop\-PokeQuest_Vizsgaremek\backend\PokeQuestAPI\PokeQuestAPI\bin\Debug\net8.0\PokeQuestAPI.runtimeconfig.json
@@ -333,9 +332,7 @@ C:\Users\kokenyesi.andor\Desktop\-PokeQuest_Vizsgaremek\backend\PokeQuestAPI\Pok
 C:\Users\kokenyesi.andor\Desktop\-PokeQuest_Vizsgaremek\backend\PokeQuestAPI\PokeQuestAPI\obj\Debug\net8.0\scopedcss\bundle\PokeQuestAPI.styles.css
 C:\Users\kokenyesi.andor\Desktop\-PokeQuest_Vizsgaremek\backend\PokeQuestAPI\PokeQuestAPI\obj\Debug\net8.0\staticwebassets.build.json
 C:\Users\kokenyesi.andor\Desktop\-PokeQuest_Vizsgaremek\backend\PokeQuestAPI\PokeQuestAPI\obj\Debug\net8.0\staticwebassets.development.json
-C:\Users\kokenyesi.andor\Desktop\-PokeQuest_Vizsgaremek\backend\PokeQuestAPI\PokeQuestAPI\obj\Debug\net8.0\staticwebassets.build.endpoints.json
 C:\Users\kokenyesi.andor\Desktop\-PokeQuest_Vizsgaremek\backend\PokeQuestAPI\PokeQuestAPI\obj\Debug\net8.0\staticwebassets\msbuild.PokeQuestAPI.Microsoft.AspNetCore.StaticWebAssets.props
-C:\Users\kokenyesi.andor\Desktop\-PokeQuest_Vizsgaremek\backend\PokeQuestAPI\PokeQuestAPI\obj\Debug\net8.0\staticwebassets\msbuild.PokeQuestAPI.Microsoft.AspNetCore.StaticWebAssetEndpoints.props
 C:\Users\kokenyesi.andor\Desktop\-PokeQuest_Vizsgaremek\backend\PokeQuestAPI\PokeQuestAPI\obj\Debug\net8.0\staticwebassets\msbuild.build.PokeQuestAPI.props
 C:\Users\kokenyesi.andor\Desktop\-PokeQuest_Vizsgaremek\backend\PokeQuestAPI\PokeQuestAPI\obj\Debug\net8.0\staticwebassets\msbuild.buildMultiTargeting.PokeQuestAPI.props
 C:\Users\kokenyesi.andor\Desktop\-PokeQuest_Vizsgaremek\backend\PokeQuestAPI\PokeQuestAPI\obj\Debug\net8.0\staticwebassets\msbuild.buildTransitive.PokeQuestAPI.props

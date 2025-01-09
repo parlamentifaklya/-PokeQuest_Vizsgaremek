@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace PokeQuestAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class mssqllocal_migration_765 : Migration
+    public partial class mssqllocal_migration_446 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -31,6 +31,7 @@ namespace PokeQuestAPI.Migrations
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     UserLevel = table.Column<int>(type: "int", nullable: false),
+                    UserRole = table.Column<int>(type: "int", nullable: false),
                     CoinAmount = table.Column<int>(type: "int", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -187,7 +188,7 @@ namespace PokeQuestAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserInventory",
+                name: "UserInventories",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -196,9 +197,9 @@ namespace PokeQuestAPI.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserInventory", x => x.Id);
+                    table.PrimaryKey("PK_UserInventories", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_UserInventory_AspNetUsers_UserId",
+                        name: "FK_UserInventories_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
@@ -228,26 +229,6 @@ namespace PokeQuestAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "OwnedFeylings",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    FeylingId = table.Column<int>(type: "int", nullable: false),
-                    UserInventoryId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_OwnedFeylings", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_OwnedFeylings_UserInventory_UserInventoryId",
-                        column: x => x.UserInventoryId,
-                        principalTable: "UserInventory",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "OwnedItems",
                 columns: table => new
                 {
@@ -261,9 +242,15 @@ namespace PokeQuestAPI.Migrations
                 {
                     table.PrimaryKey("PK_OwnedItems", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_OwnedItems_UserInventory_UserInventoryId",
+                        name: "FK_OwnedItems_Items_ItemId",
+                        column: x => x.ItemId,
+                        principalTable: "Items",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_OwnedItems_UserInventories_UserInventoryId",
                         column: x => x.UserInventoryId,
-                        principalTable: "UserInventory",
+                        principalTable: "UserInventories",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -295,7 +282,7 @@ namespace PokeQuestAPI.Migrations
                         column: x => x.AbilityId,
                         principalTable: "Abilities",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
                         name: "FK_Feylings_Items_ItemId",
                         column: x => x.ItemId,
@@ -306,19 +293,45 @@ namespace PokeQuestAPI.Migrations
                         column: x => x.StrongAgainstId,
                         principalTable: "Types",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
                         name: "FK_Feylings_Types_TypeId",
                         column: x => x.TypeId,
                         principalTable: "Types",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
                         name: "FK_Feylings_Types_WeakAgainstId",
                         column: x => x.WeakAgainstId,
                         principalTable: "Types",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OwnedFeylings",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FeylingId = table.Column<int>(type: "int", nullable: false),
+                    UserInventoryId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OwnedFeylings", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_OwnedFeylings_Feylings_FeylingId",
+                        column: x => x.FeylingId,
+                        principalTable: "Feylings",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.NoAction);
+                    table.ForeignKey(
+                        name: "FK_OwnedFeylings_UserInventories_UserInventoryId",
+                        column: x => x.UserInventoryId,
+                        principalTable: "UserInventories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateIndex(
@@ -391,9 +404,19 @@ namespace PokeQuestAPI.Migrations
                 column: "WeakAgainstId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_OwnedFeylings_FeylingId",
+                table: "OwnedFeylings",
+                column: "FeylingId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_OwnedFeylings_UserInventoryId",
                 table: "OwnedFeylings",
                 column: "UserInventoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OwnedItems_ItemId",
+                table: "OwnedItems",
+                column: "ItemId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_OwnedItems_UserInventoryId",
@@ -401,8 +424,8 @@ namespace PokeQuestAPI.Migrations
                 column: "UserInventoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserInventory_UserId",
-                table: "UserInventory",
+                name: "IX_UserInventories_UserId",
+                table: "UserInventories",
                 column: "UserId",
                 unique: true);
         }
@@ -426,9 +449,6 @@ namespace PokeQuestAPI.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Feylings");
-
-            migrationBuilder.DropTable(
                 name: "OwnedFeylings");
 
             migrationBuilder.DropTable(
@@ -438,19 +458,22 @@ namespace PokeQuestAPI.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
+                name: "Feylings");
+
+            migrationBuilder.DropTable(
+                name: "UserInventories");
+
+            migrationBuilder.DropTable(
                 name: "Abilities");
 
             migrationBuilder.DropTable(
                 name: "Items");
 
             migrationBuilder.DropTable(
-                name: "UserInventory");
+                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "Types");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUsers");
         }
     }
 }

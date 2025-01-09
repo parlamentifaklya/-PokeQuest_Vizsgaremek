@@ -12,8 +12,8 @@ using PokeQuestAPI.Data;
 namespace PokeQuestAPI.Migrations
 {
     [DbContext(typeof(PokeQuestApiContext))]
-    [Migration("20250108114034_mssql.local_migration_765")]
-    partial class mssqllocal_migration_765
+    [Migration("20250109085548_mssql.local_migration_446")]
+    partial class mssqllocal_migration_446
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -290,6 +290,8 @@ namespace PokeQuestAPI.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("FeylingId");
+
                     b.HasIndex("UserInventoryId");
 
                     b.ToTable("OwnedFeylings");
@@ -313,6 +315,8 @@ namespace PokeQuestAPI.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ItemId");
 
                     b.HasIndex("UserInventoryId");
 
@@ -394,6 +398,9 @@ namespace PokeQuestAPI.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
+                    b.Property<int>("UserRole")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedEmail")
@@ -424,7 +431,7 @@ namespace PokeQuestAPI.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("UserInventory");
+                    b.ToTable("UserInventories");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -532,17 +539,31 @@ namespace PokeQuestAPI.Migrations
 
             modelBuilder.Entity("PokeQuestAPI.Models.OwnedFeyling", b =>
                 {
+                    b.HasOne("PokeQuestAPI.Models.Feyling", "Feyling")
+                        .WithMany()
+                        .HasForeignKey("FeylingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("PokeQuestAPI.Models.UserInventory", "UserInventory")
                         .WithMany("OwnedFeylings")
                         .HasForeignKey("UserInventoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Feyling");
+
                     b.Navigation("UserInventory");
                 });
 
             modelBuilder.Entity("PokeQuestAPI.Models.OwnedItem", b =>
                 {
+                    b.HasOne("PokeQuestAPI.Models.Item", "item")
+                        .WithMany()
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("PokeQuestAPI.Models.UserInventory", "UserInventory")
                         .WithMany("UserItems")
                         .HasForeignKey("UserInventoryId")
@@ -550,6 +571,8 @@ namespace PokeQuestAPI.Migrations
                         .IsRequired();
 
                     b.Navigation("UserInventory");
+
+                    b.Navigation("item");
                 });
 
             modelBuilder.Entity("PokeQuestAPI.Models.UserInventory", b =>

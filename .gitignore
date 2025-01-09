@@ -12,3 +12,4 @@
 # Built Visual Studio Code Extensions
 *.vsix
 /backend/PokeQuestAPI/PokeQuestAPI/Data/PokeQuestDB.ldf
+/backend/PokeQuestAPI/PokeQuestAPI/Data/PokeQuestDB.mdf
