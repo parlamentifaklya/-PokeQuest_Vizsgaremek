@@ -1,8 +1,76 @@
 [
   {
+    "ContainingType": "PokeQuestAPI.Controllers.FeylingsController",
+    "Method": "CreateFeyling",
+    "RelativePath": "api/Feylings/CreateFeyling",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "feyling",
+        "Type": "PokeQuestAPI.Models.Feyling",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "PokeQuestAPI.Models.Feyling",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "PokeQuestAPI.Controllers.FeylingsController",
+    "Method": "FeylingBulkInsert",
+    "RelativePath": "api/Feylings/FeylingBulkInsert/bulk-insert",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "feylings",
+        "Type": "System.Collections.Generic.List\u00601[[PokeQuestAPI.Models.Feyling, PokeQuestAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "PokeQuestAPI.Controllers.FeylingsController",
+    "Method": "GetAllFeylings",
+    "RelativePath": "api/Feylings/GetAllFeylings",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "PokeQuestAPI.Controllers.FeylingsController",
+    "Method": "GetFeyling",
+    "RelativePath": "api/Feylings/GetFeyling/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "PokeQuestAPI.Controllers.UserController",
     "Method": "Login",
-    "RelativePath": "api/User/login",
+    "RelativePath": "api/User/Login",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
@@ -18,7 +86,7 @@
   {
     "ContainingType": "PokeQuestAPI.Controllers.UserController",
     "Method": "Register",
-    "RelativePath": "api/User/register",
+    "RelativePath": "api/User/Register",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,

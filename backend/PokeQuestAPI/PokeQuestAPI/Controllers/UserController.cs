@@ -8,11 +8,13 @@ using System.Text;
 using PokeQuestAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using PokeQuestAPI.Data;
+using Microsoft.AspNetCore.Cors;
 
 namespace PokeQuestAPI.Controllers
 {
+    [EnableCors("AllowAllOrigins")]
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     public class UserController : ControllerBase
     {
         private readonly UserManager<User> _userManager;
@@ -26,7 +28,7 @@ namespace PokeQuestAPI.Controllers
             _context = context;
         }
 
-        [HttpPost("register")]
+        [HttpPost]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
         {
             var newUser = new User
@@ -45,7 +47,7 @@ namespace PokeQuestAPI.Controllers
             return BadRequest(result.Errors);
         }
 
-        [HttpPost("login")]
+        [HttpPost]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);
