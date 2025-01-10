@@ -343,3 +343,6 @@ C:\Users\kokenyesi.andor\Desktop\-PokeQuest_Vizsgaremek\backend\PokeQuestAPI\Pok
 C:\Users\kokenyesi.andor\Desktop\-PokeQuest_Vizsgaremek\backend\PokeQuestAPI\PokeQuestAPI\obj\Debug\net8.0\PokeQuestAPI.pdb
 C:\Users\kokenyesi.andor\Desktop\-PokeQuest_Vizsgaremek\backend\PokeQuestAPI\PokeQuestAPI\obj\Debug\net8.0\PokeQuestAPI.genruntimeconfig.cache
 C:\Users\kokenyesi.andor\Desktop\-PokeQuest_Vizsgaremek\backend\PokeQuestAPI\PokeQuestAPI\obj\Debug\net8.0\ref\PokeQuestAPI.dll
+C:\Users\kokenyesi.andor\Desktop\-PokeQuest_Vizsgaremek\backend\PokeQuestAPI\PokeQuestAPI\bin\Debug\net8.0\PokeQuestAPI.staticwebassets.endpoints.json
+C:\Users\kokenyesi.andor\Desktop\-PokeQuest_Vizsgaremek\backend\PokeQuestAPI\PokeQuestAPI\obj\Debug\net8.0\staticwebassets.build.endpoints.json
+C:\Users\kokenyesi.andor\Desktop\-PokeQuest_Vizsgaremek\backend\PokeQuestAPI\PokeQuestAPI\obj\Debug\net8.0\staticwebassets\msbuild.PokeQuestAPI.Microsoft.AspNetCore.StaticWebAssetEndpoints.props

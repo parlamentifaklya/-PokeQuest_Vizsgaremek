@@ -1,11 +1,12 @@
 {
   "Version": 1,
-  "Hash": "+kLlOiQVGcHa9em4sWxcF/30tWMXkPJkpNlMQWQlm+o=",
+  "Hash": "VXw09wgQN9yJZ/AbOV5CDUggpQJ0YRSnrk2IL39xks0=",
   "Source": "PokeQuestAPI",
   "BasePath": "_content/PokeQuestAPI",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [],
   "DiscoveryPatterns": [],
-  "Assets": []
+  "Assets": [],
+  "Endpoints": []
 }

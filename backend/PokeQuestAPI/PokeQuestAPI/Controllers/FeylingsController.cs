@@ -37,7 +37,7 @@ namespace PokeQuestAPI.Controllers
             var result = _context.Feylings.ToListAsync();
             if (result == null)
             {
-                return BadRequest();
+                return NotFound();
             }
             return Ok(result);
         }
@@ -72,18 +72,58 @@ namespace PokeQuestAPI.Controllers
             return CreatedAtAction(nameof(GetFeyling), new { id =  feyling.Id }, feyling);
         }
 
-        [HttpPost("bulk-insert")]
+        [HttpPost("Feyling-bulk-insert")]
         public async Task<ActionResult> FeylingBulkInsert([FromBody] List<Feyling> feylings)
         {
-            if (feylings == null || feylings.Count == 0 ||!ModelState.IsValid)
+            if (feylings == null || feylings.Count == 0)
             {
-                return BadRequest();
+                return NotFound();
             }
 
             await _context.Feylings.AddRangeAsync(feylings);
             await _context.SaveChangesAsync();
 
             return Ok();
+        }
+
+        [HttpDelete]
+        public async Task<ActionResult> DeleteFeyling(int id)
+        {
+            var res = await _context.Feylings.FindAsync(id);
+
+            if (res == null)
+            {
+                return NotFound();
+            }
+
+            _context.Feylings.Remove(res);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult> UpdateFeyling(int id, Feyling updatedFeyling)
+        {
+            if (id != updatedFeyling.Id)
+            {
+                return BadRequest();
+            }
+
+            var existingFeyling = await _context.Feylings.FindAsync(id);
+
+            if (existingFeyling == null)
+            {
+                return NotFound();
+            }
+
+            existingFeyling.Hp = updatedFeyling.Hp;
+            existingFeyling.Atk = updatedFeyling.Atk;
+            existingFeyling.SellPrice = updatedFeyling.SellPrice;
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
         }
     }
 }

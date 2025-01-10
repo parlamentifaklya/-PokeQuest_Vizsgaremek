@@ -19,13 +19,11 @@ namespace PokeQuestAPI.Controllers
     {
         private readonly UserManager<User> _userManager;
         private readonly IConfiguration _configuration;
-        private readonly PokeQuestApiContext _context;
 
-        public UserController(UserManager<User> userManager, IConfiguration configuration, PokeQuestApiContext context)
+        public UserController(UserManager<User> userManager, IConfiguration configuration)
         {
             _userManager = userManager;
             _configuration = configuration;
-            _context = context;
         }
 
         [HttpPost]
@@ -77,6 +75,74 @@ namespace PokeQuestAPI.Controllers
             }
 
             return Unauthorized();
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult> UpdateUser(string username, User user)
+        {
+            var currentUser = await _userManager.FindByNameAsync(username);
+
+            if (currentUser == null)
+            {
+                return NotFound();
+            }
+
+            if (currentUser.UserName != _userManager.GetUserName(User))
+            {
+                return Forbid();
+            }
+
+            if (!string.IsNullOrEmpty(user.UserName))
+            {
+                currentUser.UserName = user.UserName;
+            }
+
+            if (!string.IsNullOrEmpty(user.Email))
+            {
+                currentUser.Email = user.Email;
+            }
+
+            if (!string.IsNullOrEmpty(user.PasswordHash))
+            {
+                var token = await _userManager.GeneratePasswordResetTokenAsync(currentUser);
+                var result = await _userManager.ResetPasswordAsync(currentUser, token, user.PasswordHash);
+                if (!result.Succeeded)
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+
+            var updateResult = await _userManager.UpdateAsync(currentUser);
+            if (!updateResult.Succeeded)
+            {
+                return BadRequest(updateResult.Errors);
+            }
+
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteUser(int id)
+        {
+            var userToDelete = await _userManager.FindByIdAsync(id.ToString());
+
+            if (userToDelete == null)
+            {
+                return NotFound();
+            }
+
+            if (userToDelete.Id != _userManager.GetUserId(User))
+            {
+                return Forbid();
+            }
+
+            var result = await _userManager.DeleteAsync(userToDelete);
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            return NoContent();
         }
 
     }
