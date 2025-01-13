@@ -70,7 +70,7 @@ namespace PokeQuestAPI.Controllers
         {
             if (items == null || items.Count == 0)
             {
-                return NotFound();
+                return BadRequest();
             }
 
             await _context.Items.AddRangeAsync(items);

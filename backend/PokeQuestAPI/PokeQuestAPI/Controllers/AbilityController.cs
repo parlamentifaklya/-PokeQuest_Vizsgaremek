@@ -66,7 +66,7 @@ namespace PokeQuestAPI.Controllers
         {
             if (abilities == null || abilities.Count == 0)
             {
-                return NotFound();
+                return BadRequest();
             }
 
             await _context.Abilities.AddRangeAsync(abilities);

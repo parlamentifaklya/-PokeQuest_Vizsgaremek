@@ -77,7 +77,7 @@ namespace PokeQuestAPI.Controllers
         {
             if (feylings == null || feylings.Count == 0)
             {
-                return NotFound();
+                return BadRequest();
             }
 
             await _context.Feylings.AddRangeAsync(feylings);
