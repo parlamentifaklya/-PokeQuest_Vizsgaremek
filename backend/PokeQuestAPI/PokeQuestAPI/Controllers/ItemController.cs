@@ -56,6 +56,7 @@ namespace PokeQuestAPI.Controllers
                 Name = item.Name,
                 Description = item.Description,
                 Img = item.Img,
+                Rarity = item.Rarity,
                 ItemAbility = item.ItemAbility
             };
 
@@ -111,6 +112,7 @@ namespace PokeQuestAPI.Controllers
             }
 
             existingItem.ItemAbility = updatedItem.ItemAbility;
+            existingItem.Rarity = updatedItem.Rarity;
 
             await _context.SaveChangesAsync();
 
