@@ -5063,19 +5063,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\kokenyesi.andor\\.nuget\\packages\\": {}
+    "C:\\Users\\szilagyi.dominik\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\kokenyesi.andor\\Desktop\\-PokeQuest_Vizsgaremek\\backend\\PokeQuestAPI\\PokeQuestAPI\\PokeQuestAPI.csproj",
+      "projectUniqueName": "C:\\Users\\szilagyi.dominik\\Documents\\-PokeQuest_Vizsgaremek\\backend\\PokeQuestAPI\\PokeQuestAPI\\PokeQuestAPI.csproj",
       "projectName": "PokeQuestAPI",
-      "projectPath": "C:\\Users\\kokenyesi.andor\\Desktop\\-PokeQuest_Vizsgaremek\\backend\\PokeQuestAPI\\PokeQuestAPI\\PokeQuestAPI.csproj",
-      "packagesPath": "C:\\Users\\kokenyesi.andor\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\kokenyesi.andor\\Desktop\\-PokeQuest_Vizsgaremek\\backend\\PokeQuestAPI\\PokeQuestAPI\\obj\\",
+      "projectPath": "C:\\Users\\szilagyi.dominik\\Documents\\-PokeQuest_Vizsgaremek\\backend\\PokeQuestAPI\\PokeQuestAPI\\PokeQuestAPI.csproj",
+      "packagesPath": "C:\\Users\\szilagyi.dominik\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\szilagyi.dominik\\Documents\\-PokeQuest_Vizsgaremek\\backend\\PokeQuestAPI\\PokeQuestAPI\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\kokenyesi.andor\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\szilagyi.dominik\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -5149,7 +5149,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.402/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.400/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
