@@ -13,5 +13,7 @@ namespace PokeQuestAPI.Models
         public string Description { get; set; }
         public string Img { get; set; }
         public string ItemAbility { get; set; }
+
+        public int Rarity { get; set; }
     }
 }
