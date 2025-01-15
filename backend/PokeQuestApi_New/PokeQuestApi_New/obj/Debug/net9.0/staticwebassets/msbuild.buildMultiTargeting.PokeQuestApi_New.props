@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\PokeQuestApi_New.props" />
+</Project>
