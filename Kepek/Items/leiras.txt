@@ -70,7 +70,11 @@ Spear of the Eternal Ember: The Spear of the Eternal Ember is a legendary weapon
 SausageOfTrueDevotionAndMadness: Its not a simple sausage, it holds the power of the demon lord wich could take over the world, but it just a crazy sausage.
 +90atk, +60 feyling element dmg
 
-
+0 - common(szürke)
+1- uncommon(zöld)
+2 - rare(kék)
+3 - epic(lila)
+4 - legendary(sárga)
 
 
 

@@ -1,0 +1,182 @@
+[
+  {
+    "id": 0,
+    "name": "Emberheart Amulet",
+    "description": "The Emberheart Amulet is a mystical pendant forged from enchanted metals and adorned with radiant gemstones that seem to hold the essence of fire and ice. The central gem, a vibrant aquamarine, glows with a soft, otherworldly light, symbolizing balance and harmony. Encasing it are intricate metallic frames with sharp, angular designs, accented by fiery orange and deep sapphire crystals. Suspended on a sturdy chain, this amulet exudes power and elegance, making it a treasured artifact for adventurers and guardians alike. Legends say it grants the wearer resilience and clarity in the face of darkness.",
+    "img": "string",
+    "itemAbility": "Fire Aspect: When activated, the amulet radiates searing heat, engulfing the wearer in a protective aura of flames. +10 fire element dmg",
+    "rarity": 3
+  },
+  {
+    "id": 0,
+    "name": "Guardian's Aegis Belt",
+    "description": "The Guardian's Aegis Belt is a legendary artifact crafted by ancient protectors to embody strength and resilience. The belt's centerpiece is adorned with a golden "G," symbolizing guardianship and valor, surrounded by luminous gemstones of blue, orange, and amber hues. The intricate metallic framework, reinforced with enchanted leather, combines both elegance and fortitude. Its design reflects balance, power, and protection, making it a prized relic for those sworn to defend the weak and uphold justice.",
+    "img": "string",
+    "itemAbility": "The belt passively enhances the wearer's endurance, reducing damage taken. +10 def/hp",
+    "rarity": 1
+  },
+  {
+    "id": 0,
+    "name": "Radiant Ember Elixir(Attack Potion)",
+    "description": "The Radiant Ember Elixir is a potion of immense power, glowing with a golden hue that seems to pulse like a living flame. Encased in a finely crafted glass vial, the liquid radiates warmth and emits a faint ember-like smoke. A glowing drop hovers above the potion, symbolizing its energy-laden essence. The starburst emblem etched onto the bottle represents its potency and transformative properties. This rare elixir is said to be brewed from molten sunstone shards and the essence of elemental fire.",
+    "img": "string",
+    "itemAbility": "Upon consumption, the elixir imbues the user with increased strength, agility, and reflexes, while enveloping their attacks with searing flames that deal extra base damage to enemies. +5dmg",
+    "rarity": 3
+  },
+  {
+    "id": 0,
+    "name": "Boots of the Zephyr Vanguard",
+    "description": "The Boots of the Zephyr Vanguard are masterfully crafted footwear infused with elemental air energy, designed for the swift and the brave. Each boot features angular plating adorned with shimmering emerald-like gems that glow faintly, symbolizing the power of the winds. The sleek design merges utility with regal aesthetics, reinforced with lightweight yet durable materials. These boots are said to have been forged by a celestial smith for warriors who needed unmatched speed and agility in battle while maintaining their noble stature.",
+    "img": "string",
+    "itemAbility": "It protects the little toe. +5 def",
+    "rarity": 0
+  },
+  {
+    "id": 0,
+    "name": "Aegis of the Eternal Sentinel",
+    "description": "The Aegis of the Eternal Sentinel is a masterwork chestplate forged by ancient artisans who sought to create an indomitable shield for the realm's most revered guardians. Its intricate design features angular, golden accents symbolizing strength and divine protection, seamlessly integrated into the dark steel frame. The central golden emblem represents the unyielding resolve of its bearer, radiating an aura of courage and fortitude. Adorned with intricate carvings of mythical creatures on its side plates, this armor is as much a masterpiece of artistry as it is a bastion of defense.",
+    "img": "string",
+    "itemAbility": "+30 def",
+    "rarity": 3
+  },
+  {
+    "id": 0,
+    "name": "Elixir of the Iron Bastion (Defense Potion)",
+    "description": "The Elixir of the Iron Bastion is a mystical defense potion crafted from rare herbs, enchanted minerals, and water from sacred springs. Its brilliant blue liquid shimmers faintly, and a golden emblem etched on the bottle's surface signifies its protective nature. When consumed, the elixir imbues the user with an unyielding aura, reinforcing their resilience against physical and magical attacks.",
+    "img": "string",
+    "itemAbility": "+15 def",
+    "rarity": 3
+  },
+  {
+    "id": 0,
+    "name": "Wraithflame Warmaul",
+    "description": "The Wraithflame Warmaul is a legendary weapon forged in the heart of an eternal storm. Its dual-bladed head radiates an eerie blue fire, said to be the souls of ancient warriors bound to its power. The flames never waver, even underwater, and their spectral glow illuminates the darkest of nights. Intricate carvings on its shaft pulse faintly, resonating with the wielder's emotions and amplifying their wrath in combat.",
+    "img": "string",
+    "itemAbility": "+20 atk",
+    "rarity": 2
+  },
+  {
+    "id": 0,
+    "name": "Hand of Radiant Virtue",
+    "description": "The Hand of Radiant Virtue is a gauntlet crafted from enchanted steel and adorned with resplendent gemstones of red, blue, and silver. Each gem pulses with magical energy, representing the virtues of courage, wisdom, and purity. Forged in an ancient sanctum of light, this gauntlet is said to bond with its wearer, amplifying their resolve and granting them a divine presence in battle. Its intricate design combines elegance and raw power, making it a symbol of both protection and might.",
+    "img": "string",
+    "itemAbility": "It protects the little finger. +5 def",
+    "rarity": 0
+  },
+  {
+    "id": 0,
+    "name": "Stormforge Hammer",
+    "description": "The Stormforge Hammer is a mighty weapon forged in the heart of a tempest by an ancient order of elemental smiths. Its sturdy frame is constructed from obsidian-infused steel, while its core glows with a vibrant blue crystal that pulsates with raw storm energy. The intricate engravings and geometric symbols etched into the hammer serve as conduits for its power, allowing its wielder to channel devastating lightning strikes upon their foes. This hammer is not just a weapon; it is a symbol of dominance over the elements and a force of nature in the hands of the worthy.",
+    "img": "string",
+    "itemAbility": "+30 rock element dmg",
+    "rarity": 2
+  },
+  {
+    "id": 0,
+    "name": "Elixir of Verdant Vitality",
+    "description": "The Elixir of Verdant Vitality is a shimmering green potion contained in a delicate glass vial adorned with a heart-shaped leaf emblem. This potent mixture is brewed from rare herbs and enchanted by the essence of nature itself. When consumed, it restores health to the drinker, mending wounds and revitalizing their life force. A faint mist rises from the bottle, carrying the soothing aroma of a lush forest after rainfall.",
+    "img": "string",
+    "itemAbility": "Instantly restores 25% of the user's maximum health.",
+    "rarity": 0
+  },
+  {
+    "id": 0,
+    "name": "Elixir of Crimson Draught",
+    "description": "Encased in a finely crafted glass bottle with golden accents, the Crimson Draught radiates a deep crimson glow, exuding warmth and life. The steam rising from its surface hints at the immense restorative power contained within. This elixir is a prized treasure for adventurers, capable of bringing even the gravely injured back to full strength.",
+    "img": "string",
+    "itemAbility": "Instantly restores 75% of the user's maximum health.",
+    "rarity": 1
+  },
+  {
+    "id": 0,
+    "name": "Helm of the Infernal Watcher",
+    "description": "Forged in the heart of a volcanic forge and imbued with the essence of an ancient infernal spirit, this helmet emanates an ominous glow from its fiery red eyes. The golden trim and intricate designs on the azure surface signify its royal origin, while the plume of crimson hair flows like flames in the wind. The Helm of the Infernal Watcher is said to grant its wearer unparalleled vigilance and unwavering resolve, but it whispers dark secrets to those who don it.",
+    "img": "string",
+    "itemAbility": "+5 def",
+    "rarity": 0
+  },
+  {
+    "id": 0,
+    "name": "Arcane Flamecaster",
+    "description": "A fusion of arcane sorcery and advanced engineering, the Arcane Flamecaster is a weapon of devastating power and beauty. Its sleek design glows with ethereal energy, channeling both fire and frost in a delicate balance. The intricate skull insignia hints at its necromantic origins, while the dual-elemental flames swirling around it promise destruction to any who dare stand in its path. The pistol hums with a faint, otherworldly resonance, as if alive with the magic it contains.",
+    "img": "string",
+    "itemAbility": "Elemental Burst: Fires a dual-element shot that deals both fire and water damage, capable of igniting and muting targets simultaneously.
++40 physic element dmg",
+    "rarity": 4
+  },
+  {
+    "id": 0,
+    "name": "Starcaller Scepter",
+    "description": "The Starcaller Scepter is a legendary wand forged from starlight and enchanted sapphire. Its gleaming crystal tip holds the energy of distant constellations, radiating an otherworldly blue glow. The shaft is wrapped in arcane runes, providing stability to the raw cosmic power within. This elegant yet formidable weapon is coveted by mages, as its mere presence enhances the wielder's magical aura and inspires awe.",
+    "img": "string",
+    "itemAbility": "Cosmic Bolt: Fires a concentrated beam of water energy, dealing high water damage to a target.
++20 water element dmg",
+    "rarity": 2
+  },
+  {
+    "id": 0,
+    "name": "Arcane Fang",
+    "description": "The Arcane Fang is a dual-purpose weapon, seamlessly blending a razor-sharp blade with a radiant mana core. Forged with precision and imbued with ancient magic, this artifact channels arcane energy into its crystalline design. The golden hilt and protective guard shimmer with an ethereal glow, signifying its divine craftsmanship. Perfect for warriors and spellcasters alike, the Arcane Fang enhances both melee prowess and magical potential, making it a symbol of balance between strength and intellect.",
+    "img": "string",
+    "itemAbility": "Amplifies electric attacks when the mana core is activated.
++20 electric element dmg",
+    "rarity": 2
+  },
+  {
+    "id": 0,
+    "name": "Verdant Cleaver",
+    "description": "The Verdant Cleaver is an elegant yet fearsome battle axe, forged from mystical alloys and adorned with intricate, nature-inspired designs. Its dual-toned blade glows with a cyan luminescence, resonating with the essence of life and destruction. The weapon’s shaft is wrapped in enchanted leather, ensuring a perfect grip while channeling its wielder’s energy. This axe is said to have been crafted by an ancient forest deity, granting it the ability to grow stronger in the presence of natural elements. A symbol of balance, the Verdant Cleaver is as much a protector as it is a destroyer.",
+    "img": "string",
+    "itemAbility": "+70 atk",
+    "rarity": 4
+  },
+  {
+    "id": 0,
+    "name": "Infernal Fang",
+    "description": "The Infernal Fang is a sinister blade forged in the depths of a volcanic abyss, its blackened steel infused with molten cores that glow like fiery veins. The jagged, serrated edges are designed to tear through armor and flesh alike, while its hilt is wrapped in heat-resistant material for a firm grip. Embers flicker along the blade, and the air around it shimmers with intense heat, instilling fear in enemies who dare approach.",
+    "img": "string",
+    "itemAbility": "+30 fire element dmg",
+    "rarity": 1
+  },
+  {
+    "id": 0,
+    "name": "Emberlight Band",
+    "description": "The Emberlight Band is a radiant artifact of ancient design, crafted from enchanted gold and set with a fiery orange gem that seems to hold a spark of the sun itself. Smaller gemstones, representing the elements of earth, fire, water, and air, are embedded along its circumference, glowing faintly with magical energy. The intricate patterns etched into its surface pulse with warmth, and its power resonates with anyone attuned to elemental magic.",
+    "img": "string",
+    "itemAbility": "+3 def",
+    "rarity": 0
+  },
+  {
+    "id": 0,
+    "name": "Nightshade Scythe",
+    "description": "Forged in the shadows of an ancient eclipse, the Nightshade Scythe is a weapon of dread and destruction. Its obsidian blade gleams with an unholy glow, while crimson inlays pulse with the energy of dark magic. The shaft is adorned with intricate carvings of twisted vines and skull motifs, representing death's inevitable grasp. A blood-red tassel dangles from the scythe, rumored to be a fragment of a fallen hero's cloak.",
+    "img": "string",
+    "itemAbility": "Umbral Slash: Sends forth a wave of dark energy that devastates enemies in its path.
++50 dark element dmg",
+    "rarity": 3
+  },
+  {
+    "id": 0,
+    "name": "Aegis of the Radiant Vanguard",
+    "description": "The Aegis of the Radiant Vanguard is a legendary shield forged by celestial artisans in the heart of a dying star. Its luminous core emanates a soft, blue light, symbolizing unwavering hope and justice. Encased in a sturdy golden frame etched with runic inscriptions, the shield is a testament to divine craftsmanship.",
+    "img": "string",
+    "itemAbility": "+50 def",
+    "rarity": 2
+  },
+  {
+    "id": 0,
+    "name": "Spear of the Eternal Ember",
+    "description": "The Spear of the Eternal Ember is a legendary weapon infused with the essence of an undying flame. Its blade shimmers with a molten glow, and its intricate golden accents pulse with fiery energy. Crimson ribbons flow from its hilt, seemingly alive as they sway in harmony with the weapon's heat.",
+    "img": "string",
+    "itemAbility": "+15 atk",
+    "rarity": 1
+  },
+  {
+    "id": 0,
+    "name": "Sausage Of True Devotion And Madness",
+    "description": "Its not a simple sausage, it holds the power of the demon lord wich could take over the world, but it just a crazy sausage.",
+    "img": "string",
+    "itemAbility": "+90atk, +60 feyling element dmg",
+    "rarity": 4
+  }
+]
