@@ -11,9 +11,14 @@ namespace PokeQuestApi_New.Controllers
     public class FileUploadController : ControllerBase
     {
         private readonly PokeQuestApiContext _context;
+        private readonly string _uploadsDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
         public FileUploadController(PokeQuestApiContext context)
         {
-            context = _context;
+            _context = context;
+            if (!Directory.Exists(_uploadsDirectory))
+            {
+                Directory.CreateDirectory(_uploadsDirectory);
+            }
         }
 
         [HttpPost("image-upload")]
@@ -24,24 +29,15 @@ namespace PokeQuestApi_New.Controllers
                 return BadRequest("No file uploaded.");
             }
 
-            // Ensure the Uploads directory exists
             var uploadsDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
 
-            if (!Directory.Exists(uploadsDirectory))
-            {
-                Directory.CreateDirectory(uploadsDirectory); // Create the directory if it doesn't exist
-            }
+            var fileName = Path.GetFileName(file.FileName);
+            fileName = Path.GetFileNameWithoutExtension(fileName);
+            var fileExtension = Path.GetExtension(file.FileName);
+            var safeFileName = fileName + fileExtension;
 
-            // Get the original file name and ensure it doesn't contain invalid characters
-            var fileName = Path.GetFileName(file.FileName);  // Preserve the original file name
-            fileName = Path.GetFileNameWithoutExtension(fileName); // Remove any path components
-            var fileExtension = Path.GetExtension(file.FileName); // Get the file extension
-            var safeFileName = fileName + fileExtension;  // Recombine the name and extension to ensure it's safe
-
-            // Define the path to save the file
             var filePath = Path.Combine(uploadsDirectory, safeFileName);
 
-            // Ensure unique file name if a file with the same name exists
             int counter = 1;
             while (System.IO.File.Exists(filePath))
             {
@@ -50,15 +46,56 @@ namespace PokeQuestApi_New.Controllers
                 counter++;
             }
 
-            // Save the file to the disk
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
                 await file.CopyToAsync(stream);
             }
 
-            // Return the path of the saved file
             return Ok(new { FilePath = filePath });
         }
 
+        [HttpGet("all-images")]
+        public IActionResult GetAllImages()
+        {
+            if (!Directory.Exists(_uploadsDirectory))
+            {
+                return NotFound("Uploads directory not found.");
+            }
+
+            var imageFiles = Directory.GetFiles(_uploadsDirectory)
+                .Where(file => IsImageFile(file))
+                .Select(file => Path.GetFileName(file))
+                .ToList();
+
+            if (imageFiles.Count == 0)
+            {
+                return NotFound("No images found.");
+            }
+
+            var imageUrls = imageFiles.Select(file => Url.Action("GetImage", "FileUpload", new { fileName = file }, Request.Scheme)).ToList();
+
+            return Ok(imageUrls);
+        }
+
+        private bool IsImageFile(string filePath)
+        {
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp" };
+            var extension = Path.GetExtension(filePath).ToLower();
+            return allowedExtensions.Contains(extension);
+        }
+
+        [HttpGet("image/{fileName}")]
+        public IActionResult GetImage(string fileName)
+        {
+            var filePath = Path.Combine(_uploadsDirectory, fileName);
+
+            if (!System.IO.File.Exists(filePath))
+            {
+                return NotFound("File not found.");
+            }
+
+            var fileBytes = System.IO.File.ReadAllBytes(filePath);
+            return File(fileBytes, "image/jpeg");
+        }
     }
 }

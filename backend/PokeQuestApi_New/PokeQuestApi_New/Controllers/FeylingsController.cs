@@ -15,7 +15,7 @@ namespace PokeQuestApi_New.Controllers
         private readonly PokeQuestApiContext _context;
         public FeylingsController(PokeQuestApiContext context)
         {
-            context = _context;
+            _context = context;
         }
 
         [HttpGet("{id}")]
