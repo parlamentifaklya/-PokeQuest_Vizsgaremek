@@ -25,6 +25,13 @@ namespace PokeQuestApi_New.Controllers
             }
 
             var filePath = Path.Combine("Uploads", file.Name);
+            var uploadsDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
+
+            if (!Directory.Exists(uploadsDirectory))
+            {
+                Directory.CreateDirectory(uploadsDirectory);
+            }
+
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
                 await file.CopyToAsync(stream);

@@ -210,6 +210,22 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "PokeQuestApi_New.Controllers.FileUploadController",
+    "Method": "UploadImage",
+    "RelativePath": "api/FileUpload/image-upload",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "file",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "PokeQuestApi_New.Controllers.ItemController",
     "Method": "CreateItem",
     "RelativePath": "api/Item/CreateItem",
