@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using PokeQuestApi_New.Controllers;
 using PokeQuestApi_New.Data;
+using PokeQuestApi_New.Filters;
 using PokeQuestApi_New.Models;
 using System.Text;
 
@@ -83,6 +85,8 @@ builder.Services.AddSwaggerGen(options =>
             new string[] {}
         }
     });
+
+    options.OperationFilter<FileUploadOperationFilter>();
 });
 
 builder.Services.AddEndpointsApiExplorer();
