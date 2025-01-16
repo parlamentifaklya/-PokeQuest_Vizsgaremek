@@ -79,7 +79,7 @@ namespace PokeQuestApi_New.Controllers
 
         private bool IsImageFile(string filePath)
         {
-            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp" };
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".jfif" };
             var extension = Path.GetExtension(filePath).ToLower();
             return allowedExtensions.Contains(extension);
         }

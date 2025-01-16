@@ -211,6 +211,16 @@
   },
   {
     "ContainingType": "PokeQuestApi_New.Controllers.FileUploadController",
+    "Method": "GetAllImages",
+    "RelativePath": "api/FileUpload/all-images",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "PokeQuestApi_New.Controllers.FileUploadController",
     "Method": "UploadImage",
     "RelativePath": "api/FileUpload/image-upload",
     "HttpMethod": "POST",
@@ -221,6 +231,22 @@
         "Name": "file",
         "Type": "Microsoft.AspNetCore.Http.IFormFile",
         "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "PokeQuestApi_New.Controllers.FileUploadController",
+    "Method": "GetImage",
+    "RelativePath": "api/FileUpload/image/{fileName}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "fileName",
+        "Type": "System.String",
+        "IsRequired": true
       }
     ],
     "ReturnTypes": []
