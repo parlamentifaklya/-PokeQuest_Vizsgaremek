@@ -21,7 +21,7 @@ namespace PokeQuestApi_New.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetFeyling(int id)
         {
-            var result = _context.Feylings.FindAsync(id);
+            var result = await _context.Feylings.FindAsync(id);
 
             if (result == null)
             {
@@ -34,7 +34,7 @@ namespace PokeQuestApi_New.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllFeylings()
         {
-            var result = _context.Feylings.ToListAsync();
+            var result = await _context.Feylings.ToListAsync();
             if (result == null)
             {
                 return NotFound();

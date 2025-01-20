@@ -31,7 +31,7 @@ namespace PokeQuestApi_New.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllAbilities()
         {
-            var result = _context.Abilities.ToListAsync();
+            var result =  await _context.Abilities.ToListAsync();
             if (result == null)
             {
                 return NotFound();

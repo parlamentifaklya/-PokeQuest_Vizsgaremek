@@ -35,7 +35,7 @@ namespace PokeQuestApi_New.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllItems()
         {
-            var result = _context.Items.ToListAsync();
+            var result = await _context.Items.ToListAsync();
             if (result == null)
             {
                 return NotFound();
