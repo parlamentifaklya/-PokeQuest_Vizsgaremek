@@ -125,5 +125,44 @@ namespace PokeQuestApi_New.Controllers
 
             return NoContent();
         }
+
+        [HttpPost("unlock/{userInventoryId}/{feylingId}")]
+        public async Task<IActionResult> UnlockFeyling(int userInventoryId, int feylingId)
+        {
+            var feyling = await _context.Feylings.FindAsync(feylingId);
+            if (feyling == null)
+            {
+                return NotFound("Feyling not found.");
+            }
+
+            var existingOwnedFeyling = await _context.OwnedFeylings.FirstOrDefaultAsync(of => of.UserInventoryId == userInventoryId && of.FeylingId == feylingId);
+            if (existingOwnedFeyling != null)
+            {
+                return BadRequest("Feyling already unlocked.");
+            }
+
+            var ownedFeyling = new OwnedFeyling
+            {
+                UserInventoryId = userInventoryId,
+                FeylingId = feylingId
+            };
+
+            await _context.OwnedFeylings.AddAsync(ownedFeyling);
+            await _context.SaveChangesAsync();
+
+            return Ok("New Feyling unlocked!");
+        }
+
+        [HttpGet("unlocked/{userInventoryId}")]
+        public async Task<IActionResult> GetUnlockedFeylings(int userInventoryId)
+        {
+            var ownedFeylings = await _context.OwnedFeylings.Where(of => of.UserInventoryId == userInventoryId).Include(of => of.Feyling).ToListAsync();
+            if (ownedFeylings == null || !ownedFeylings.Any())
+            {
+                return NotFound("No unlocked feylings found.");
+            }
+
+            return Ok(ownedFeylings.Select(of => of.Feyling));
+        }
     }
 }

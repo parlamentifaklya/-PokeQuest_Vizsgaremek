@@ -118,5 +118,51 @@ namespace PokeQuestApi_New.Controllers
 
             return NoContent();
         }
+
+        [HttpPost("unlock/{userInventoryId}/{itemId}/{amount}")]
+        public async Task<IActionResult> UnlockItem(int userInventoryId, int itemId, int amount)
+        {
+            var item = await _context.Items.FindAsync(itemId);
+            if (item == null)
+            {
+                return NotFound("Item bot found.");
+            }
+
+            var existingOwnedItem = await _context.OwnedItems.FirstOrDefaultAsync(oi => oi.UserInventoryId == userInventoryId && oi.ItemId == itemId);
+
+            if (existingOwnedItem != null)
+            {
+                existingOwnedItem.Amount += amount;
+                _context.OwnedItems.Update(existingOwnedItem);
+            }
+            else
+            {
+                var ownedItem = new OwnedItem
+                {
+                    UserInventoryId = userInventoryId,
+                    ItemId = itemId,
+                    Amount = amount
+                };
+
+                await _context.OwnedItems.AddAsync(ownedItem);
+            }
+
+            await _context.SaveChangesAsync();
+
+            return Ok("Item unlocked");
+        }
+
+        [HttpGet("owned/{userInventoryId}")]
+        public async Task<IActionResult> GetOwnedItems(int userInventoryId)
+        {
+            var ownedItems = await _context.OwnedItems.Where(oi => oi.UserInventoryId == userInventoryId).Include(oi => oi.item).ToListAsync();
+
+            if (ownedItems == null || !ownedItems.Any())
+            {
+                return NotFound("No owned items.");
+            }
+
+            return Ok(ownedItems);
+        }
     }
 }

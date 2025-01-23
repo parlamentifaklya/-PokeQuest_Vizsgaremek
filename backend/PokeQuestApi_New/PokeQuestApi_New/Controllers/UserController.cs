@@ -19,11 +19,13 @@ namespace PokeQuestApi_New.Controllers
     {
         private readonly UserManager<User> _userManager;
         private readonly IConfiguration _configuration;
+        private readonly PokeQuestApiContext _context;
 
-        public UserController(UserManager<User> userManager, IConfiguration configuration)
+        public UserController(UserManager<User> userManager, IConfiguration configuration, PokeQuestApiContext context)
         {
             _userManager = userManager;
             _configuration = configuration;
+            _context = context;
         }
 
         [HttpPost]
@@ -39,6 +41,39 @@ namespace PokeQuestApi_New.Controllers
 
             if (result.Succeeded)
             {
+                var userInventory = new UserInventory
+                {
+                    UserId = newUser.Id,
+                };
+
+                await _context.UserInventories.AddAsync(userInventory);
+                await _context.SaveChangesAsync();
+
+                var defaultFeylingIds = new List<int> { 1, 2, 3 };
+                foreach (var feylingId in defaultFeylingIds)
+                {
+                    var ownedFeyling = new OwnedFeyling
+                    {
+                        UserInventoryId = userInventory.Id,
+                        FeylingId = feylingId
+                    };
+                    await _context.OwnedFeylings.AddAsync(ownedFeyling);
+                }
+                await _context.SaveChangesAsync();
+
+                var defaultItemIds = new List<int> { 1, 2, 3 };
+                foreach (var itemId in defaultItemIds)
+                {
+                    var ownedItem = new OwnedItem
+                    {
+                        UserInventoryId = userInventory.Id,
+                        ItemId = itemId,
+                        Amount = 1
+                    };
+                    await _context.OwnedItems.AddAsync(ownedItem);
+                }
+                await _context.SaveChangesAsync();
+
                 return Ok(new { Message = "User registered successfully!"});
             }
 

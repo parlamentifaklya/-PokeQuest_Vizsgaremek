@@ -190,6 +190,43 @@
   },
   {
     "ContainingType": "PokeQuestApi_New.Controllers.FeylingsController",
+    "Method": "GetUnlockedFeylings",
+    "RelativePath": "api/Feylings/GetUnlockedFeylings/unlocked/{userInventoryId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userInventoryId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "PokeQuestApi_New.Controllers.FeylingsController",
+    "Method": "UnlockFeyling",
+    "RelativePath": "api/Feylings/UnlockFeyling/unlock/{userInventoryId}/{feylingId}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userInventoryId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "feylingId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "PokeQuestApi_New.Controllers.FeylingsController",
     "Method": "UpdateFeyling",
     "RelativePath": "api/Feylings/UpdateFeyling/{id}",
     "HttpMethod": "PUT",
@@ -321,6 +358,22 @@
   },
   {
     "ContainingType": "PokeQuestApi_New.Controllers.ItemController",
+    "Method": "GetOwnedItems",
+    "RelativePath": "api/Item/GetOwnedItems/owned/{userInventoryId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userInventoryId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "PokeQuestApi_New.Controllers.ItemController",
     "Method": "ItemBulkInsert",
     "RelativePath": "api/Item/ItemBulkInsert/Item-bulk-insert",
     "HttpMethod": "POST",
@@ -330,6 +383,32 @@
       {
         "Name": "items",
         "Type": "System.Collections.Generic.List\u00601[[PokeQuestApi_New.Models.Item, PokeQuestApi_New, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "PokeQuestApi_New.Controllers.ItemController",
+    "Method": "UnlockItem",
+    "RelativePath": "api/Item/UnlockItem/unlock/{userInventoryId}/{itemId}/{amount}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userInventoryId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "itemId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "amount",
+        "Type": "System.Int32",
         "IsRequired": true
       }
     ],
