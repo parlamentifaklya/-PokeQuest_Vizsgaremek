@@ -29,7 +29,7 @@ Umbrahound: A ferocious, wolf-like Feyling, Umbrahound thrives in total darkness
 Noxiraptor: A sleek, dragon-like creature that emerges from the darkest parts of the world. Noxiraptor can control the shadows around it, bending them to its will. It has powerful claws that can tear through rock and steel alike.
 Scytheris: Scytheris is a venomous, insect-like Feyling that thrives in swamps and toxic environments. It secretes a poison that can paralyze its prey, and it uses its large, jagged mandibles to inject a venomous bite into its victims.
 
-ROCK vagy STONE
+ROCK
 
 Obsidigoyle: Obsidigoyle is a towering, winged figure carved from dark, glassy obsidian stone. Its body resembles an ancient gargoyle, with sharp, angular features and wings that seem to shimmer with a faint ethereal glow. The stone has a polished, reflective surface, but cracks run through it, revealing eerie, glowing veins beneath. Its eyes are twin pools of molten magma, burning with an inner fury.
 Petrida: Petrida is an enormous, serpent-like creature, its scales made of jagged stone, giving it an intimidating and ancient appearance. Its body coils in a massive spiral, covered in intricate stone plates that resemble cracked ruins. Along its spine, spikes of hardened minerals jut out, and its eyes gleam with a golden light that speaks of ancient wisdom.
