@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PokeQuestApi_New.Data;
@@ -13,9 +14,11 @@ namespace PokeQuestApi_New.Controllers
     public class FeylingsController : ControllerBase
     {
         private readonly PokeQuestApiContext _context;
-        public FeylingsController(PokeQuestApiContext context)
+        private readonly UserManager<User> _userManager;
+        public FeylingsController(PokeQuestApiContext context, UserManager<User> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         [HttpGet("{id}")]
@@ -135,10 +138,27 @@ namespace PokeQuestApi_New.Controllers
                 return NotFound("Feyling not found.");
             }
 
+            var userInventory = await _context.UserInventories.FindAsync(userInventoryId);
+            if (userInventory == null)
+            {
+                return NotFound("User inventory not found.");
+            }
+
+            var user = await _userManager.FindByIdAsync(userInventory.UserId);
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
+
             var existingOwnedFeyling = await _context.OwnedFeylings.FirstOrDefaultAsync(of => of.UserInventoryId == userInventoryId && of.FeylingId == feylingId);
             if (existingOwnedFeyling != null)
             {
-                return BadRequest("Feyling already unlocked.");
+                user.CoinAmount += feyling.SellPrice;
+                _context.OwnedFeylings.Remove(existingOwnedFeyling);
+                await _context.SaveChangesAsync();
+
+                return Ok(new { Message = "Feyling sold for its sale price!", SalePrice = feyling.SellPrice, NewBalance = user.CoinAmount });
             }
 
             var ownedFeyling = new OwnedFeyling
@@ -150,7 +170,10 @@ namespace PokeQuestApi_New.Controllers
             await _context.OwnedFeylings.AddAsync(ownedFeyling);
             await _context.SaveChangesAsync();
 
-            return Ok("New Feyling unlocked!");
+            user.UserLevel++;
+            await _userManager.UpdateAsync(user);
+
+            return Ok(new { Message = "New Feyling unlocked!", UserLevel = user.UserLevel });
         }
 
         [HttpGet("owned/{userInventoryId}")]

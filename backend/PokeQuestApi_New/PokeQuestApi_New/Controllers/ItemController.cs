@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -14,9 +15,11 @@ namespace PokeQuestApi_New.Controllers
     public class ItemController : ControllerBase
     {
         private readonly PokeQuestApiContext _context;
-        public ItemController(PokeQuestApiContext context)
+        private readonly UserManager<User> _userManager;
+        public ItemController(PokeQuestApiContext context, UserManager<User> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         [HttpGet]
@@ -125,11 +128,22 @@ namespace PokeQuestApi_New.Controllers
             var item = await _context.Items.FindAsync(itemId);
             if (item == null)
             {
-                return NotFound("Item bot found.");
+                return NotFound("Item not found.");
+            }
+
+            var userInventory = await _context.UserInventories.FindAsync(userInventoryId);
+            if (userInventory == null)
+            {
+                return NotFound("User  inventory not found.");
+            }
+
+            var user = await _userManager.FindByIdAsync(userInventory.UserId);
+            if (user == null)
+            {
+                return NotFound("User not found.");
             }
 
             var existingOwnedItem = await _context.OwnedItems.FirstOrDefaultAsync(oi => oi.UserInventoryId == userInventoryId && oi.ItemId == itemId);
-
             if (existingOwnedItem != null)
             {
                 existingOwnedItem.Amount += amount;
@@ -149,7 +163,10 @@ namespace PokeQuestApi_New.Controllers
 
             await _context.SaveChangesAsync();
 
-            return Ok("Item unlocked");
+            user.UserLevel++;
+            await _userManager.UpdateAsync(user);
+
+            return Ok(new { Message = "Item unlocked successfully!", UserLevel = user.UserLevel });
         }
 
         [HttpGet("owned/{userInventoryId}")]

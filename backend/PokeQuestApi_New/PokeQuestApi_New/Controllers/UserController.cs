@@ -35,7 +35,8 @@ namespace PokeQuestApi_New.Controllers
             var newUser = new User
             {
                 UserName = model.UsserName,
-                Email = model.Email
+                Email = model.Email,
+                UserLevel = 1
             };
 
             var result = await _userManager.CreateAsync(newUser, model.Password);
@@ -92,7 +93,8 @@ namespace PokeQuestApi_New.Controllers
                 var authClaims = new[]
                 {
                     new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim("User Level", user.UserLevel.ToString())
                 };
 
                 var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
@@ -185,6 +187,37 @@ namespace PokeQuestApi_New.Controllers
             return NoContent();
         }
 
+        [Authorize(Roles = "Admin")]
+        [HttpPost("create-admin")]
+        public async Task<IActionResult> CreateAdmin([FromBody] RegisterModel model)
+        {
+            var newAdmin = new User
+            {
+                UserName = model.UsserName,
+                Email = model.Email
+            };
+
+            var result = await _userManager.CreateAsync(newAdmin, model.Password);
+
+            if (result.Succeeded)
+            {
+                await _userManager.AddToRoleAsync(newAdmin, "Admin");
+                return Ok(new { Message = "Admin user created successfully!" });
+            }
+
+            return BadRequest(result.Errors);
+        }
+
+        public int GetUserLevel(ClaimsPrincipal user)
+        {
+            var levelClaim = user.FindFirst("User Level");
+            if (levelClaim != null)
+            {
+                return int.Parse(levelClaim.Value);
+            }
+
+            return 0;
+        }
     }
 
     public class RegisterModel
