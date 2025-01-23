@@ -191,7 +191,7 @@
   {
     "ContainingType": "PokeQuestApi_New.Controllers.FeylingsController",
     "Method": "GetUnlockedFeylings",
-    "RelativePath": "api/Feylings/GetUnlockedFeylings/unlocked/{userInventoryId}",
+    "RelativePath": "api/Feylings/GetUnlockedFeylings/owned/{userInventoryId}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,

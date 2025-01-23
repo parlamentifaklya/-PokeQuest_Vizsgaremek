@@ -153,7 +153,7 @@ namespace PokeQuestApi_New.Controllers
             return Ok("New Feyling unlocked!");
         }
 
-        [HttpGet("unlocked/{userInventoryId}")]
+        [HttpGet("owned/{userInventoryId}")]
         public async Task<IActionResult> GetUnlockedFeylings(int userInventoryId)
         {
             var ownedFeylings = await _context.OwnedFeylings.Where(of => of.UserInventoryId == userInventoryId).Include(of => of.Feyling).ToListAsync();

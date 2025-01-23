@@ -412,7 +412,7 @@
         }
       }
     },
-    "/api/Feylings/GetUnlockedFeylings/unlocked/{userInventoryId}": {
+    "/api/Feylings/GetUnlockedFeylings/owned/{userInventoryId}": {
       "get": {
         "tags": [
           "Feylings"
