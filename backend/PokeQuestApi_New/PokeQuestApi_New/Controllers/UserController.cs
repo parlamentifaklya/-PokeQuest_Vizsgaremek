@@ -9,6 +9,7 @@ using PokeQuestApi_New.Models;
 using Microsoft.EntityFrameworkCore;
 using PokeQuestApi_New.Data;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Authorization;
 
 namespace PokeQuestApi_New.Controllers
 {
@@ -41,6 +42,8 @@ namespace PokeQuestApi_New.Controllers
 
             if (result.Succeeded)
             {
+                await _userManager.AddToRoleAsync(newUser, "User");
+
                 var userInventory = new UserInventory
                 {
                     UserId = newUser.Id,
@@ -112,6 +115,7 @@ namespace PokeQuestApi_New.Controllers
             return Unauthorized();
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateUser(string username, User user)
         {
@@ -156,6 +160,7 @@ namespace PokeQuestApi_New.Controllers
             return NoContent();
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteUser(int id)
         {
