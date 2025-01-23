@@ -1,0 +1,49 @@
+TUZES
+
+Flareonix: Phoenix Rebirth - Revives from ashes, restoring health and power.
+Infernodrake: Volcanic Roar - Unleashes a powerful roar that causes eruptions, dealing magic damage.
+Pyrocerberus: Flame Fury - Unleashes a different type of fire attack, inflicting various burn effects.
+Blazetiger: Ignition Prowl - Leaves a trail of flames that ignites enemies and terrain.
+Embergriff: Ashen Gaze - A fiery stare that incinerates foes.
+
+
+VIZES
+
+Aquaflare: Flame Dance - Creates a dazzling display of bioluminescent flames that confuses and dazzles enemies.
+Kelpishell: Coral Swap - Changes shells to gain different defensive abilities or resistances.
+Hydrofein: Silver Surge - A swift attack that allows it to move through water and strike with shimmering speed.
+Ripplee: Starlight Pulse - Emits a pulse of bioluminescent energy that heals itself or stuns enemies.
+Wavern: Tidal Wave - Summons a massive wave that crashes down on foes, dealing damage and soaking them.
+
+
+PHYSIC
+
+Mindrix: Telekinetic Manipulation - Moves objects or enemies with telekinesis, causing damage or disarming foes.
+Phasmoir: Phantom Phase - Phases in and out of reality, avoiding attacks and creating illusions.
+TeleThrash: Psychic Slam - Levitate and slam opponents into the ground, dealing heavy damage.
+Astronox: Gravitational Shift - Manipulates gravity to control the battlefield, stunning and damaging enemies.
+Cerebrox: Mind Invasion - Invades the minds of foes, causing confusion and fear, and twisting their thoughts.
+
+DARK
+
+Nocthrowler: Chilling Screech - Emits a terrifying screech that instills fear and lowers enemy morale.
+Gravemurk: Soul Snatch - Steals the souls of nearby enemies, weakening them and empowering itself.
+Umbrahound: Shadow Blend - Blends into shadows, becoming nearly invisible and increasing dodge rate.
+Noxiraptor: Shadow Control - Manipulates shadows to create barriers or traps for enemies.
+Scytheris: Venomous Bite - Delivers a paralyzing bite that inflicts poison damage over time.
+
+ROCK
+
+Obsidigoyle: Obsidian Shield - Creates a protective barrier of obsidian that absorbs damage.
+Petrida: Stone Spiral - Coils and strikes with immense force, causing tremors and damage.
+Shalegeist: Spectral Drift - Phases through solid objects, avoiding attacks and confusing enemies.
+Bouldraze: Earthquake Stomp - Slams the ground, causing a shockwave that knocks enemies off balance.
+Cragthorn: Thorn Barrage - Launches sharp stone spikes at enemies, dealing damage and causing bleed effects.
+
+ELECTRIC
+
+Voltaris: Static Charge - Releases a burst of electricity that stuns nearby enemies.
+Zapion: Lightning Bolt - Fires a concentrated bolt of lightning at a target, dealing high damage.
+Stormclaw: Thunderous Roar - Emits a roar that generates a shockwave, damaging and disorienting foes.
+Electrosphere: Magnetic Pulse - Creates a pulse that disrupts electronic devices and stuns and removing item from their foes.
+Ampthtera: Arcane Storm - Summons a storm of lightning that strikes multiple times, dealing magic damage.

@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\kokenyesi.andor\\Desktop\\-PokeQuest_Vizsgaremek\\backend\\PokeQuestApi_New\\PokeQuestApi_New\\PokeQuestApi_New.csproj": {}
+    "C:\\Users\\szilagyi.dominik\\Desktop\\-PokeQuest_Vizsgaremek\\backend\\PokeQuestApi_New\\PokeQuestApi_New\\PokeQuestApi_New.csproj": {}
   },
   "projects": {
-    "C:\\Users\\kokenyesi.andor\\Desktop\\-PokeQuest_Vizsgaremek\\backend\\PokeQuestApi_New\\PokeQuestApi_New\\PokeQuestApi_New.csproj": {
+    "C:\\Users\\szilagyi.dominik\\Desktop\\-PokeQuest_Vizsgaremek\\backend\\PokeQuestApi_New\\PokeQuestApi_New\\PokeQuestApi_New.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\kokenyesi.andor\\Desktop\\-PokeQuest_Vizsgaremek\\backend\\PokeQuestApi_New\\PokeQuestApi_New\\PokeQuestApi_New.csproj",
+        "projectUniqueName": "C:\\Users\\szilagyi.dominik\\Desktop\\-PokeQuest_Vizsgaremek\\backend\\PokeQuestApi_New\\PokeQuestApi_New\\PokeQuestApi_New.csproj",
         "projectName": "PokeQuestApi_New",
-        "projectPath": "C:\\Users\\kokenyesi.andor\\Desktop\\-PokeQuest_Vizsgaremek\\backend\\PokeQuestApi_New\\PokeQuestApi_New\\PokeQuestApi_New.csproj",
-        "packagesPath": "C:\\Users\\kokenyesi.andor\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\kokenyesi.andor\\Desktop\\-PokeQuest_Vizsgaremek\\backend\\PokeQuestApi_New\\PokeQuestApi_New\\obj\\",
+        "projectPath": "C:\\Users\\szilagyi.dominik\\Desktop\\-PokeQuest_Vizsgaremek\\backend\\PokeQuestApi_New\\PokeQuestApi_New\\PokeQuestApi_New.csproj",
+        "packagesPath": "C:\\Users\\szilagyi.dominik\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\szilagyi.dominik\\Desktop\\-PokeQuest_Vizsgaremek\\backend\\PokeQuestApi_New\\PokeQuestApi_New\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\kokenyesi.andor\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\szilagyi.dominik\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
