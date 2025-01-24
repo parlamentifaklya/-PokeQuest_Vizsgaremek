@@ -542,6 +542,22 @@
   },
   {
     "ContainingType": "PokeQuestApi_New.Controllers.UserController",
+    "Method": "CreateAdmin",
+    "RelativePath": "api/User/CreateAdmin/create-admin",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "model",
+        "Type": "PokeQuestApi_New.Controllers.RegisterModel",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "PokeQuestApi_New.Controllers.UserController",
     "Method": "DeleteUser",
     "RelativePath": "api/User/DeleteUser/{id}",
     "HttpMethod": "DELETE",
@@ -554,6 +570,16 @@
         "IsRequired": true
       }
     ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "PokeQuestApi_New.Controllers.UserController",
+    "Method": "GetUserLevel",
+    "RelativePath": "api/User/GetUserLevel/level",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
     "ReturnTypes": []
   },
   {

@@ -208,9 +208,16 @@ namespace PokeQuestApi_New.Controllers
             return BadRequest(result.Errors);
         }
 
-        public int GetUserLevel(ClaimsPrincipal user)
+        [HttpGet("level")]
+        public IActionResult GetUserLevel()
         {
-            var levelClaim = user.FindFirst("User Level");
+            var userLevel = GetUserLevel(User);
+            return Ok(new { UserLevel = userLevel });
+        }
+
+        private int GetUserLevel(ClaimsPrincipal user)
+        {
+            var levelClaim = user.FindFirst("User  Level");
             if (levelClaim != null)
             {
                 return int.Parse(levelClaim.Value);
