@@ -543,14 +543,14 @@
   {
     "ContainingType": "PokeQuestApi_New.Controllers.UserController",
     "Method": "CreateAdmin",
-    "RelativePath": "api/User/CreateAdmin/create-admin",
+    "RelativePath": "api/User/CreateAdmin",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
         "Name": "model",
-        "Type": "PokeQuestApi_New.Controllers.RegisterModel",
+        "Type": "PokeQuestApi_New.Controllers.UserController\u002BRegisterModel",
         "IsRequired": true
       }
     ],
@@ -566,7 +566,7 @@
     "Parameters": [
       {
         "Name": "id",
-        "Type": "System.Int32",
+        "Type": "System.String",
         "IsRequired": true
       }
     ],
@@ -584,6 +584,37 @@
   },
   {
     "ContainingType": "PokeQuestApi_New.Controllers.UserController",
+    "Method": "GetUsers",
+    "RelativePath": "api/User/GetUsers",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "page",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "pageSize",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[PokeQuestApi_New.Models.User, PokeQuestApi_New, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "PokeQuestApi_New.Controllers.UserController",
     "Method": "Login",
     "RelativePath": "api/User/Login",
     "HttpMethod": "POST",
@@ -592,7 +623,7 @@
     "Parameters": [
       {
         "Name": "model",
-        "Type": "PokeQuestApi_New.Controllers.LoginModel",
+        "Type": "PokeQuestApi_New.Controllers.UserController\u002BLoginModel",
         "IsRequired": true
       }
     ],
@@ -608,7 +639,7 @@
     "Parameters": [
       {
         "Name": "model",
-        "Type": "PokeQuestApi_New.Controllers.RegisterModel",
+        "Type": "PokeQuestApi_New.Controllers.UserController\u002BRegisterModel",
         "IsRequired": true
       }
     ],
@@ -623,18 +654,13 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "username",
+        "Name": "id",
         "Type": "System.String",
-        "IsRequired": false
+        "IsRequired": true
       },
       {
         "Name": "user",
         "Type": "PokeQuestApi_New.Models.User",
-        "IsRequired": true
-      },
-      {
-        "Name": "id",
-        "Type": "",
         "IsRequired": true
       }
     ],

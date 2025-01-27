@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'services/api_service.dart'; // Assuming this is where your API logic lives
 import 'admin_panel_screen.dart'; // Your Admin Panel Screen
+import 'package:jwt_decoder/jwt_decoder.dart'; // Add jwt_decoder to check token expiry
 
 class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -34,18 +37,35 @@ class _LoginScreenState extends State<LoginScreen> {
     final token = await _apiService.login(email, password);
 
     if (token != null) {
-      // Save the token in shared preferences
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setString('jwt_token', token);
+      // Check if the token is expired
+      if (isTokenExpired(token)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Session expired, please log in again')),
+        );
+        return;
+      }
 
-      // Navigate to the admin panel screen and pass the token
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => AdminPanelScreen(token: token),
-        ),
-      );
+      // Check if the logged-in user has the "Admin" role
+      if (_apiService.isAdmin(token)) {
+        // Save the token in shared preferences
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setString('jwt_token', token);
+
+        // Navigate to the admin panel screen and pass the token
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => AdminPanelScreen(token: token),
+          ),
+        );
+      } else {
+        // Show an error message if the user is not an admin
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('You are not authorized to access the admin panel')),
+        );
+      }
     } else {
+      // Handle login failure
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Login failed')),
       );
@@ -54,6 +74,10 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {
       _isLoading = false;
     });
+  }
+
+  bool isTokenExpired(String token) {
+    return JwtDecoder.isExpired(token);
   }
 
   @override

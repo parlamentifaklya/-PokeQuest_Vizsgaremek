@@ -42,7 +42,12 @@ builder.Services.AddAuthentication(options =>
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-        ValidIssuer = builder.Configuration["Jwt:Audience"],
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        AudienceValidator = (audiences, securityToken, validationParameters) =>
+        {
+            var validAudiences = builder.Configuration.GetSection("Jwt:Audiences").Get<List<string>>();
+            return audiences.Any(aud => validAudiences.Contains(aud));
+        },
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
     };
 });
@@ -108,19 +113,26 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
+// Create roles during startup using scoped service
+CreateRoles(app.Services).Wait();
+
 app.Run();
 
 async Task CreateRoles(IServiceProvider serviceProvider)
 {
-    var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-    string[] roleNames = { "Admin", "User" };
-
-    foreach (var roleName in roleNames)
+    // Create a scope to resolve scoped services
+    using (var scope = serviceProvider.CreateScope())
     {
-        var roleExist = await roleManager.RoleExistsAsync(roleName);
-        if (!roleExist)
+        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+        string[] roleNames = { "Admin", "User" };
+
+        foreach (var roleName in roleNames)
         {
-            await roleManager.CreateAsync(new IdentityRole(roleName));
+            var roleExist = await roleManager.RoleExistsAsync(roleName);
+            if (!roleExist)
+            {
+                await roleManager.CreateAsync(new IdentityRole(roleName));
+            }
         }
     }
 }

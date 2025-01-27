@@ -29,12 +29,13 @@ namespace PokeQuestApi_New.Controllers
             _context = context;
         }
 
+        // Register method to register a new user
         [HttpPost]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
         {
             var newUser = new User
             {
-                UserName = model.UsserName,
+                UserName = model.UserName,
                 Email = model.Email,
                 UserLevel = 1
             };
@@ -78,33 +79,50 @@ namespace PokeQuestApi_New.Controllers
                 }
                 await _context.SaveChangesAsync();
 
-                return Ok(new { Message = "User registered successfully!"});
+                return Ok(new { Message = "User registered successfully!" });
             }
 
             return BadRequest(result.Errors);
         }
 
+        // Login method to authenticate user and generate JWT token
         [HttpPost]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);
             if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
             {
-                var authClaims = new[]
+                // Fetch roles assigned to the user
+                var userRoles = await _userManager.GetRolesAsync(user);
+
+                // Create claims including roles
+                var authClaims = new List<Claim>
                 {
-                    new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                    new Claim("User Level", user.UserLevel.ToString())
+                new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim("User Level", user.UserLevel.ToString()),
                 };
+
+                foreach (var role in userRoles)
+                {
+                    authClaims.Add(new Claim(ClaimTypes.Role, role));
+                }
+
+                // Add the multiple audience claims
+                var audiences = _configuration.GetSection("Jwt:Audiences").Get<List<string>>(); // Fetch the list of audiences from the config
+                foreach (var audience in audiences)
+                {
+                    authClaims.Add(new Claim(JwtRegisteredClaimNames.Aud, audience));
+                }
 
                 var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
 
                 var token = new JwtSecurityToken(
-                    issuer: _configuration["Jwt:Issuer"],
-                    audience: _configuration["Jwt:Audience"],
-                    expires: DateTime.Now.AddHours(3),
+                    issuer: _configuration["Jwt:Issuer"],  // Issuer defined in your config
+                    audience: audiences.First(),  // Set one audience for validation (you can set the first or any audience in the list)
+                    expires: DateTime.Now.AddHours(3),  // Set token expiration
                     claims: authClaims,
-                    signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
+                    signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)  // Use signing key
                 );
 
                 return Ok(new
@@ -117,22 +135,19 @@ namespace PokeQuestApi_New.Controllers
             return Unauthorized();
         }
 
+        // Update user information (admin only)
         [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateUser(string username, User user)
+        public async Task<ActionResult> UpdateUser(string id, [FromBody] User user)
         {
-            var currentUser = await _userManager.FindByNameAsync(username);
+            var currentUser = await _userManager.FindByIdAsync(id);
 
             if (currentUser == null)
             {
                 return NotFound();
             }
 
-            if (currentUser.UserName != _userManager.GetUserName(User))
-            {
-                return Forbid();
-            }
-
+            // Admins can modify other users, so remove this check
             if (!string.IsNullOrEmpty(user.UserName))
             {
                 currentUser.UserName = user.UserName;
@@ -162,38 +177,37 @@ namespace PokeQuestApi_New.Controllers
             return NoContent();
         }
 
+        // Delete user (admin only)
         [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteUser(int id)
+        public async Task<ActionResult> DeleteUser(string id)
         {
-            var userToDelete = await _userManager.FindByIdAsync(id.ToString());
+            var userToDelete = await _userManager.FindByIdAsync(id);
 
             if (userToDelete == null)
             {
-                return NotFound();
+                return NotFound(new { Message = "User not found" });
             }
 
-            if (userToDelete.Id != _userManager.GetUserId(User))
-            {
-                return Forbid();
-            }
-
+            // Admins can delete any user, so no need to prevent deletion of own account here
             var result = await _userManager.DeleteAsync(userToDelete);
+
             if (!result.Succeeded)
             {
                 return BadRequest(result.Errors);
             }
 
-            return NoContent();
+            return NoContent(); // User deleted successfully
         }
 
+        // Create admin user (admin only)
         [Authorize(Roles = "Admin")]
-        [HttpPost("create-admin")]
+        [HttpPost]
         public async Task<IActionResult> CreateAdmin([FromBody] RegisterModel model)
         {
             var newAdmin = new User
             {
-                UserName = model.UsserName,
+                UserName = model.UserName,
                 Email = model.Email
             };
 
@@ -201,13 +215,23 @@ namespace PokeQuestApi_New.Controllers
 
             if (result.Succeeded)
             {
-                await _userManager.AddToRoleAsync(newAdmin, "Admin");
-                return Ok(new { Message = "Admin user created successfully!" });
+                // Assign the "Admin" role to the new user
+                var roleResult = await _userManager.AddToRoleAsync(newAdmin, "Admin");
+
+                if (roleResult.Succeeded)
+                {
+                    return Ok(new { Message = "Admin user created successfully!" });
+                }
+                else
+                {
+                    return BadRequest(new { Message = "Failed to assign role to the admin user", Errors = roleResult.Errors });
+                }
             }
 
-            return BadRequest(result.Errors);
+            return BadRequest(new { Message = "User creation failed", Errors = result.Errors });
         }
 
+        // Method to get the user's level from claims
         [HttpGet("level")]
         public IActionResult GetUserLevel()
         {
@@ -217,26 +241,58 @@ namespace PokeQuestApi_New.Controllers
 
         private int GetUserLevel(ClaimsPrincipal user)
         {
-            var levelClaim = user.FindFirst("User  Level");
+            var levelClaim = user.FindFirst("User Level");
             if (levelClaim != null)
             {
                 return int.Parse(levelClaim.Value);
             }
 
-            return 0;
+            return 0; // Default level
         }
-    }
 
-    public class RegisterModel
-    {
-        public string UsserName { get; set; }
-        public string Email { get; set; }
-        public string Password { get; set; }
-    }
+        // Get list of users (admin only)
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<User>>> GetUsers(int page = 1, int pageSize = 10)
+        {
+            var users = await _userManager.Users.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
 
-    public class LoginModel
-    {
-        public string Email { get; set; }
-        public string Password { get; set; }
+            if (users == null || users.Count == 0)
+            {
+                return NotFound(new { Message = "No users found" });
+            }
+
+            var userDtos = new List<object>();
+
+            foreach (var user in users)
+            {
+                var roles = await _userManager.GetRolesAsync(user); // Get the roles for each user
+                userDtos.Add(new
+                {
+                    user.Id,
+                    user.UserName,
+                    user.Email,
+                    user.UserLevel,
+                    Roles = roles // Add the roles list to the DTO
+                });
+            }
+
+            return Ok(userDtos);
+        }
+
+        // Model for registering a user
+        public class RegisterModel
+        {
+            public string UserName { get; set; }
+            public string Email { get; set; }
+            public string Password { get; set; }
+        }
+
+        // Model for logging in
+        public class LoginModel
+        {
+            public string Email { get; set; }
+            public string Password { get; set; }
+        }
     }
 }
