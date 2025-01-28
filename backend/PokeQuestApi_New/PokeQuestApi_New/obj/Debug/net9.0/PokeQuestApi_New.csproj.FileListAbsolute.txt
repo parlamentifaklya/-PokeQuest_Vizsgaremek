@@ -323,10 +323,10 @@ D:\!!!PokeQuest - vizsgaremek\backend\PokeQuestApi_New\PokeQuestApi_New\obj\Debu
 D:\!!!PokeQuest - vizsgaremek\backend\PokeQuestApi_New\PokeQuestApi_New\obj\Debug\net9.0\staticwebassets\msbuild.buildMultiTargeting.PokeQuestApi_New.props
 D:\!!!PokeQuest - vizsgaremek\backend\PokeQuestApi_New\PokeQuestApi_New\obj\Debug\net9.0\staticwebassets\msbuild.buildTransitive.PokeQuestApi_New.props
 D:\!!!PokeQuest - vizsgaremek\backend\PokeQuestApi_New\PokeQuestApi_New\obj\Debug\net9.0\staticwebassets.pack.json
-D:\!!!PokeQuest - vizsgaremek\backend\PokeQuestApi_New\PokeQuestApi_New\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
 D:\!!!PokeQuest - vizsgaremek\backend\PokeQuestApi_New\PokeQuestApi_New\obj\Debug\net9.0\PokeQues.CC9DD49D.Up2Date
 D:\!!!PokeQuest - vizsgaremek\backend\PokeQuestApi_New\PokeQuestApi_New\obj\Debug\net9.0\PokeQuestApi_New.dll
 D:\!!!PokeQuest - vizsgaremek\backend\PokeQuestApi_New\PokeQuestApi_New\obj\Debug\net9.0\refint\PokeQuestApi_New.dll
 D:\!!!PokeQuest - vizsgaremek\backend\PokeQuestApi_New\PokeQuestApi_New\obj\Debug\net9.0\PokeQuestApi_New.pdb
 D:\!!!PokeQuest - vizsgaremek\backend\PokeQuestApi_New\PokeQuestApi_New\obj\Debug\net9.0\PokeQuestApi_New.genruntimeconfig.cache
 D:\!!!PokeQuest - vizsgaremek\backend\PokeQuestApi_New\PokeQuestApi_New\obj\Debug\net9.0\ref\PokeQuestApi_New.dll
+D:\!!!PokeQuest - vizsgaremek\backend\PokeQuestApi_New\PokeQuestApi_New\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt

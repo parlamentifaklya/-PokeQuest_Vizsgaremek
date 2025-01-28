@@ -51,19 +51,10 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
     try {
       final users = await _apiService.getUsers(widget.token); // Using getUsers method
 
-      if (users != null && users is List) {
-        setState(() {
-          _data = users;
-        });
-      } else {
-        setState(() {
-          _data = [];
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('No users found')),
-        );
-      }
-    } catch (e) {
+      setState(() {
+        _data = users;
+      });
+        } catch (e) {
       print('Error fetching data: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to load data')),
@@ -84,6 +75,12 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
     setState(() {
       _isLoading = true;
     });
+
+    // Ensure the Inventory field is present (either empty or with existing data)
+    updatedUser['Inventory'] = updatedUser['Inventory'] ?? {
+      'OwnedFeylings': [],
+      'UserItems': [],
+    };
 
     bool success = await _apiService.updateUser(widget.token, userId, updatedUser);
     if (success) {

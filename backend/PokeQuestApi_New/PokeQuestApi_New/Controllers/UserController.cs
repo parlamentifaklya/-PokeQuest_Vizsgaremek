@@ -55,6 +55,16 @@ namespace PokeQuestApi_New.Controllers
                 await _context.SaveChangesAsync();
 
                 var defaultFeylingIds = new List<int> { 1, 2, 3 };
+                var defaultItemIds = new List<int> { 1, 2, 3 };
+
+                var feylingExists = await _context.Feylings.AnyAsync(f => defaultFeylingIds.Contains(f.Id));
+                var itemExists = await _context.Items.AnyAsync(i => defaultItemIds.Contains(i.Id));
+
+                if (!feylingExists || !itemExists)
+                {
+                    return BadRequest(new { Message = "Some Feyling or Item records are missing." });
+                }
+
                 foreach (var feylingId in defaultFeylingIds)
                 {
                     var ownedFeyling = new OwnedFeyling
@@ -66,7 +76,6 @@ namespace PokeQuestApi_New.Controllers
                 }
                 await _context.SaveChangesAsync();
 
-                var defaultItemIds = new List<int> { 1, 2, 3 };
                 foreach (var itemId in defaultItemIds)
                 {
                     var ownedItem = new OwnedItem
@@ -166,6 +175,12 @@ namespace PokeQuestApi_New.Controllers
                 {
                     return BadRequest(result.Errors);
                 }
+            }
+
+            // Check if the Inventory field is included in the request; if not, ignore it
+            if (user.Inventory != null)
+            {
+                currentUser.Inventory = user.Inventory; // Update the Inventory if provided
             }
 
             var updateResult = await _userManager.UpdateAsync(currentUser);

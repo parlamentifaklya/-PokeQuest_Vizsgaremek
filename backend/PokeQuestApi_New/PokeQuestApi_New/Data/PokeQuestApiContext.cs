@@ -85,19 +85,22 @@ namespace PokeQuestApi_New.Data
             modelBuilder.Entity<UserInventory>()
                 .HasOne(ui => ui.User) // UserInventory has one User
                 .WithOne(u => u.Inventory) // User has one UserInventory
-                .HasForeignKey<UserInventory>(ui => ui.UserId); // Foreign key in UserInventory
+                .HasForeignKey<UserInventory>(ui => ui.UserId) // Foreign key in UserInventory
+                .OnDelete(DeleteBehavior.Cascade); // Ensure that deleting the user deletes the inventory
 
             // Define relationships for OwnedFeyling
             modelBuilder.Entity<OwnedFeyling>()
                 .HasOne(ow => ow.UserInventory) // OwnedFeyling has one UserInventory
                 .WithMany(ui => ui.OwnedFeylings) // UserInventory can have many OwnedFeylings
-                .HasForeignKey(ow => ow.UserInventoryId); // Foreign key in OwnedFeyling
+                .HasForeignKey(ow => ow.UserInventoryId) // Foreign key in OwnedFeyling
+                .OnDelete(DeleteBehavior.Cascade);
 
             // Define relationships for OwnedItem
             modelBuilder.Entity<OwnedItem>()
                 .HasOne(oi => oi.UserInventory) // OwnedItem has one UserInventory
                 .WithMany(ui => ui.UserItems) // UserInventory can have many OwnedItems
-                .HasForeignKey(oi => oi.UserInventoryId); // Foreign key in OwnedItem
+                .HasForeignKey(oi => oi.UserInventoryId) // Foreign key in OwnedItem
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
