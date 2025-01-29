@@ -13,7 +13,7 @@ namespace PokeQuestApi_New.Models
 
         public string Description { get; set; }
 
-        public string ImgUrl { get; set; }
+        public string Img { get; set; }
 
         // Foreign key for Type
         public int TypeId { get; set; } // Assuming Type is another entity with a primary key

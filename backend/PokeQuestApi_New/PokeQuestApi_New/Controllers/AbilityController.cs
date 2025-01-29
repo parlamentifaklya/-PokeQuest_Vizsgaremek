@@ -1,8 +1,12 @@
 ﻿using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PokeQuestApi_New.Data;
 using PokeQuestApi_New.Models;
+using PokeQuestApi_New.Services;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace PokeQuestApi_New.Controllers
 {
@@ -12,13 +16,16 @@ namespace PokeQuestApi_New.Controllers
     public class AbilityController : ControllerBase
     {
         private readonly PokeQuestApiContext _context;
-        public AbilityController(PokeQuestApiContext context)
+        private readonly ImageUploadService _imageUploadService;
+
+        public AbilityController(PokeQuestApiContext context, ImageUploadService imageUploadService)
         {
             _context = context;
+            _imageUploadService = imageUploadService;
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetAbility(int id) 
+        public async Task<IActionResult> GetAbility(int id)
         {
             var result = await _context.Abilities.FindAsync(id);
             if (result == null)
@@ -31,86 +38,127 @@ namespace PokeQuestApi_New.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllAbilities()
         {
-            var result =  await _context.Abilities.ToListAsync();
-            if (result == null)
+            var result = await _context.Abilities.ToListAsync();
+            if (result == null || result.Count == 0)
             {
-                return NotFound();
+                return NotFound("No abilities found.");
             }
             return Ok(result);
         }
 
+        // Create a new ability with optional image upload
         [HttpPost]
-        public async Task<ActionResult<Ability>> CreateAbility(Ability ability)
+        public async Task<ActionResult<Ability>> CreateAbility([FromForm] CreateAbilityDto dto)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
+            string filePath = null;
+            if (dto.File != null)
+            {
+                filePath = await _imageUploadService.UploadImage(dto.File, "AbilityImgs");
+            }
+
             Ability newAbility = new Ability
             {
-                Name = ability.Name,
-                Description = ability.Description,
-                Damage = ability.Damage,
-                TypeId = ability.TypeId
+                Name = dto.Ability.Name,
+                Description = dto.Ability.Description,
+                Damage = dto.Ability.Damage,
+                TypeId = dto.Ability.TypeId,
+                Img = filePath  // Store the image file path
             };
 
             await _context.Abilities.AddAsync(newAbility);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetAbility), new { id = ability.Id }, ability);
+            return CreatedAtAction(nameof(GetAbility), new { id = newAbility.Id }, newAbility);
         }
 
+        // Bulk insert abilities with images (if provided)
         [HttpPost("Ability-bulk-insert")]
-        public async Task<ActionResult> AbilityBulkInsert([FromBody] List<Ability> abilities)
+        public async Task<ActionResult> AbilityBulkInsert([FromForm] List<CreateAbilityDto> abilities)
         {
             if (abilities == null || abilities.Count == 0)
             {
-                return BadRequest();
+                return BadRequest("No abilities to insert.");
             }
 
-            await _context.Abilities.AddRangeAsync(abilities);
+            var abilitiesToAdd = new List<Ability>();
+
+            foreach (var dto in abilities)
+            {
+                var ability = dto.Ability;
+
+                // If a file is provided, upload the image and get the file path
+                if (dto.File != null)
+                {
+                    var filePath = await _imageUploadService.UploadImage(dto.File, "AbilityImgs");
+                    ability.Img = filePath;  // Assign the file path to the Img property
+                }
+
+                abilitiesToAdd.Add(ability);
+            }
+
+            await _context.Abilities.AddRangeAsync(abilitiesToAdd);
             await _context.SaveChangesAsync();
 
-            return Ok();
+            return Ok(new { Message = "Abilities inserted successfully!" });
         }
 
+        // Delete ability by ID
         [HttpDelete]
         public async Task<ActionResult> DeleteAbility(int id)
         {
-            var res = await _context.Abilities.FindAsync(id);
-
-            if(res == null)
+            var ability = await _context.Abilities.FindAsync(id);
+            if (ability == null)
             {
                 return NotFound();
             }
 
-            _context.Abilities.Remove(res);
+            _context.Abilities.Remove(ability);
             await _context.SaveChangesAsync();
 
             return Ok();
         }
 
+        // Update an existing ability with optional image upload
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateAbility(int id, Ability updatedAbility)
+        public async Task<ActionResult> UpdateAbility(int id, [FromForm] CreateAbilityDto dto)
         {
-            if (id != updatedAbility.Id)
+            if (id != dto.Ability.Id)
             {
-                return BadRequest();
+                return BadRequest("Ability ID mismatch.");
             }
 
             var existingAbility = await _context.Abilities.FindAsync(id);
-
             if (existingAbility == null)
             {
-                return NotFound();
+                return NotFound("Ability not found.");
             }
 
-            existingAbility.Damage = updatedAbility.Damage;
+            // If a file is uploaded, update the image
+            if (dto.File != null)
+            {
+                var filePath = await _imageUploadService.UploadImage(dto.File, "AbilityImgs");
+                existingAbility.Img = filePath;  // Update the Img field
+            }
 
+            existingAbility.Name = dto.Ability.Name;
+            existingAbility.Description = dto.Ability.Description;
+            existingAbility.Damage = dto.Ability.Damage;
+            existingAbility.TypeId = dto.Ability.TypeId;
+
+            _context.Abilities.Update(existingAbility);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return NoContent(); // Successfully updated
         }
+    }
+    public class CreateAbilityDto
+    {
+        public Ability Ability { get; set; }
+        public IFormFile File { get; set; }
     }
 }

@@ -11,6 +11,8 @@ namespace PokeQuestApi_New.Models
         [Required] // This attribute specifies that Name is required
         public string Name { get; set; }
 
+        public string Img { get; set; }
+
         public string Description { get; set; }
 
         public int Damage { get; set; }

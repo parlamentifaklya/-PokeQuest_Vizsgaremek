@@ -6,6 +6,7 @@ using PokeQuestApi_New.Controllers;
 using PokeQuestApi_New.Data;
 using PokeQuestApi_New.Filters;
 using PokeQuestApi_New.Models;
+using PokeQuestApi_New.Services;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,6 +22,8 @@ builder.Services.AddCors(options =>
         builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
     });
 });
+
+builder.Services.AddSingleton<ImageUploadService>();
 
 builder.Services.AddIdentity<User, IdentityRole>(options =>
 {
@@ -112,6 +115,7 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+app.UseStaticFiles();
 
 // Create roles during startup using scoped service
 CreateRoles(app.Services).Wait();

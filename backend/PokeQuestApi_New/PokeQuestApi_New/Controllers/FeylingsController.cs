@@ -5,6 +5,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PokeQuestApi_New.Data;
 using PokeQuestApi_New.Models;
+using PokeQuestApi_New.Services;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace PokeQuestApi_New.Controllers
 {
@@ -15,10 +20,13 @@ namespace PokeQuestApi_New.Controllers
     {
         private readonly PokeQuestApiContext _context;
         private readonly UserManager<User> _userManager;
-        public FeylingsController(PokeQuestApiContext context, UserManager<User> userManager)
+        private readonly ImageUploadService _imageUploadService;
+
+        public FeylingsController(PokeQuestApiContext context, UserManager<User> userManager, ImageUploadService imageUploadService)
         {
             _context = context;
             _userManager = userManager;
+            _imageUploadService = imageUploadService;
         }
 
         [HttpGet("{id}")]
@@ -46,18 +54,32 @@ namespace PokeQuestApi_New.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Feyling>> CreateFeyling(Feyling feyling)
+        public async Task<ActionResult<Feyling>> CreateFeyling([FromForm] Feyling feyling, IFormFile? img)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
+            // Handle image upload if provided
+            if (img != null)
+            {
+                try
+                {
+                    string imagePath = await _imageUploadService.UploadImage(img, "FeylingImgs");
+                    feyling.Img = imagePath;  // Save the image path to the model
+                }
+                catch (ArgumentException ex)
+                {
+                    return BadRequest(ex.Message);
+                }
+            }
+
             var newFeyling = new Feyling
             {
                 Name = feyling.Name,
                 Description = feyling.Description,
-                ImgUrl = feyling.ImgUrl,
+                Img = feyling.Img,  // Set image path
                 TypeId = feyling.TypeId,
                 AbilityId = feyling.AbilityId,
                 IsUnlocked = feyling.IsUnlocked,
@@ -72,7 +94,53 @@ namespace PokeQuestApi_New.Controllers
             await _context.Feylings.AddAsync(newFeyling);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetFeyling), new { id =  feyling.Id }, feyling);
+            return CreatedAtAction(nameof(GetFeyling), new { id = feyling.Id }, feyling);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult> UpdateFeyling(int id, [FromForm] Feyling updatedFeyling, IFormFile? img)
+        {
+            if (id != updatedFeyling.Id)
+            {
+                return BadRequest();
+            }
+
+            var existingFeyling = await _context.Feylings.FindAsync(id);
+
+            if (existingFeyling == null)
+            {
+                return NotFound();
+            }
+
+            // Handle image upload if provided
+            if (img != null)
+            {
+                try
+                {
+                    string imagePath = await _imageUploadService.UploadImage(img, "FeylingImgs");
+                    existingFeyling.Img = imagePath;  // Update the image path
+                }
+                catch (ArgumentException ex)
+                {
+                    return BadRequest(ex.Message);
+                }
+            }
+
+            existingFeyling.Name = updatedFeyling.Name;
+            existingFeyling.Description = updatedFeyling.Description;
+            existingFeyling.TypeId = updatedFeyling.TypeId;
+            existingFeyling.AbilityId = updatedFeyling.AbilityId;
+            existingFeyling.IsUnlocked = updatedFeyling.IsUnlocked;
+            existingFeyling.Hp = updatedFeyling.Hp;
+            existingFeyling.Atk = updatedFeyling.Atk;
+            existingFeyling.ItemId = updatedFeyling.ItemId;
+            existingFeyling.WeakAgainstId = updatedFeyling.WeakAgainstId;
+            existingFeyling.StrongAgainstId = updatedFeyling.StrongAgainstId;
+            existingFeyling.SellPrice = updatedFeyling.SellPrice;
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
         }
 
         [HttpPost("Feyling-bulk-insert")]
@@ -105,30 +173,6 @@ namespace PokeQuestApi_New.Controllers
             return NoContent();
         }
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateFeyling(int id, Feyling updatedFeyling)
-        {
-            if (id != updatedFeyling.Id)
-            {
-                return BadRequest();
-            }
-
-            var existingFeyling = await _context.Feylings.FindAsync(id);
-
-            if (existingFeyling == null)
-            {
-                return NotFound();
-            }
-
-            existingFeyling.Hp = updatedFeyling.Hp;
-            existingFeyling.Atk = updatedFeyling.Atk;
-            existingFeyling.SellPrice = updatedFeyling.SellPrice;
-
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
         [HttpPost("unlock/{userInventoryId}/{feylingId}")]
         public async Task<IActionResult> UnlockFeyling(int userInventoryId, int feylingId)
         {
@@ -149,7 +193,6 @@ namespace PokeQuestApi_New.Controllers
             {
                 return NotFound("User not found.");
             }
-
 
             var existingOwnedFeyling = await _context.OwnedFeylings.FirstOrDefaultAsync(of => of.UserInventoryId == userInventoryId && of.FeylingId == feylingId);
             if (existingOwnedFeyling != null)

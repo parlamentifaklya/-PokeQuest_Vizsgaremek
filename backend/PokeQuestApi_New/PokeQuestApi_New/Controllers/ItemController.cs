@@ -1,185 +1,173 @@
 ﻿using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using PokeQuestApi_New.Data;
 using PokeQuestApi_New.Models;
+using PokeQuestApi_New.Services;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace PokeQuestApi_New.Controllers
 {
     [EnableCors("AllowAllOrigins")]
-    [Route("api/[controller]/[action]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class ItemController : ControllerBase
     {
         private readonly PokeQuestApiContext _context;
-        private readonly UserManager<User> _userManager;
-        public ItemController(PokeQuestApiContext context, UserManager<User> userManager)
+        private readonly ImageUploadService _imageUploadService;
+
+        // Injecting context and image upload service
+        public ItemController(PokeQuestApiContext context, ImageUploadService imageUploadService)
         {
             _context = context;
-            _userManager = userManager;
+            _imageUploadService = imageUploadService;
         }
 
+        // Get a single item by ID
         [HttpGet]
         public async Task<IActionResult> GetItem(int id)
         {
-            var result = await _context.Items.FindAsync(id);
-
-            if (result == null)
+            var item = await _context.Items.FindAsync(id);
+            if (item == null)
             {
                 return NotFound();
             }
-
-            return Ok(result);
+            return Ok(item);
         }
 
-        [HttpGet]
+        // Get all items
+        [HttpGet("all")]
         public async Task<IActionResult> GetAllItems()
         {
-            var result = await _context.Items.ToListAsync();
-            if (result == null)
+            var items = await _context.Items.ToListAsync();
+            if (items == null || items.Count == 0)
             {
-                return NotFound();
+                return NotFound("No items found.");
             }
-            return Ok(result);
+            return Ok(items);
         }
 
+        // Create a new item (with optional image upload)
         [HttpPost]
-        public async Task<ActionResult<Item>> CreateItem(Item item)
+        public async Task<ActionResult<Item>> CreateItem([FromForm] Item item, IFormFile file)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
+            string filePath = null;
+            if (file != null)
+            {
+                // Upload the image and get the file path
+                filePath = await _imageUploadService.UploadImage(file, "ItemImgs");
+            }
+
             var newItem = new Item
             {
                 Name = item.Name,
                 Description = item.Description,
-                Img = item.Img,
-                Rarity = item.Rarity,
-                ItemAbility = item.ItemAbility
+                Img = filePath,  // Save the file path in Img
+                ItemAbility = item.ItemAbility,
+                Rarity = item.Rarity
             };
 
+            // Add new item to the database
             await _context.Items.AddAsync(newItem);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetItem), new { id = item.Id }, item);
+            return CreatedAtAction(nameof(GetItem), new { id = newItem.Id }, newItem);
         }
 
-        [HttpPost("Item-bulk-insert")]
-        public async Task<ActionResult> ItemBulkInsert([FromBody] List<Item> items)
-        {
-            if (items == null || items.Count == 0)
-            {
-                return BadRequest();
-            }
-
-            await _context.Items.AddRangeAsync(items);
-            await _context.SaveChangesAsync();
-
-            return Ok();
-        }
-
-        [HttpDelete]
-        public async Task<ActionResult> DeleteItem(int id)
-        {
-            var res = await _context.Items.FindAsync(id);
-
-            if (res == null)
-            {
-                return NotFound();
-            }
-
-            _context.Items.Remove(res);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
+        // Update an existing item (with optional image upload)
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateItem(int id, Item updatedItem)
+        public async Task<IActionResult> UpdateItem(int id, [FromForm] Item updatedItem, IFormFile file)
         {
             if (id != updatedItem.Id)
             {
-                return BadRequest();
+                return BadRequest("Item ID mismatch.");
             }
 
             var existingItem = await _context.Items.FindAsync(id);
-
             if (existingItem == null)
-            {
-                return NotFound();
-            }
-
-            existingItem.ItemAbility = updatedItem.ItemAbility;
-            existingItem.Rarity = updatedItem.Rarity;
-
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        [HttpPost("unlock/{userInventoryId}/{itemId}/{amount}")]
-        public async Task<IActionResult> UnlockItem(int userInventoryId, int itemId, int amount)
-        {
-            var item = await _context.Items.FindAsync(itemId);
-            if (item == null)
             {
                 return NotFound("Item not found.");
             }
 
-            var userInventory = await _context.UserInventories.FindAsync(userInventoryId);
-            if (userInventory == null)
+            // If a new file is uploaded, update the Img field
+            if (file != null)
             {
-                return NotFound("User  inventory not found.");
+                string filePath = await _imageUploadService.UploadImage(file, "ItemImgs");
+                existingItem.Img = filePath; // Update the Img field with the new image path
             }
 
-            var user = await _userManager.FindByIdAsync(userInventory.UserId);
-            if (user == null)
-            {
-                return NotFound("User not found.");
-            }
+            // Update the other properties
+            existingItem.Name = updatedItem.Name;
+            existingItem.Description = updatedItem.Description;
+            existingItem.ItemAbility = updatedItem.ItemAbility;
+            existingItem.Rarity = updatedItem.Rarity;
 
-            var existingOwnedItem = await _context.OwnedItems.FirstOrDefaultAsync(oi => oi.UserInventoryId == userInventoryId && oi.ItemId == itemId);
-            if (existingOwnedItem != null)
-            {
-                existingOwnedItem.Amount += amount;
-                _context.OwnedItems.Update(existingOwnedItem);
-            }
-            else
-            {
-                var ownedItem = new OwnedItem
-                {
-                    UserInventoryId = userInventoryId,
-                    ItemId = itemId,
-                    Amount = amount
-                };
-
-                await _context.OwnedItems.AddAsync(ownedItem);
-            }
-
+            _context.Items.Update(existingItem);
             await _context.SaveChangesAsync();
 
-            user.UserLevel++;
-            await _userManager.UpdateAsync(user);
-
-            return Ok(new { Message = "Item unlocked successfully!", UserLevel = user.UserLevel });
+            return NoContent(); // No content means the update was successful but no data to return
         }
 
-        [HttpGet("owned/{userInventoryId}")]
-        public async Task<IActionResult> GetOwnedItems(int userInventoryId)
+        // Delete an item by ID
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteItem(int id)
         {
-            var ownedItems = await _context.OwnedItems.Where(oi => oi.UserInventoryId == userInventoryId).Include(oi => oi.item).ToListAsync();
-
-            if (ownedItems == null || !ownedItems.Any())
+            var item = await _context.Items.FindAsync(id);
+            if (item == null)
             {
-                return NotFound("No owned items.");
+                return NotFound();
             }
 
-            return Ok(ownedItems);
+            _context.Items.Remove(item);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        // Bulk insert items
+        [HttpPost("bulk-insert")]
+        public async Task<ActionResult> BulkInsertItems([FromForm] List<Item> items, [FromForm] List<IFormFile> files)
+        {
+            if (items == null || items.Count == 0)
+            {
+                return BadRequest("No items to insert.");
+            }
+
+            if (files != null && files.Count != items.Count)
+            {
+                return BadRequest("The number of files must match the number of items.");
+            }
+
+            // List to hold the items that will be added to the database
+            var itemsToAdd = new List<Item>();
+
+            for (int i = 0; i < items.Count; i++)
+            {
+                var item = items[i];
+
+                // If there is a file for the current item, upload it and get the file path
+                if (files != null && files.Count > i && files[i] != null)
+                {
+                    var filePath = await _imageUploadService.UploadImage(files[i], "ItemImgs");
+                    item.Img = filePath;  // Set the Img field to the uploaded file path
+                }
+
+                // Add the item to the list that will be inserted into the database
+                itemsToAdd.Add(item);
+            }
+
+            // Bulk insert the items into the database
+            await _context.Items.AddRangeAsync(itemsToAdd);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { Message = "Items inserted successfully!" });
         }
     }
 }
