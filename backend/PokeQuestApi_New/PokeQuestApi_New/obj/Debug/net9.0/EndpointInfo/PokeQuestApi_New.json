@@ -47,20 +47,37 @@
           "Ability"
         ],
         "requestBody": {
+          "description": "File to upload and ability details",
           "content": {
-            "application/json": {
+            "multipart/form-data": {
               "schema": {
-                "$ref": "#/components/schemas/Ability"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Ability"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/Ability"
+                "required": [
+                  "file"
+                ],
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "ability": {
+                    "type": "object",
+                    "properties": {
+                      "Name": {
+                        "type": "string"
+                      },
+                      "Description": {
+                        "type": "string"
+                      },
+                      "Damage": {
+                        "type": "integer"
+                      },
+                      "TypeId": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
               }
             }
           }
@@ -96,27 +113,21 @@
         ],
         "requestBody": {
           "content": {
-            "application/json": {
+            "multipart/form-data": {
               "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/Ability"
+                "type": "object",
+                "properties": {
+                  "abilities": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/CreateAbilityDto"
+                    }
+                  }
                 }
-              }
-            },
-            "text/json": {
-              "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/Ability"
-                }
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/Ability"
+              },
+              "encoding": {
+                "abilities": {
+                  "style": "form"
                 }
               }
             }
@@ -168,20 +179,37 @@
           }
         ],
         "requestBody": {
+          "description": "File to upload and ability details",
           "content": {
-            "application/json": {
+            "multipart/form-data": {
               "schema": {
-                "$ref": "#/components/schemas/Ability"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Ability"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/Ability"
+                "required": [
+                  "file"
+                ],
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "ability": {
+                    "type": "object",
+                    "properties": {
+                      "Name": {
+                        "type": "string"
+                      },
+                      "Description": {
+                        "type": "string"
+                      },
+                      "Damage": {
+                        "type": "integer"
+                      },
+                      "TypeId": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
               }
             }
           }
@@ -235,19 +263,269 @@
         ],
         "requestBody": {
           "content": {
-            "application/json": {
+            "multipart/form-data": {
               "schema": {
-                "$ref": "#/components/schemas/Feyling"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Feyling"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/Feyling"
+                "required": [
+                  "Ability.Name",
+                  "Ability.Type.Name",
+                  "Item.Name",
+                  "Name",
+                  "StrongAgainst.Name",
+                  "Type.Name",
+                  "WeakAgainst.Name"
+                ],
+                "type": "object",
+                "properties": {
+                  "Id": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "Name": {
+                    "type": "string"
+                  },
+                  "Description": {
+                    "type": "string"
+                  },
+                  "Img": {
+                    "type": "string"
+                  },
+                  "TypeId": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "Type.Id": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "Type.Name": {
+                    "type": "string"
+                  },
+                  "Type.Img": {
+                    "type": "string"
+                  },
+                  "AbilityId": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "Ability.Id": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "Ability.Name": {
+                    "type": "string"
+                  },
+                  "Ability.Img": {
+                    "type": "string"
+                  },
+                  "Ability.Description": {
+                    "type": "string"
+                  },
+                  "Ability.Damage": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "Ability.TypeId": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "Ability.Type.Id": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "Ability.Type.Name": {
+                    "type": "string"
+                  },
+                  "Ability.Type.Img": {
+                    "type": "string"
+                  },
+                  "IsUnlocked": {
+                    "type": "boolean"
+                  },
+                  "Hp": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "Atk": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "ItemId": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "Item.Id": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "Item.Name": {
+                    "type": "string"
+                  },
+                  "Item.Description": {
+                    "type": "string"
+                  },
+                  "Item.Img": {
+                    "type": "string"
+                  },
+                  "Item.ItemAbility": {
+                    "type": "string"
+                  },
+                  "Item.Rarity": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "WeakAgainstId": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "WeakAgainst.Id": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "WeakAgainst.Name": {
+                    "type": "string"
+                  },
+                  "WeakAgainst.Img": {
+                    "type": "string"
+                  },
+                  "StrongAgainstId": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "StrongAgainst.Id": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "StrongAgainst.Name": {
+                    "type": "string"
+                  },
+                  "StrongAgainst.Img": {
+                    "type": "string"
+                  },
+                  "SellPrice": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "img": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "Id": {
+                  "style": "form"
+                },
+                "Name": {
+                  "style": "form"
+                },
+                "Description": {
+                  "style": "form"
+                },
+                "Img": {
+                  "style": "form"
+                },
+                "TypeId": {
+                  "style": "form"
+                },
+                "Type.Id": {
+                  "style": "form"
+                },
+                "Type.Name": {
+                  "style": "form"
+                },
+                "Type.Img": {
+                  "style": "form"
+                },
+                "AbilityId": {
+                  "style": "form"
+                },
+                "Ability.Id": {
+                  "style": "form"
+                },
+                "Ability.Name": {
+                  "style": "form"
+                },
+                "Ability.Img": {
+                  "style": "form"
+                },
+                "Ability.Description": {
+                  "style": "form"
+                },
+                "Ability.Damage": {
+                  "style": "form"
+                },
+                "Ability.TypeId": {
+                  "style": "form"
+                },
+                "Ability.Type.Id": {
+                  "style": "form"
+                },
+                "Ability.Type.Name": {
+                  "style": "form"
+                },
+                "Ability.Type.Img": {
+                  "style": "form"
+                },
+                "IsUnlocked": {
+                  "style": "form"
+                },
+                "Hp": {
+                  "style": "form"
+                },
+                "Atk": {
+                  "style": "form"
+                },
+                "ItemId": {
+                  "style": "form"
+                },
+                "Item.Id": {
+                  "style": "form"
+                },
+                "Item.Name": {
+                  "style": "form"
+                },
+                "Item.Description": {
+                  "style": "form"
+                },
+                "Item.Img": {
+                  "style": "form"
+                },
+                "Item.ItemAbility": {
+                  "style": "form"
+                },
+                "Item.Rarity": {
+                  "style": "form"
+                },
+                "WeakAgainstId": {
+                  "style": "form"
+                },
+                "WeakAgainst.Id": {
+                  "style": "form"
+                },
+                "WeakAgainst.Name": {
+                  "style": "form"
+                },
+                "WeakAgainst.Img": {
+                  "style": "form"
+                },
+                "StrongAgainstId": {
+                  "style": "form"
+                },
+                "StrongAgainst.Id": {
+                  "style": "form"
+                },
+                "StrongAgainst.Name": {
+                  "style": "form"
+                },
+                "StrongAgainst.Img": {
+                  "style": "form"
+                },
+                "SellPrice": {
+                  "style": "form"
+                },
+                "img": {
+                  "style": "form"
+                }
               }
             }
           }
@@ -272,6 +550,298 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/api/Feylings/UpdateFeyling/{id}": {
+      "put": {
+        "tags": [
+          "Feylings"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "Ability.Name",
+                  "Ability.Type.Name",
+                  "Item.Name",
+                  "Name",
+                  "StrongAgainst.Name",
+                  "Type.Name",
+                  "WeakAgainst.Name"
+                ],
+                "type": "object",
+                "properties": {
+                  "Id": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "Name": {
+                    "type": "string"
+                  },
+                  "Description": {
+                    "type": "string"
+                  },
+                  "Img": {
+                    "type": "string"
+                  },
+                  "TypeId": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "Type.Id": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "Type.Name": {
+                    "type": "string"
+                  },
+                  "Type.Img": {
+                    "type": "string"
+                  },
+                  "AbilityId": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "Ability.Id": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "Ability.Name": {
+                    "type": "string"
+                  },
+                  "Ability.Img": {
+                    "type": "string"
+                  },
+                  "Ability.Description": {
+                    "type": "string"
+                  },
+                  "Ability.Damage": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "Ability.TypeId": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "Ability.Type.Id": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "Ability.Type.Name": {
+                    "type": "string"
+                  },
+                  "Ability.Type.Img": {
+                    "type": "string"
+                  },
+                  "IsUnlocked": {
+                    "type": "boolean"
+                  },
+                  "Hp": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "Atk": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "ItemId": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "Item.Id": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "Item.Name": {
+                    "type": "string"
+                  },
+                  "Item.Description": {
+                    "type": "string"
+                  },
+                  "Item.Img": {
+                    "type": "string"
+                  },
+                  "Item.ItemAbility": {
+                    "type": "string"
+                  },
+                  "Item.Rarity": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "WeakAgainstId": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "WeakAgainst.Id": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "WeakAgainst.Name": {
+                    "type": "string"
+                  },
+                  "WeakAgainst.Img": {
+                    "type": "string"
+                  },
+                  "StrongAgainstId": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "StrongAgainst.Id": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "StrongAgainst.Name": {
+                    "type": "string"
+                  },
+                  "StrongAgainst.Img": {
+                    "type": "string"
+                  },
+                  "SellPrice": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "img": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "Id": {
+                  "style": "form"
+                },
+                "Name": {
+                  "style": "form"
+                },
+                "Description": {
+                  "style": "form"
+                },
+                "Img": {
+                  "style": "form"
+                },
+                "TypeId": {
+                  "style": "form"
+                },
+                "Type.Id": {
+                  "style": "form"
+                },
+                "Type.Name": {
+                  "style": "form"
+                },
+                "Type.Img": {
+                  "style": "form"
+                },
+                "AbilityId": {
+                  "style": "form"
+                },
+                "Ability.Id": {
+                  "style": "form"
+                },
+                "Ability.Name": {
+                  "style": "form"
+                },
+                "Ability.Img": {
+                  "style": "form"
+                },
+                "Ability.Description": {
+                  "style": "form"
+                },
+                "Ability.Damage": {
+                  "style": "form"
+                },
+                "Ability.TypeId": {
+                  "style": "form"
+                },
+                "Ability.Type.Id": {
+                  "style": "form"
+                },
+                "Ability.Type.Name": {
+                  "style": "form"
+                },
+                "Ability.Type.Img": {
+                  "style": "form"
+                },
+                "IsUnlocked": {
+                  "style": "form"
+                },
+                "Hp": {
+                  "style": "form"
+                },
+                "Atk": {
+                  "style": "form"
+                },
+                "ItemId": {
+                  "style": "form"
+                },
+                "Item.Id": {
+                  "style": "form"
+                },
+                "Item.Name": {
+                  "style": "form"
+                },
+                "Item.Description": {
+                  "style": "form"
+                },
+                "Item.Img": {
+                  "style": "form"
+                },
+                "Item.ItemAbility": {
+                  "style": "form"
+                },
+                "Item.Rarity": {
+                  "style": "form"
+                },
+                "WeakAgainstId": {
+                  "style": "form"
+                },
+                "WeakAgainst.Id": {
+                  "style": "form"
+                },
+                "WeakAgainst.Name": {
+                  "style": "form"
+                },
+                "WeakAgainst.Img": {
+                  "style": "form"
+                },
+                "StrongAgainstId": {
+                  "style": "form"
+                },
+                "StrongAgainst.Id": {
+                  "style": "form"
+                },
+                "StrongAgainst.Name": {
+                  "style": "form"
+                },
+                "StrongAgainst.Img": {
+                  "style": "form"
+                },
+                "SellPrice": {
+                  "style": "form"
+                },
+                "img": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
           }
         }
       }
@@ -338,48 +908,6 @@
         }
       }
     },
-    "/api/Feylings/UpdateFeyling/{id}": {
-      "put": {
-        "tags": [
-          "Feylings"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Feyling"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Feyling"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/Feyling"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
     "/api/Feylings/UnlockFeyling/unlock/{userInventoryId}/{feylingId}": {
       "post": {
         "tags": [
@@ -435,68 +963,7 @@
         }
       }
     },
-    "/api/FileUpload/image-upload": {
-      "post": {
-        "tags": [
-          "FileUpload"
-        ],
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "file": {
-                    "type": "string",
-                    "format": "binary"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/FileUpload/all-images": {
-      "get": {
-        "tags": [
-          "FileUpload"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/FileUpload/image/{fileName}": {
-      "get": {
-        "tags": [
-          "FileUpload"
-        ],
-        "parameters": [
-          {
-            "name": "fileName",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/Item/GetItem": {
+    "/api/Item": {
       "get": {
         "tags": [
           "Item"
@@ -516,40 +983,68 @@
             "description": "OK"
           }
         }
-      }
-    },
-    "/api/Item/GetAllItems": {
-      "get": {
-        "tags": [
-          "Item"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/Item/CreateItem": {
+      },
       "post": {
         "tags": [
           "Item"
         ],
         "requestBody": {
           "content": {
-            "application/json": {
+            "multipart/form-data": {
               "schema": {
-                "$ref": "#/components/schemas/Item"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Item"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/Item"
+                "required": [
+                  "Name"
+                ],
+                "type": "object",
+                "properties": {
+                  "Id": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "Name": {
+                    "type": "string"
+                  },
+                  "Description": {
+                    "type": "string"
+                  },
+                  "Img": {
+                    "type": "string"
+                  },
+                  "ItemAbility": {
+                    "type": "string"
+                  },
+                  "Rarity": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "Id": {
+                  "style": "form"
+                },
+                "Name": {
+                  "style": "form"
+                },
+                "Description": {
+                  "style": "form"
+                },
+                "Img": {
+                  "style": "form"
+                },
+                "ItemAbility": {
+                  "style": "form"
+                },
+                "Rarity": {
+                  "style": "form"
+                },
+                "file": {
+                  "style": "form"
+                }
               }
             }
           }
@@ -578,60 +1073,10 @@
         }
       }
     },
-    "/api/Item/ItemBulkInsert/Item-bulk-insert": {
-      "post": {
+    "/api/Item/all": {
+      "get": {
         "tags": [
           "Item"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/Item"
-                }
-              }
-            },
-            "text/json": {
-              "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/Item"
-                }
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/Item"
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/Item/DeleteItem": {
-      "delete": {
-        "tags": [
-          "Item"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
         ],
         "responses": {
           "200": {
@@ -640,7 +1085,7 @@
         }
       }
     },
-    "/api/Item/UpdateItem/{id}": {
+    "/api/Item/{id}": {
       "put": {
         "tags": [
           "Item"
@@ -658,19 +1103,61 @@
         ],
         "requestBody": {
           "content": {
-            "application/json": {
+            "multipart/form-data": {
               "schema": {
-                "$ref": "#/components/schemas/Item"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Item"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/Item"
+                "required": [
+                  "Name"
+                ],
+                "type": "object",
+                "properties": {
+                  "Id": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "Name": {
+                    "type": "string"
+                  },
+                  "Description": {
+                    "type": "string"
+                  },
+                  "Img": {
+                    "type": "string"
+                  },
+                  "ItemAbility": {
+                    "type": "string"
+                  },
+                  "Rarity": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "Id": {
+                  "style": "form"
+                },
+                "Name": {
+                  "style": "form"
+                },
+                "Description": {
+                  "style": "form"
+                },
+                "Img": {
+                  "style": "form"
+                },
+                "ItemAbility": {
+                  "style": "form"
+                },
+                "Rarity": {
+                  "style": "form"
+                },
+                "file": {
+                  "style": "form"
+                }
               }
             }
           }
@@ -680,34 +1167,14 @@
             "description": "OK"
           }
         }
-      }
-    },
-    "/api/Item/UnlockItem/unlock/{userInventoryId}/{itemId}/{amount}": {
-      "post": {
+      },
+      "delete": {
         "tags": [
           "Item"
         ],
         "parameters": [
           {
-            "name": "userInventoryId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "itemId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "amount",
+            "name": "id",
             "in": "path",
             "required": true,
             "schema": {
@@ -723,22 +1190,43 @@
         }
       }
     },
-    "/api/Item/GetOwnedItems/owned/{userInventoryId}": {
-      "get": {
+    "/api/Item/bulk-insert": {
+      "post": {
         "tags": [
           "Item"
         ],
-        "parameters": [
-          {
-            "name": "userInventoryId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/Item"
+                    }
+                  },
+                  "files": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "binary"
+                    }
+                  }
+                }
+              },
+              "encoding": {
+                "items": {
+                  "style": "form"
+                },
+                "files": {
+                  "style": "form"
+                }
+              }
             }
           }
-        ],
+        },
         "responses": {
           "200": {
             "description": "OK"
@@ -788,19 +1276,42 @@
         ],
         "requestBody": {
           "content": {
-            "application/json": {
+            "multipart/form-data": {
               "schema": {
-                "$ref": "#/components/schemas/Type"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Type"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/Type"
+                "required": [
+                  "Name"
+                ],
+                "type": "object",
+                "properties": {
+                  "Id": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "Name": {
+                    "type": "string"
+                  },
+                  "Img": {
+                    "type": "string"
+                  },
+                  "img": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "Id": {
+                  "style": "form"
+                },
+                "Name": {
+                  "style": "form"
+                },
+                "Img": {
+                  "style": "form"
+                },
+                "img": {
+                  "style": "form"
+                }
               }
             }
           }
@@ -869,7 +1380,7 @@
         }
       }
     },
-    "/api/Type/DeleteAbility/{id}": {
+    "/api/Type/DeleteType/{id}": {
       "delete": {
         "tags": [
           "Type"
@@ -910,19 +1421,42 @@
         ],
         "requestBody": {
           "content": {
-            "application/json": {
+            "multipart/form-data": {
               "schema": {
-                "$ref": "#/components/schemas/Type"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Type"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/Type"
+                "required": [
+                  "Name"
+                ],
+                "type": "object",
+                "properties": {
+                  "Id": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "Name": {
+                    "type": "string"
+                  },
+                  "Img": {
+                    "type": "string"
+                  },
+                  "img": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "Id": {
+                  "style": "form"
+                },
+                "Name": {
+                  "style": "form"
+                },
+                "Img": {
+                  "style": "form"
+                },
+                "img": {
+                  "style": "form"
+                }
               }
             }
           }
@@ -1177,6 +1711,10 @@
             "minLength": 1,
             "type": "string"
           },
+          "img": {
+            "type": "string",
+            "nullable": true
+          },
           "description": {
             "type": "string",
             "nullable": true
@@ -1191,6 +1729,20 @@
           },
           "type": {
             "$ref": "#/components/schemas/Type"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateAbilityDto": {
+        "type": "object",
+        "properties": {
+          "ability": {
+            "$ref": "#/components/schemas/Ability"
+          },
+          "file": {
+            "type": "string",
+            "format": "binary",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -1213,7 +1765,7 @@
             "type": "string",
             "nullable": true
           },
-          "imgUrl": {
+          "img": {
             "type": "string",
             "nullable": true
           },
@@ -1401,6 +1953,10 @@
           "name": {
             "minLength": 1,
             "type": "string"
+          },
+          "img": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
