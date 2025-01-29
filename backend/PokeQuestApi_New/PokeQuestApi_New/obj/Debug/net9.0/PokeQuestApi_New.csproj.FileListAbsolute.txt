@@ -329,3 +329,4 @@ D:\!!!PokeQuest - vizsgaremek\backend\PokeQuestApi_New\PokeQuestApi_New\obj\Debu
 D:\!!!PokeQuest - vizsgaremek\backend\PokeQuestApi_New\PokeQuestApi_New\obj\Debug\net9.0\PokeQuestApi_New.genruntimeconfig.cache
 D:\!!!PokeQuest - vizsgaremek\backend\PokeQuestApi_New\PokeQuestApi_New\obj\Debug\net9.0\ref\PokeQuestApi_New.dll
 D:\!!!PokeQuest - vizsgaremek\backend\PokeQuestApi_New\PokeQuestApi_New\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
+C:\Users\kokenyesi.andor\Desktop\-PokeQuest_Vizsgaremek\backend\PokeQuestApi_New\PokeQuestApi_New\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt

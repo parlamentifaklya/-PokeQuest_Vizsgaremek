@@ -49,7 +49,9 @@
                 await file.CopyToAsync(stream);
             }
 
-            return filePath;  // Return the full file path where the file is saved
+            // Return the relative path from the "Uploads" directory
+            var relativePath = Path.Combine("Uploads", folderName, Path.GetFileName(filePath));
+            return relativePath;  // Return the relative path
         }
     }
 }
