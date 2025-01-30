@@ -84,12 +84,51 @@ namespace PokeQuestApi_New.Controllers
                     IsUnlocked = dto.IsUnlocked,
                     Hp = dto.Hp,
                     Atk = dto.Atk,
-                    ItemId = dto.ItemId,
+                    ItemId = dto.ItemId ?? null, // Nullable item (can be null)
                     WeakAgainstId = dto.WeakAgainstId,
                     StrongAgainstId = dto.StrongAgainstId,
                     SellPrice = dto.SellPrice
                 };
 
+                // Validate TypeId
+                var typeExists = await _context.Types.AnyAsync(t => t.Id == dto.TypeId);
+                if (!typeExists)
+                {
+                    return BadRequest("The specified Type does not exist.");
+                }
+
+                // Validate AbilityId
+                var abilityExists = await _context.Abilities.AnyAsync(a => a.Id == dto.AbilityId);
+                if (!abilityExists)
+                {
+                    return BadRequest("The specified Ability does not exist.");
+                }
+
+                // Validate ItemId if it's provided (ItemId can be null)
+                if (dto.ItemId.HasValue)
+                {
+                    var itemExists = await _context.Items.AnyAsync(i => i.Id == dto.ItemId.Value);
+                    if (!itemExists)
+                    {
+                        return BadRequest("The specified Item does not exist.");
+                    }
+                }
+
+                // Validate WeakAgainstId
+                var weakAgainstExists = await _context.Types.AnyAsync(t => t.Id == dto.WeakAgainstId);
+                if (!weakAgainstExists)
+                {
+                    return BadRequest("The specified WeakAgainstId does not exist in the Types table.");
+                }
+
+                // Validate StrongAgainstId
+                var strongAgainstExists = await _context.Types.AnyAsync(t => t.Id == dto.StrongAgainstId);
+                if (!strongAgainstExists)
+                {
+                    return BadRequest("The specified StrongAgainstId does not exist in the Types table.");
+                }
+
+                // Save the new Feyling to the database
                 await _context.Feylings.AddAsync(newFeyling);
                 await _context.SaveChangesAsync();
 
@@ -115,21 +154,18 @@ namespace PokeQuestApi_New.Controllers
                 return NotFound("Feyling not found.");
             }
 
-            // Check if an image is provided
-            if (dto.Img == null)
+            // Handle image upload if provided
+            if (dto.Img != null)
             {
-                return BadRequest("An image is required to update a Feyling.");
-            }
-
-            // Handle image upload
-            try
-            {
-                string imagePath = await _imageUploadService.UploadImage(dto.Img, "FeylingImgs");
-                existingFeyling.Img = imagePath;  // Update the image path
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ex.Message);
+                try
+                {
+                    string imagePath = await _imageUploadService.UploadImage(dto.Img, "FeylingImgs");
+                    existingFeyling.Img = imagePath;  // Update the image path
+                }
+                catch (ArgumentException ex)
+                {
+                    return BadRequest(ex.Message);
+                }
             }
 
             // Update the existing feyling's properties
@@ -140,15 +176,34 @@ namespace PokeQuestApi_New.Controllers
             existingFeyling.IsUnlocked = dto.IsUnlocked;
             existingFeyling.Hp = dto.Hp;
             existingFeyling.Atk = dto.Atk;
-            existingFeyling.ItemId = dto.ItemId;
+
+            // Handle nullable ItemId (only check if ItemId is provided)
+            if (dto.ItemId.HasValue)
+            {
+                // If ItemId is provided, ensure it exists in the database
+                var itemExists = await _context.Items.AnyAsync(i => i.Id == dto.ItemId.Value);
+                if (!itemExists)
+                {
+                    return BadRequest("The specified Item does not exist.");
+                }
+                existingFeyling.ItemId = dto.ItemId;
+            }
+            else
+            {
+                // If ItemId is null in the DTO, ensure it remains null in the database
+                existingFeyling.ItemId = null;
+            }
+
             existingFeyling.WeakAgainstId = dto.WeakAgainstId;
             existingFeyling.StrongAgainstId = dto.StrongAgainstId;
             existingFeyling.SellPrice = dto.SellPrice;
 
+            // Save the updated Feyling to the database
             await _context.SaveChangesAsync();
 
             return NoContent(); // Successfully updated
         }
+
 
         [HttpPost("Feyling-bulk-insert")]
         public async Task<ActionResult> FeylingBulkInsert([FromBody] List<Feyling> feylings)
@@ -262,7 +317,7 @@ namespace PokeQuestApi_New.Controllers
 
         public int Atk { get; set; }
 
-        public int ItemId { get; set; } // Nullable foreign key for Item
+        public int? ItemId { get; set; } // Nullable foreign key for Item
 
         public int WeakAgainstId { get; set; } // Nullable foreign key for WeakAgainst
 

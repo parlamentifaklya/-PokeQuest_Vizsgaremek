@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PokeQuestApi_New.Data;
 
@@ -10,9 +11,11 @@ using PokeQuestApi_New.Data;
 namespace PokeQuestApi_New.Migrations
 {
     [DbContext(typeof(PokeQuestApiContext))]
-    partial class PokeQuestApiContextModelSnapshot : ModelSnapshot
+    [Migration("20250130213829_sqlite.local_migration_915")]
+    partial class sqlitelocal_migration_915
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.1");

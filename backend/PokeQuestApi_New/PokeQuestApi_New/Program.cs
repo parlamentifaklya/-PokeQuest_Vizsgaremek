@@ -13,7 +13,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container
 builder.Services.AddDbContext<PokeQuestApiContext>(options =>
-    options.UseSqlite("Data Source=./Data/PokeQuestAPI.db"));
+{
+    options.UseSqlite("Data Source=./Data/PokeQuestAPI.db");
+    options.AddInterceptors(new SQLiteForeignKeyInterceptor());
+});
 
 builder.Services.AddCors(options =>
 {
