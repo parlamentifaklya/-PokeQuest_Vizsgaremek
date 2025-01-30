@@ -32,7 +32,7 @@ namespace PokeQuestApi_New.Models
         public int Atk { get; set; }
 
         // Foreign key for Item
-        public int? ItemId { get; set; } // Assuming Item is another entity with a primary key
+        public int ItemId { get; set; } // Assuming Item is another entity with a primary key
         [ForeignKey("ItemId")]
         public virtual Item? Item { get; set; } // Navigation property
 

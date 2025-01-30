@@ -272,13 +272,9 @@
             "multipart/form-data": {
               "schema": {
                 "required": [
-                  "Ability.Name",
-                  "Ability.Type.Name",
-                  "Item.Name",
+                  "AbilityId",
                   "Name",
-                  "StrongAgainst.Name",
-                  "Type.Name",
-                  "WeakAgainst.Name"
+                  "TypeId"
                 ],
                 "type": "object",
                 "properties": {
@@ -293,64 +289,16 @@
                     "type": "string"
                   },
                   "Img": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "binary"
                   },
                   "TypeId": {
                     "type": "integer",
                     "format": "int32"
                   },
-                  "Type.Id": {
-                    "type": "integer",
-                    "format": "int32"
-                  },
-                  "Type.Name": {
-                    "type": "string"
-                  },
-                  "Type.Img": {
-                    "type": "string"
-                  },
                   "AbilityId": {
                     "type": "integer",
                     "format": "int32"
-                  },
-                  "Ability.Id": {
-                    "type": "integer",
-                    "format": "int32"
-                  },
-                  "Ability.Name": {
-                    "type": "string"
-                  },
-                  "Ability.Img": {
-                    "type": "string"
-                  },
-                  "Ability.Description": {
-                    "type": "string"
-                  },
-                  "Ability.Damage": {
-                    "type": "integer",
-                    "format": "int32"
-                  },
-                  "Ability.HealthPoint": {
-                    "type": "integer",
-                    "format": "int32"
-                  },
-                  "Ability.RechargeTime": {
-                    "type": "integer",
-                    "format": "int32"
-                  },
-                  "Ability.TypeId": {
-                    "type": "integer",
-                    "format": "int32"
-                  },
-                  "Ability.Type.Id": {
-                    "type": "integer",
-                    "format": "int32"
-                  },
-                  "Ability.Type.Name": {
-                    "type": "string"
-                  },
-                  "Ability.Type.Img": {
-                    "type": "string"
                   },
                   "IsUnlocked": {
                     "type": "boolean"
@@ -367,61 +315,17 @@
                     "type": "integer",
                     "format": "int32"
                   },
-                  "Item.Id": {
-                    "type": "integer",
-                    "format": "int32"
-                  },
-                  "Item.Name": {
-                    "type": "string"
-                  },
-                  "Item.Description": {
-                    "type": "string"
-                  },
-                  "Item.Img": {
-                    "type": "string"
-                  },
-                  "Item.ItemAbility": {
-                    "type": "string"
-                  },
-                  "Item.Rarity": {
-                    "type": "integer",
-                    "format": "int32"
-                  },
                   "WeakAgainstId": {
                     "type": "integer",
                     "format": "int32"
-                  },
-                  "WeakAgainst.Id": {
-                    "type": "integer",
-                    "format": "int32"
-                  },
-                  "WeakAgainst.Name": {
-                    "type": "string"
-                  },
-                  "WeakAgainst.Img": {
-                    "type": "string"
                   },
                   "StrongAgainstId": {
                     "type": "integer",
                     "format": "int32"
                   },
-                  "StrongAgainst.Id": {
-                    "type": "integer",
-                    "format": "int32"
-                  },
-                  "StrongAgainst.Name": {
-                    "type": "string"
-                  },
-                  "StrongAgainst.Img": {
-                    "type": "string"
-                  },
                   "SellPrice": {
                     "type": "integer",
                     "format": "int32"
-                  },
-                  "img": {
-                    "type": "string",
-                    "format": "binary"
                   }
                 }
               },
@@ -441,49 +345,7 @@
                 "TypeId": {
                   "style": "form"
                 },
-                "Type.Id": {
-                  "style": "form"
-                },
-                "Type.Name": {
-                  "style": "form"
-                },
-                "Type.Img": {
-                  "style": "form"
-                },
                 "AbilityId": {
-                  "style": "form"
-                },
-                "Ability.Id": {
-                  "style": "form"
-                },
-                "Ability.Name": {
-                  "style": "form"
-                },
-                "Ability.Img": {
-                  "style": "form"
-                },
-                "Ability.Description": {
-                  "style": "form"
-                },
-                "Ability.Damage": {
-                  "style": "form"
-                },
-                "Ability.HealthPoint": {
-                  "style": "form"
-                },
-                "Ability.RechargeTime": {
-                  "style": "form"
-                },
-                "Ability.TypeId": {
-                  "style": "form"
-                },
-                "Ability.Type.Id": {
-                  "style": "form"
-                },
-                "Ability.Type.Name": {
-                  "style": "form"
-                },
-                "Ability.Type.Img": {
                   "style": "form"
                 },
                 "IsUnlocked": {
@@ -498,52 +360,13 @@
                 "ItemId": {
                   "style": "form"
                 },
-                "Item.Id": {
-                  "style": "form"
-                },
-                "Item.Name": {
-                  "style": "form"
-                },
-                "Item.Description": {
-                  "style": "form"
-                },
-                "Item.Img": {
-                  "style": "form"
-                },
-                "Item.ItemAbility": {
-                  "style": "form"
-                },
-                "Item.Rarity": {
-                  "style": "form"
-                },
                 "WeakAgainstId": {
-                  "style": "form"
-                },
-                "WeakAgainst.Id": {
-                  "style": "form"
-                },
-                "WeakAgainst.Name": {
-                  "style": "form"
-                },
-                "WeakAgainst.Img": {
                   "style": "form"
                 },
                 "StrongAgainstId": {
                   "style": "form"
                 },
-                "StrongAgainst.Id": {
-                  "style": "form"
-                },
-                "StrongAgainst.Name": {
-                  "style": "form"
-                },
-                "StrongAgainst.Img": {
-                  "style": "form"
-                },
                 "SellPrice": {
-                  "style": "form"
-                },
-                "img": {
                   "style": "form"
                 }
               }
@@ -595,13 +418,9 @@
             "multipart/form-data": {
               "schema": {
                 "required": [
-                  "Ability.Name",
-                  "Ability.Type.Name",
-                  "Item.Name",
+                  "AbilityId",
                   "Name",
-                  "StrongAgainst.Name",
-                  "Type.Name",
-                  "WeakAgainst.Name"
+                  "TypeId"
                 ],
                 "type": "object",
                 "properties": {
@@ -616,64 +435,16 @@
                     "type": "string"
                   },
                   "Img": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "binary"
                   },
                   "TypeId": {
                     "type": "integer",
                     "format": "int32"
                   },
-                  "Type.Id": {
-                    "type": "integer",
-                    "format": "int32"
-                  },
-                  "Type.Name": {
-                    "type": "string"
-                  },
-                  "Type.Img": {
-                    "type": "string"
-                  },
                   "AbilityId": {
                     "type": "integer",
                     "format": "int32"
-                  },
-                  "Ability.Id": {
-                    "type": "integer",
-                    "format": "int32"
-                  },
-                  "Ability.Name": {
-                    "type": "string"
-                  },
-                  "Ability.Img": {
-                    "type": "string"
-                  },
-                  "Ability.Description": {
-                    "type": "string"
-                  },
-                  "Ability.Damage": {
-                    "type": "integer",
-                    "format": "int32"
-                  },
-                  "Ability.HealthPoint": {
-                    "type": "integer",
-                    "format": "int32"
-                  },
-                  "Ability.RechargeTime": {
-                    "type": "integer",
-                    "format": "int32"
-                  },
-                  "Ability.TypeId": {
-                    "type": "integer",
-                    "format": "int32"
-                  },
-                  "Ability.Type.Id": {
-                    "type": "integer",
-                    "format": "int32"
-                  },
-                  "Ability.Type.Name": {
-                    "type": "string"
-                  },
-                  "Ability.Type.Img": {
-                    "type": "string"
                   },
                   "IsUnlocked": {
                     "type": "boolean"
@@ -690,61 +461,17 @@
                     "type": "integer",
                     "format": "int32"
                   },
-                  "Item.Id": {
-                    "type": "integer",
-                    "format": "int32"
-                  },
-                  "Item.Name": {
-                    "type": "string"
-                  },
-                  "Item.Description": {
-                    "type": "string"
-                  },
-                  "Item.Img": {
-                    "type": "string"
-                  },
-                  "Item.ItemAbility": {
-                    "type": "string"
-                  },
-                  "Item.Rarity": {
-                    "type": "integer",
-                    "format": "int32"
-                  },
                   "WeakAgainstId": {
                     "type": "integer",
                     "format": "int32"
-                  },
-                  "WeakAgainst.Id": {
-                    "type": "integer",
-                    "format": "int32"
-                  },
-                  "WeakAgainst.Name": {
-                    "type": "string"
-                  },
-                  "WeakAgainst.Img": {
-                    "type": "string"
                   },
                   "StrongAgainstId": {
                     "type": "integer",
                     "format": "int32"
                   },
-                  "StrongAgainst.Id": {
-                    "type": "integer",
-                    "format": "int32"
-                  },
-                  "StrongAgainst.Name": {
-                    "type": "string"
-                  },
-                  "StrongAgainst.Img": {
-                    "type": "string"
-                  },
                   "SellPrice": {
                     "type": "integer",
                     "format": "int32"
-                  },
-                  "img": {
-                    "type": "string",
-                    "format": "binary"
                   }
                 }
               },
@@ -764,49 +491,7 @@
                 "TypeId": {
                   "style": "form"
                 },
-                "Type.Id": {
-                  "style": "form"
-                },
-                "Type.Name": {
-                  "style": "form"
-                },
-                "Type.Img": {
-                  "style": "form"
-                },
                 "AbilityId": {
-                  "style": "form"
-                },
-                "Ability.Id": {
-                  "style": "form"
-                },
-                "Ability.Name": {
-                  "style": "form"
-                },
-                "Ability.Img": {
-                  "style": "form"
-                },
-                "Ability.Description": {
-                  "style": "form"
-                },
-                "Ability.Damage": {
-                  "style": "form"
-                },
-                "Ability.HealthPoint": {
-                  "style": "form"
-                },
-                "Ability.RechargeTime": {
-                  "style": "form"
-                },
-                "Ability.TypeId": {
-                  "style": "form"
-                },
-                "Ability.Type.Id": {
-                  "style": "form"
-                },
-                "Ability.Type.Name": {
-                  "style": "form"
-                },
-                "Ability.Type.Img": {
                   "style": "form"
                 },
                 "IsUnlocked": {
@@ -821,52 +506,13 @@
                 "ItemId": {
                   "style": "form"
                 },
-                "Item.Id": {
-                  "style": "form"
-                },
-                "Item.Name": {
-                  "style": "form"
-                },
-                "Item.Description": {
-                  "style": "form"
-                },
-                "Item.Img": {
-                  "style": "form"
-                },
-                "Item.ItemAbility": {
-                  "style": "form"
-                },
-                "Item.Rarity": {
-                  "style": "form"
-                },
                 "WeakAgainstId": {
-                  "style": "form"
-                },
-                "WeakAgainst.Id": {
-                  "style": "form"
-                },
-                "WeakAgainst.Name": {
-                  "style": "form"
-                },
-                "WeakAgainst.Img": {
                   "style": "form"
                 },
                 "StrongAgainstId": {
                   "style": "form"
                 },
-                "StrongAgainst.Id": {
-                  "style": "form"
-                },
-                "StrongAgainst.Name": {
-                  "style": "form"
-                },
-                "StrongAgainst.Img": {
-                  "style": "form"
-                },
                 "SellPrice": {
-                  "style": "form"
-                },
-                "img": {
                   "style": "form"
                 }
               }
@@ -1867,8 +1513,7 @@
           },
           "itemId": {
             "type": "integer",
-            "format": "int32",
-            "nullable": true
+            "format": "int32"
           },
           "item": {
             "$ref": "#/components/schemas/Item"

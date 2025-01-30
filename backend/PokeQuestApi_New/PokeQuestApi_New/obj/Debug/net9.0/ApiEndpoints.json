@@ -199,7 +199,7 @@
       },
       {
         "Name": "Img",
-        "Type": "System.String",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
         "IsRequired": false
       },
       {
@@ -208,78 +208,8 @@
         "IsRequired": false
       },
       {
-        "Name": "Type.Id",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "Type.Name",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "Type.Img",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
         "Name": "AbilityId",
         "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "Ability.Id",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "Ability.Name",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "Ability.Img",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "Ability.Description",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "Ability.Damage",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "Ability.HealthPoint",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "Ability.RechargeTime",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "Ability.TypeId",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "Ability.Type.Id",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "Ability.Type.Name",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "Ability.Type.Img",
-        "Type": "System.String",
         "IsRequired": false
       },
       {
@@ -299,36 +229,6 @@
       },
       {
         "Name": "ItemId",
-        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
-        "IsRequired": false
-      },
-      {
-        "Name": "Item.Id",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "Item.Name",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "Item.Description",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "Item.Img",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "Item.ItemAbility",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "Item.Rarity",
         "Type": "System.Int32",
         "IsRequired": false
       },
@@ -338,48 +238,13 @@
         "IsRequired": false
       },
       {
-        "Name": "WeakAgainst.Id",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "WeakAgainst.Name",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "WeakAgainst.Img",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
         "Name": "StrongAgainstId",
         "Type": "System.Int32",
         "IsRequired": false
       },
       {
-        "Name": "StrongAgainst.Id",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "StrongAgainst.Name",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "StrongAgainst.Img",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
         "Name": "SellPrice",
         "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "img",
-        "Type": "Microsoft.AspNetCore.Http.IFormFile",
         "IsRequired": false
       }
     ],
@@ -520,7 +385,7 @@
       },
       {
         "Name": "Img",
-        "Type": "System.String",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
         "IsRequired": false
       },
       {
@@ -529,78 +394,8 @@
         "IsRequired": false
       },
       {
-        "Name": "Type.Id",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "Type.Name",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "Type.Img",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
         "Name": "AbilityId",
         "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "Ability.Id",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "Ability.Name",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "Ability.Img",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "Ability.Description",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "Ability.Damage",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "Ability.HealthPoint",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "Ability.RechargeTime",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "Ability.TypeId",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "Ability.Type.Id",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "Ability.Type.Name",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "Ability.Type.Img",
-        "Type": "System.String",
         "IsRequired": false
       },
       {
@@ -620,36 +415,6 @@
       },
       {
         "Name": "ItemId",
-        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
-        "IsRequired": false
-      },
-      {
-        "Name": "Item.Id",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "Item.Name",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "Item.Description",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "Item.Img",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "Item.ItemAbility",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "Item.Rarity",
         "Type": "System.Int32",
         "IsRequired": false
       },
@@ -659,48 +424,13 @@
         "IsRequired": false
       },
       {
-        "Name": "WeakAgainst.Id",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "WeakAgainst.Name",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "WeakAgainst.Img",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
         "Name": "StrongAgainstId",
         "Type": "System.Int32",
         "IsRequired": false
       },
       {
-        "Name": "StrongAgainst.Id",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "StrongAgainst.Name",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "StrongAgainst.Img",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
         "Name": "SellPrice",
         "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "img",
-        "Type": "Microsoft.AspNetCore.Http.IFormFile",
         "IsRequired": false
       }
     ],

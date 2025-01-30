@@ -7,6 +7,7 @@ using PokeQuestApi_New.Data;
 using PokeQuestApi_New.Models;
 using PokeQuestApi_New.Services;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -54,93 +55,99 @@ namespace PokeQuestApi_New.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Feyling>> CreateFeyling([FromForm] Feyling feyling, IFormFile? img)
+        public async Task<ActionResult<Feyling>> CreateFeyling([FromForm] CreateFeylingDto dto)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            // Handle image upload if provided
-            if (img != null)
+            // Check if an image is provided
+            if (dto.Img == null)
             {
-                try
-                {
-                    string imagePath = await _imageUploadService.UploadImage(img, "FeylingImgs");
-                    feyling.Img = imagePath;  // Save the image path to the model
-                }
-                catch (ArgumentException ex)
-                {
-                    return BadRequest(ex.Message);
-                }
+                return BadRequest("An image is required to create a Feyling.");
             }
 
-            var newFeyling = new Feyling
+            // Handle image upload
+            try
             {
-                Name = feyling.Name,
-                Description = feyling.Description,
-                Img = feyling.Img,  // Set image path
-                TypeId = feyling.TypeId,
-                AbilityId = feyling.AbilityId,
-                IsUnlocked = feyling.IsUnlocked,
-                Hp = feyling.Hp,
-                Atk = feyling.Atk,
-                ItemId = feyling.ItemId,
-                WeakAgainstId = feyling.WeakAgainstId,
-                StrongAgainstId = feyling.StrongAgainstId,
-                SellPrice = feyling.SellPrice
-            };
+                string imagePath = await _imageUploadService.UploadImage(dto.Img, "FeylingImgs");
 
-            await _context.Feylings.AddAsync(newFeyling);
-            await _context.SaveChangesAsync();
+                // Create a new Feyling and set the image path
+                var newFeyling = new Feyling
+                {
+                    Name = dto.Name,
+                    Description = dto.Description,
+                    Img = imagePath,  // Store the image path
+                    TypeId = dto.TypeId,
+                    AbilityId = dto.AbilityId,
+                    IsUnlocked = dto.IsUnlocked,
+                    Hp = dto.Hp,
+                    Atk = dto.Atk,
+                    ItemId = dto.ItemId,
+                    WeakAgainstId = dto.WeakAgainstId,
+                    StrongAgainstId = dto.StrongAgainstId,
+                    SellPrice = dto.SellPrice
+                };
 
-            return CreatedAtAction(nameof(GetFeyling), new { id = feyling.Id }, feyling);
+                await _context.Feylings.AddAsync(newFeyling);
+                await _context.SaveChangesAsync();
+
+                return CreatedAtAction(nameof(GetFeyling), new { id = newFeyling.Id }, newFeyling);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateFeyling(int id, [FromForm] Feyling updatedFeyling, IFormFile? img)
+        public async Task<ActionResult> UpdateFeyling(int id, [FromForm] CreateFeylingDto dto)
         {
-            if (id != updatedFeyling.Id)
+            if (id != dto.Id)
             {
-                return BadRequest();
+                return BadRequest("ID mismatch.");
             }
 
             var existingFeyling = await _context.Feylings.FindAsync(id);
-
             if (existingFeyling == null)
             {
-                return NotFound();
+                return NotFound("Feyling not found.");
             }
 
-            // Handle image upload if provided
-            if (img != null)
+            // Check if an image is provided
+            if (dto.Img == null)
             {
-                try
-                {
-                    string imagePath = await _imageUploadService.UploadImage(img, "FeylingImgs");
-                    existingFeyling.Img = imagePath;  // Update the image path
-                }
-                catch (ArgumentException ex)
-                {
-                    return BadRequest(ex.Message);
-                }
+                return BadRequest("An image is required to update a Feyling.");
             }
 
-            existingFeyling.Name = updatedFeyling.Name;
-            existingFeyling.Description = updatedFeyling.Description;
-            existingFeyling.TypeId = updatedFeyling.TypeId;
-            existingFeyling.AbilityId = updatedFeyling.AbilityId;
-            existingFeyling.IsUnlocked = updatedFeyling.IsUnlocked;
-            existingFeyling.Hp = updatedFeyling.Hp;
-            existingFeyling.Atk = updatedFeyling.Atk;
-            existingFeyling.ItemId = updatedFeyling.ItemId;
-            existingFeyling.WeakAgainstId = updatedFeyling.WeakAgainstId;
-            existingFeyling.StrongAgainstId = updatedFeyling.StrongAgainstId;
-            existingFeyling.SellPrice = updatedFeyling.SellPrice;
+            // Handle image upload
+            try
+            {
+                string imagePath = await _imageUploadService.UploadImage(dto.Img, "FeylingImgs");
+                existingFeyling.Img = imagePath;  // Update the image path
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            // Update the existing feyling's properties
+            existingFeyling.Name = dto.Name;
+            existingFeyling.Description = dto.Description;
+            existingFeyling.TypeId = dto.TypeId;
+            existingFeyling.AbilityId = dto.AbilityId;
+            existingFeyling.IsUnlocked = dto.IsUnlocked;
+            existingFeyling.Hp = dto.Hp;
+            existingFeyling.Atk = dto.Atk;
+            existingFeyling.ItemId = dto.ItemId;
+            existingFeyling.WeakAgainstId = dto.WeakAgainstId;
+            existingFeyling.StrongAgainstId = dto.StrongAgainstId;
+            existingFeyling.SellPrice = dto.SellPrice;
 
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return NoContent(); // Successfully updated
         }
 
         [HttpPost("Feyling-bulk-insert")]
@@ -230,5 +237,37 @@ namespace PokeQuestApi_New.Controllers
 
             return Ok(ownedFeylings.Select(of => of.Feyling));
         }
+    }
+
+    public class CreateFeylingDto
+    {
+        public int Id { get; set; }
+
+        [Required]
+        public string Name { get; set; }
+
+        public string Description { get; set; }
+
+        public IFormFile? Img { get; set; } // For image uploads
+
+        [Required]
+        public int TypeId { get; set; } // Foreign key for Type
+
+        [Required]
+        public int AbilityId { get; set; } // Foreign key for Ability
+
+        public bool IsUnlocked { get; set; }
+
+        public int Hp { get; set; }
+
+        public int Atk { get; set; }
+
+        public int ItemId { get; set; } // Nullable foreign key for Item
+
+        public int WeakAgainstId { get; set; } // Nullable foreign key for WeakAgainst
+
+        public int StrongAgainstId { get; set; } // Nullable foreign key for StrongAgainst
+
+        public int SellPrice { get; set; }
     }
 }
