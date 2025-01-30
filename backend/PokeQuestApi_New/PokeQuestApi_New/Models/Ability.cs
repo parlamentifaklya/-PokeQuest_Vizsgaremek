@@ -21,6 +21,6 @@ namespace PokeQuestApi_New.Models
         // Foreign key for Type
         public int TypeId { get; set; } // Assuming Type is another entity with a primary key
         [ForeignKey("TypeId")]
-        public Type Type { get; set; } // Navigation property
+        public virtual Type Type { get; set; } // Navigation property
     }
 }

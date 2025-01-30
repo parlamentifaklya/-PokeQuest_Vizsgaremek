@@ -7,6 +7,6 @@
         public List<OwnedItem> UserItems { get; set; } = new List<OwnedItem>();
 
         public string UserId { get; set; } // Foreign key to User
-        public User User { get; set; } // Navigation property back to User
+        public virtual User User { get; set; } // Navigation property back to User
     }
 }

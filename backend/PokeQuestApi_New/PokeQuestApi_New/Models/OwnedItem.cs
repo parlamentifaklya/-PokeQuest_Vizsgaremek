@@ -8,6 +8,6 @@
         public int Amount { get; set; } // Navigation property
 
         public int UserInventoryId { get; set; } // Foreign key to UserInventory
-        public UserInventory UserInventory { get; set; } // Navigation property back to UserInventory
+        public virtual UserInventory UserInventory { get; set; } // Navigation property back to UserInventory
     }
 }

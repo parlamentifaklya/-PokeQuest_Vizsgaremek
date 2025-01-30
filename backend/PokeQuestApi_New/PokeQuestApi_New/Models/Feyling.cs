@@ -18,12 +18,12 @@ namespace PokeQuestApi_New.Models
         // Foreign key for Type
         public int TypeId { get; set; } // Assuming Type is another entity with a primary key
         [ForeignKey("TypeId")]
-        public Type Type { get; set; } // Navigation property
+        public virtual Type Type { get; set; } // Navigation property
 
         // Foreign key for Ability
         public int AbilityId { get; set; } // Assuming Ability is another entity with a primary key
         [ForeignKey("AbilityId")]
-        public Ability Ability { get; set; } // Navigation property
+        public virtual Ability Ability { get; set; } // Navigation property
 
         public bool IsUnlocked { get; set; }
 
@@ -34,17 +34,17 @@ namespace PokeQuestApi_New.Models
         // Foreign key for Item
         public int? ItemId { get; set; } // Assuming Item is another entity with a primary key
         [ForeignKey("ItemId")]
-        public Item? Item { get; set; } // Navigation property
+        public virtual Item? Item { get; set; } // Navigation property
 
         // Foreign key for WeakAgainst
         public int WeakAgainstId { get; set; } // Assuming WeakAgainst is another entity with a primary key
         [ForeignKey("WeakAgainstId")]
-        public Type WeakAgainst { get; set; } // Navigation property
+        public virtual Type WeakAgainst { get; set; } // Navigation property
 
         // Foreign key for StrongAgainst
         public int StrongAgainstId { get; set; } // Assuming StrongAgainst is another entity with a primary key
         [ForeignKey("StrongAgainstId")]
-        public Type StrongAgainst { get; set; } // Navigation property
+        public virtual Type StrongAgainst { get; set; } // Navigation property
 
         public int SellPrice { get; set; }
     }
