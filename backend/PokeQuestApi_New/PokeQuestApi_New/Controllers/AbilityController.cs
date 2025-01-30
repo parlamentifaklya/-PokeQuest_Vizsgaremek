@@ -90,7 +90,14 @@ namespace PokeQuestApi_New.Controllers
 
             foreach (var dto in abilities)
             {
-                var ability = dto.Ability;
+                // Create a new Ability instance for each DTO
+                var ability = new Ability
+                {
+                    Name = dto.Name,
+                    Description = dto.Description,
+                    Damage = dto.Damage,
+                    TypeId = dto.TypeId
+                };
 
                 // If a file is provided, upload the image and get the file path
                 if (dto.File != null)
@@ -128,7 +135,7 @@ namespace PokeQuestApi_New.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateAbility(int id, [FromForm] CreateAbilityDto dto)
         {
-            if (id != dto.Ability.Id)
+            if (id != dto.Id)
             {
                 return BadRequest("Ability ID mismatch.");
             }
@@ -159,6 +166,7 @@ namespace PokeQuestApi_New.Controllers
     }
     public class CreateAbilityDto
     {
+        public int Id { get; set; }
         public IFormFile File { get; set; } // For file uploads
 
         [Required]
