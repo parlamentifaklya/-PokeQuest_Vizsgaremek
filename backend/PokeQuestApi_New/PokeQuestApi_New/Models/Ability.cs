@@ -18,6 +18,10 @@ namespace PokeQuestApi_New.Models
 
         public int Damage { get; set; }
 
+        public int HealthPoint {  get; set; }
+
+        public int RechargeTime {  get; set; }
+
         // Foreign key for Type
         public int TypeId { get; set; } // Assuming Type is another entity with a primary key
         [ForeignKey("TypeId")]

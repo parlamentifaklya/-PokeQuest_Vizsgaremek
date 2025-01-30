@@ -67,6 +67,8 @@ namespace PokeQuestApi_New.Controllers
                 Name = dto.Name,
                 Description = dto.Description,
                 Damage = dto.Damage,
+                HealthPoint = dto.HealthPoint,
+                RechargeTime = dto.RechargeTime,
                 TypeId = dto.TypeId,
                 Img = filePath  // Store the image file path
             };
@@ -96,6 +98,8 @@ namespace PokeQuestApi_New.Controllers
                     Name = dto.Name,
                     Description = dto.Description,
                     Damage = dto.Damage,
+                    HealthPoint = dto.HealthPoint,
+                    RechargeTime = dto.RechargeTime,
                     TypeId = dto.TypeId
                 };
 
@@ -156,6 +160,8 @@ namespace PokeQuestApi_New.Controllers
             existingAbility.Name = dto.Name;
             existingAbility.Description = dto.Description;
             existingAbility.Damage = dto.Damage;
+            existingAbility.HealthPoint = dto.HealthPoint;
+            existingAbility.RechargeTime = dto.RechargeTime;
             existingAbility.TypeId = dto.TypeId;
 
             _context.Abilities.Update(existingAbility);
@@ -175,6 +181,10 @@ namespace PokeQuestApi_New.Controllers
         public string Description { get; set; }
 
         public int Damage { get; set; }
+
+        public int HealthPoint {  get; set; }
+
+        public int RechargeTime {  get; set; }
 
         [Required]
         public int TypeId { get; set; } // Only include TypeId

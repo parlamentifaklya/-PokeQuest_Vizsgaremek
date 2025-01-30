@@ -482,10 +482,10 @@ C:\Users\szilagyi.dominik\Desktop\-PokeQuest_Vizsgaremek\backend\PokeQuestApi_Ne
 C:\Users\szilagyi.dominik\Desktop\-PokeQuest_Vizsgaremek\backend\PokeQuestApi_New\PokeQuestApi_New\obj\Debug\net9.0\staticwebassets\msbuild.buildMultiTargeting.PokeQuestApi_New.props
 C:\Users\szilagyi.dominik\Desktop\-PokeQuest_Vizsgaremek\backend\PokeQuestApi_New\PokeQuestApi_New\obj\Debug\net9.0\staticwebassets\msbuild.buildTransitive.PokeQuestApi_New.props
 C:\Users\szilagyi.dominik\Desktop\-PokeQuest_Vizsgaremek\backend\PokeQuestApi_New\PokeQuestApi_New\obj\Debug\net9.0\staticwebassets.pack.json
-C:\Users\szilagyi.dominik\Desktop\-PokeQuest_Vizsgaremek\backend\PokeQuestApi_New\PokeQuestApi_New\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
 C:\Users\szilagyi.dominik\Desktop\-PokeQuest_Vizsgaremek\backend\PokeQuestApi_New\PokeQuestApi_New\obj\Debug\net9.0\PokeQues.CC9DD49D.Up2Date
 C:\Users\szilagyi.dominik\Desktop\-PokeQuest_Vizsgaremek\backend\PokeQuestApi_New\PokeQuestApi_New\obj\Debug\net9.0\PokeQuestApi_New.dll
 C:\Users\szilagyi.dominik\Desktop\-PokeQuest_Vizsgaremek\backend\PokeQuestApi_New\PokeQuestApi_New\obj\Debug\net9.0\refint\PokeQuestApi_New.dll
 C:\Users\szilagyi.dominik\Desktop\-PokeQuest_Vizsgaremek\backend\PokeQuestApi_New\PokeQuestApi_New\obj\Debug\net9.0\PokeQuestApi_New.pdb
 C:\Users\szilagyi.dominik\Desktop\-PokeQuest_Vizsgaremek\backend\PokeQuestApi_New\PokeQuestApi_New\obj\Debug\net9.0\PokeQuestApi_New.genruntimeconfig.cache
 C:\Users\szilagyi.dominik\Desktop\-PokeQuest_Vizsgaremek\backend\PokeQuestApi_New\PokeQuestApi_New\obj\Debug\net9.0\ref\PokeQuestApi_New.dll
+C:\Users\szilagyi.dominik\Desktop\-PokeQuest_Vizsgaremek\backend\PokeQuestApi_New\PokeQuestApi_New\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt

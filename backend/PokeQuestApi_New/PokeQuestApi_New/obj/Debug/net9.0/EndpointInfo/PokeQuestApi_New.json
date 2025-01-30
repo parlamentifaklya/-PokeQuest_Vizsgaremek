@@ -71,6 +71,12 @@
                   "damage": {
                     "type": "integer"
                   },
+                  "healthpoint": {
+                    "type": "integer"
+                  },
+                  "rechargetime": {
+                    "type": "integer"
+                  },
                   "typeId": {
                     "type": "integer"
                   }
@@ -200,6 +206,12 @@
                   "damage": {
                     "type": "integer"
                   },
+                  "healthpoint": {
+                    "type": "integer"
+                  },
+                  "rechargetime": {
+                    "type": "integer"
+                  },
                   "typeId": {
                     "type": "integer"
                   }
@@ -315,6 +327,14 @@
                     "type": "string"
                   },
                   "Ability.Damage": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "Ability.HealthPoint": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "Ability.RechargeTime": {
                     "type": "integer",
                     "format": "int32"
                   },
@@ -446,6 +466,12 @@
                   "style": "form"
                 },
                 "Ability.Damage": {
+                  "style": "form"
+                },
+                "Ability.HealthPoint": {
+                  "style": "form"
+                },
+                "Ability.RechargeTime": {
                   "style": "form"
                 },
                 "Ability.TypeId": {
@@ -627,6 +653,14 @@
                     "type": "integer",
                     "format": "int32"
                   },
+                  "Ability.HealthPoint": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "Ability.RechargeTime": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
                   "Ability.TypeId": {
                     "type": "integer",
                     "format": "int32"
@@ -755,6 +789,12 @@
                   "style": "form"
                 },
                 "Ability.Damage": {
+                  "style": "form"
+                },
+                "Ability.HealthPoint": {
+                  "style": "form"
+                },
+                "Ability.RechargeTime": {
                   "style": "form"
                 },
                 "Ability.TypeId": {
@@ -1717,6 +1757,14 @@
             "type": "integer",
             "format": "int32"
           },
+          "healthPoint": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "rechargeTime": {
+            "type": "integer",
+            "format": "int32"
+          },
           "typeId": {
             "type": "integer",
             "format": "int32"
@@ -1752,6 +1800,14 @@
             "nullable": true
           },
           "damage": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "healthPoint": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "rechargeTime": {
             "type": "integer",
             "format": "int32"
           },

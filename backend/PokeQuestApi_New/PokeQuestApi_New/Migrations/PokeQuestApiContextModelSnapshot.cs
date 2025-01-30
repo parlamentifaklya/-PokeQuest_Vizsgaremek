@@ -158,6 +158,9 @@ namespace PokeQuestApi_New.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("HealthPoint")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Img")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -165,6 +168,9 @@ namespace PokeQuestApi_New.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("RechargeTime")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("TypeId")
                         .HasColumnType("INTEGER");

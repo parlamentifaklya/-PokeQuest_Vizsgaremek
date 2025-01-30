@@ -49,6 +49,16 @@
         "IsRequired": false
       },
       {
+        "Name": "HealthPoint",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "RechargeTime",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
         "Name": "TypeId",
         "Type": "System.Int32",
         "IsRequired": false
@@ -147,6 +157,16 @@
         "IsRequired": false
       },
       {
+        "Name": "HealthPoint",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "RechargeTime",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
         "Name": "TypeId",
         "Type": "System.Int32",
         "IsRequired": false
@@ -229,6 +249,16 @@
       },
       {
         "Name": "Ability.Damage",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Ability.HealthPoint",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Ability.RechargeTime",
         "Type": "System.Int32",
         "IsRequired": false
       },
@@ -540,6 +570,16 @@
       },
       {
         "Name": "Ability.Damage",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Ability.HealthPoint",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Ability.RechargeTime",
         "Type": "System.Int32",
         "IsRequired": false
       },

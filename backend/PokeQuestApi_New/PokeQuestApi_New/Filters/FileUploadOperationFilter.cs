@@ -53,6 +53,18 @@ namespace PokeQuestApi_New.Filters
                                             }
                                         },
                                         {
+                                            "healthpoint", new OpenApiSchema
+                                            {
+                                                Type = "integer" // Ability healthgain
+                                            }
+                                        },
+                                        {
+                                            "rechargetime", new OpenApiSchema
+                                            {
+                                                Type = "integer" // Ability rechargetime
+                                            }
+                                        },
+                                        {
                                             "typeId", new OpenApiSchema
                                             {
                                                 Type = "integer" // TypeId for the ability

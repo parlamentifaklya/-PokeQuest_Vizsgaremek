@@ -1,7 +1,7 @@
 TUZES
 
 Flareonix: Phoenix Rebirth - Revives from ashes, restoring health and power.
-Infernodrake: Volcanic Roar - Unleashes a powerful roar that causes eruptions, dealing magic damage.
+PyroHydra: Volcanic Roar - Unleashes a powerful roar that causes eruptions, dealing magic damage.
 Pyrocerberus: Flame Fury - Unleashes a different type of fire attack, inflicting various burn effects.
 Blazetiger: Ignition Prowl - Leaves a trail of flames that ignites enemies and terrain.
 Embergriff: Ashen Gaze - A fiery stare that incinerates foes.
