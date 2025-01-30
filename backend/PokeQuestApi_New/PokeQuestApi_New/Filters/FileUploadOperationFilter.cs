@@ -1,15 +1,10 @@
 ﻿using Microsoft.OpenApi.Models;
+using PokeQuestApi_New.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using System;
 using System.Collections.Generic;
 
 namespace PokeQuestApi_New.Filters
 {
-    using Microsoft.OpenApi.Models;
-    using Swashbuckle.AspNetCore.SwaggerGen;
-    using System.Collections.Generic;
-    using System.Linq;
-
     public class FileUploadOperationFilter : IOperationFilter
     {
         public void Apply(OpenApiOperation operation, OperationFilterContext context)
@@ -29,7 +24,7 @@ namespace PokeQuestApi_New.Filters
                                 Schema = new OpenApiSchema
                                 {
                                     Type = "object",
-                                    Required = new HashSet<string> { "file" }, // Make the file parameter required
+                                    Required = new HashSet<string> { "file", "ability" }, // Make both file and ability parameters required
                                     Properties = new Dictionary<string, OpenApiSchema>
                                     {
                                         {
@@ -42,13 +37,10 @@ namespace PokeQuestApi_New.Filters
                                         {
                                             "ability", new OpenApiSchema
                                             {
-                                                Type = "object",
-                                                Properties = new Dictionary<string, OpenApiSchema>
+                                                Reference = new OpenApiReference
                                                 {
-                                                    { "Name", new OpenApiSchema { Type = "string" } },
-                                                    { "Description", new OpenApiSchema { Type = "string" } },
-                                                    { "Damage", new OpenApiSchema { Type = "integer" } },
-                                                    { "TypeId", new OpenApiSchema { Type = "integer" } }
+                                                    Type = ReferenceType.Schema,
+                                                    Id = nameof(Ability) // Reference the existing Ability model
                                                 }
                                             }
                                         }

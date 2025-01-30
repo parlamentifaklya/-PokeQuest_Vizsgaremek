@@ -52,7 +52,8 @@
             "multipart/form-data": {
               "schema": {
                 "required": [
-                  "file"
+                  "file",
+                  "ability"
                 ],
                 "type": "object",
                 "properties": {
@@ -61,21 +62,7 @@
                     "format": "binary"
                   },
                   "ability": {
-                    "type": "object",
-                    "properties": {
-                      "Name": {
-                        "type": "string"
-                      },
-                      "Description": {
-                        "type": "string"
-                      },
-                      "Damage": {
-                        "type": "integer"
-                      },
-                      "TypeId": {
-                        "type": "integer"
-                      }
-                    }
+                    "$ref": "#/components/schemas/Ability"
                   }
                 }
               }
@@ -184,7 +171,8 @@
             "multipart/form-data": {
               "schema": {
                 "required": [
-                  "file"
+                  "file",
+                  "ability"
                 ],
                 "type": "object",
                 "properties": {
@@ -193,21 +181,7 @@
                     "format": "binary"
                   },
                   "ability": {
-                    "type": "object",
-                    "properties": {
-                      "Name": {
-                        "type": "string"
-                      },
-                      "Description": {
-                        "type": "string"
-                      },
-                      "Damage": {
-                        "type": "integer"
-                      },
-                      "TypeId": {
-                        "type": "integer"
-                      }
-                    }
+                    "$ref": "#/components/schemas/Ability"
                   }
                 }
               }
