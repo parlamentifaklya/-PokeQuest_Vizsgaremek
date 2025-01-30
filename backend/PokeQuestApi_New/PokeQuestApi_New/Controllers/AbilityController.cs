@@ -6,6 +6,7 @@ using PokeQuestApi_New.Data;
 using PokeQuestApi_New.Models;
 using PokeQuestApi_New.Services;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
 namespace PokeQuestApi_New.Controllers
@@ -63,10 +64,10 @@ namespace PokeQuestApi_New.Controllers
 
             Ability newAbility = new Ability
             {
-                Name = dto.Ability.Name,
-                Description = dto.Ability.Description,
-                Damage = dto.Ability.Damage,
-                TypeId = dto.Ability.TypeId,
+                Name = dto.Name,
+                Description = dto.Description,
+                Damage = dto.Damage,
+                TypeId = dto.TypeId,
                 Img = filePath  // Store the image file path
             };
 
@@ -145,10 +146,10 @@ namespace PokeQuestApi_New.Controllers
                 existingAbility.Img = filePath;  // Update the Img field
             }
 
-            existingAbility.Name = dto.Ability.Name;
-            existingAbility.Description = dto.Ability.Description;
-            existingAbility.Damage = dto.Ability.Damage;
-            existingAbility.TypeId = dto.Ability.TypeId;
+            existingAbility.Name = dto.Name;
+            existingAbility.Description = dto.Description;
+            existingAbility.Damage = dto.Damage;
+            existingAbility.TypeId = dto.TypeId;
 
             _context.Abilities.Update(existingAbility);
             await _context.SaveChangesAsync();
@@ -158,7 +159,16 @@ namespace PokeQuestApi_New.Controllers
     }
     public class CreateAbilityDto
     {
-        public Ability Ability { get; set; }
-        public IFormFile File { get; set; }
+        public IFormFile File { get; set; } // For file uploads
+
+        [Required]
+        public string Name { get; set; }
+
+        public string Description { get; set; }
+
+        public int Damage { get; set; }
+
+        [Required]
+        public int TypeId { get; set; } // Only include TypeId
     }
 }
