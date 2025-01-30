@@ -24,7 +24,7 @@ namespace PokeQuestApi_New.Filters
                                 Schema = new OpenApiSchema
                                 {
                                     Type = "object",
-                                    Required = new HashSet<string> { "file", "ability" }, // Make both file and ability parameters required
+                                    Required = new HashSet<string> { "file", "name", "typeId" }, // Make required properties explicit
                                     Properties = new Dictionary<string, OpenApiSchema>
                                     {
                                         {
@@ -35,13 +35,27 @@ namespace PokeQuestApi_New.Filters
                                             }
                                         },
                                         {
-                                            "ability", new OpenApiSchema
+                                            "name", new OpenApiSchema
                                             {
-                                                Reference = new OpenApiReference
-                                                {
-                                                    Type = ReferenceType.Schema,
-                                                    Id = nameof(Ability) // Reference the existing Ability model
-                                                }
+                                                Type = "string" // Ability name
+                                            }
+                                        },
+                                        {
+                                            "description", new OpenApiSchema
+                                            {
+                                                Type = "string" // Ability description
+                                            }
+                                        },
+                                        {
+                                            "damage", new OpenApiSchema
+                                            {
+                                                Type = "integer" // Ability damage
+                                            }
+                                        },
+                                        {
+                                            "typeId", new OpenApiSchema
+                                            {
+                                                Type = "integer" // TypeId for the ability
                                             }
                                         }
                                     }

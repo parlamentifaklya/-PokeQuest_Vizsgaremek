@@ -53,7 +53,8 @@
               "schema": {
                 "required": [
                   "file",
-                  "ability"
+                  "name",
+                  "typeId"
                 ],
                 "type": "object",
                 "properties": {
@@ -61,8 +62,17 @@
                     "type": "string",
                     "format": "binary"
                   },
-                  "ability": {
-                    "$ref": "#/components/schemas/Ability"
+                  "name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "damage": {
+                    "type": "integer"
+                  },
+                  "typeId": {
+                    "type": "integer"
                   }
                 }
               }
@@ -172,7 +182,8 @@
               "schema": {
                 "required": [
                   "file",
-                  "ability"
+                  "name",
+                  "typeId"
                 ],
                 "type": "object",
                 "properties": {
@@ -180,8 +191,17 @@
                     "type": "string",
                     "format": "binary"
                   },
-                  "ability": {
-                    "$ref": "#/components/schemas/Ability"
+                  "name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "damage": {
+                    "type": "integer"
+                  },
+                  "typeId": {
+                    "type": "integer"
                   }
                 }
               }
@@ -1708,15 +1728,36 @@
         "additionalProperties": false
       },
       "CreateAbilityDto": {
+        "required": [
+          "name",
+          "typeId"
+        ],
         "type": "object",
         "properties": {
-          "ability": {
-            "$ref": "#/components/schemas/Ability"
+          "id": {
+            "type": "integer",
+            "format": "int32"
           },
           "file": {
             "type": "string",
             "format": "binary",
             "nullable": true
+          },
+          "name": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "damage": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "typeId": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
