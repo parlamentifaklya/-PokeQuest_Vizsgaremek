@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Cors;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -47,6 +48,7 @@ namespace PokeQuestApi_New.Controllers
             return Ok(res);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<Models.Type>> CreateType([FromForm] Models.Type type, IFormFile? img)
         {
@@ -81,6 +83,7 @@ namespace PokeQuestApi_New.Controllers
             return CreatedAtAction(nameof(GetType), new { id = newType.Id }, newType);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("Type-bulk-insert")]
         public async Task<ActionResult> TypeBulkInsert([FromBody] List<Models.Type> types)
         {
@@ -95,6 +98,7 @@ namespace PokeQuestApi_New.Controllers
             return Ok();
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteType(int id)
         {
@@ -111,6 +115,7 @@ namespace PokeQuestApi_New.Controllers
             return NoContent();
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateType(int id, [FromForm] Models.Type updatedType, IFormFile? img)
         {

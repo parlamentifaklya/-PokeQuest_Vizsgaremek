@@ -55,7 +55,7 @@ class _LoginScreenState extends State<LoginScreen> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => AdminPanelScreen(token: token),
+            builder: (context) => AdminPanelScreen(token: token), // Passing token here
           ),
         );
       } else {

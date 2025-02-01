@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using PokeQuestApi_New.Data;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Authorization;
+using System.Diagnostics.Eventing.Reader;
 
 namespace PokeQuestApi_New.Controllers
 {
@@ -226,24 +227,28 @@ namespace PokeQuestApi_New.Controllers
                 Email = model.Email
             };
 
+            // Create the user first
             var result = await _userManager.CreateAsync(newAdmin, model.Password);
 
             if (result.Succeeded)
             {
-                // Assign the "Admin" role to the new user
+                // Automatically assign the "Admin" role to the new user
                 var roleResult = await _userManager.AddToRoleAsync(newAdmin, "Admin");
 
                 if (roleResult.Succeeded)
                 {
+                    _context.SaveChangesAsync();
                     return Ok(new { Message = "Admin user created successfully!" });
                 }
                 else
                 {
-                    return BadRequest(new { Message = "Failed to assign role to the admin user", Errors = roleResult.Errors });
+                    return BadRequest(new { Message = "Failed to assign role to the admin user", Errors = roleResult.Errors.Select(e => e.Description) });
                 }
             }
-
-            return BadRequest(new { Message = "User creation failed", Errors = result.Errors });
+            else
+            {
+                return BadRequest(new { Message = "User creation failed", Errors = result.Errors.Select(e => e.Description) });
+            }
         }
 
         // Method to get the user's level from claims

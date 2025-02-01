@@ -3,6 +3,7 @@ import 'package:pokequest_adminpanel/services/api_service.dart';
 import 'package:jwt_decoder/jwt_decoder.dart'; // For checking token expiration
 import 'login_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'manage_types_screen.dart'; // Import the ManageTypesScreen
 
 class AdminPanelScreen extends StatefulWidget {
   final String token; // Token passed from the login screen
@@ -18,10 +19,10 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
   List<dynamic> _data = [];
   final ApiService _apiService = ApiService(); // Instance of ApiService
 
-  // Controllers for text fields
+  // Controllers for text fields to create admin
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _roleController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController(); // Add password controller
 
   @override
   void initState() {
@@ -54,7 +55,7 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
       setState(() {
         _data = users;
       });
-        } catch (e) {
+    } catch (e) {
       print('Error fetching data: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to load data')),
@@ -116,7 +117,7 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
 
   // Function to create a new admin
   Future<void> _createAdmin() async {
-    if (_nameController.text.isEmpty || _emailController.text.isEmpty || _roleController.text.isEmpty) {
+    if (_nameController.text.isEmpty || _emailController.text.isEmpty || _passwordController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('All fields are required')));
       return;
     }
@@ -124,7 +125,8 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
     Map<String, dynamic> newAdmin = {
       'name': _nameController.text,
       'email': _emailController.text,
-      'role': _roleController.text,
+      'role': 'Admin', // Role is fixed to 'Admin'
+      'password': _passwordController.text, // Use the entered password
     };
 
     setState(() {
@@ -144,17 +146,69 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
     });
   }
 
+  // Navigate to ManageTypesScreen
+  void _navigateToManageTypesScreen() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ManageTypesScreen(token: widget.token), // Pass token to ManageTypesScreen
+      ),
+    );
+  }
+
+  // Log out user
+  Future<void> _logout() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove('jwt_token'); // Clear saved token
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => LoginScreen()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Admin Panel')),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.blue,
+              ),
+              child: Text(
+                'Admin Panel',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                ),
+              ),
+            ),
+            ListTile(
+              title: Text('Manage Users'),
+              onTap: () {
+                Navigator.pushReplacementNamed(context, '/manageUsers', arguments: widget.token);
+              },
+            ),
+            ListTile(
+              title: Text('Manage Types'),
+              onTap: _navigateToManageTypesScreen, // Navigate to ManageTypesScreen
+            ),
+            ListTile(
+              title: Text('Logout'),
+              onTap: _logout,
+            ),
+          ],
+        ),
+      ),
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
           : ListView.builder(
               itemCount: _data.length,
               itemBuilder: (context, index) {
                 var user = _data[index];
-                
                 String userName = user['userName'] ?? 'Unknown';
                 String email = user['email'] ?? 'Unknown';
                 String roles = (user['roles'] != null && user['roles'] is List && user['roles'].isNotEmpty)
@@ -171,16 +225,16 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
                         icon: Icon(Icons.edit),
                         onPressed: () {
                           Map<String, dynamic> updatedUser = {
-                            'userName': 'Updated Name', 
+                            'userName': 'Updated Name',
                             'email': email,
                           };
-                          _updateUser(user['id'], updatedUser); 
+                          _updateUser(user['id'], updatedUser);
                         },
                       ),
                       IconButton(
                         icon: Icon(Icons.delete),
                         onPressed: () {
-                          _deleteUser(user['id']); 
+                          _deleteUser(user['id']);
                         },
                       ),
                     ],
@@ -207,8 +261,9 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
                       decoration: InputDecoration(labelText: 'Email'),
                     ),
                     TextField(
-                      controller: _roleController,
-                      decoration: InputDecoration(labelText: 'Role'),
+                      controller: _passwordController,
+                      decoration: InputDecoration(labelText: 'Password'), // Password input
+                      obscureText: true, // Hide password text
                     ),
                     SizedBox(height: 20),
                     ElevatedButton(

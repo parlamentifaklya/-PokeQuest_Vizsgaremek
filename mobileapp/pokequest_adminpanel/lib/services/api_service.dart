@@ -26,6 +26,24 @@ class ApiService {
     }
   }
 
+  // Function to get all users
+  Future<List<dynamic>> getUsers(String token) async {
+    final url = Uri.parse('$baseUrl/User/GetUsers');
+    final response = await http.get(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token', // Pass the JWT token here
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body); // Return the list of users
+    } else {
+      print('Error: ${response.body}');
+      return [];
+    }
+  }
+
   // Function to update user details (accept String userId)
   Future<bool> updateUser(String token, String userId, Map<String, dynamic> updatedUser) async {
     // Remove 'Inventory' from the updated user object to avoid validation errors
@@ -60,7 +78,7 @@ class ApiService {
     );
 
     if (response.statusCode == 200) {
-      return true;
+      return true; // Successfully deleted
     } else {
       print('Error: ${response.body}');
       return false;
@@ -87,9 +105,9 @@ class ApiService {
     }
   }
 
-  // Function to get all users
-  Future<List<dynamic>> getUsers(String token) async {
-    final url = Uri.parse('$baseUrl/User/GetUsers');
+  // Function to get all types
+  Future<List<dynamic>> getAllTypes(String token) async {
+    final url = Uri.parse('$baseUrl/Type/GetAllTypes');
     final response = await http.get(
       url,
       headers: {
@@ -98,13 +116,80 @@ class ApiService {
     );
 
     if (response.statusCode == 200) {
-      return json.decode(response.body);
-    } else if (response.statusCode == 401 || response.statusCode == 403) {
-      print('Unauthorized or Forbidden: ${response.body}');
-      throw Exception('Unauthorized or Forbidden');
+      return json.decode(response.body); // Return the list of types
     } else {
       print('Error: ${response.body}');
       return [];
+    }
+  }
+
+  // Function to create a type
+  Future<bool> createType(String token, Map<String, dynamic> typeData, {required String imgPath}) async {
+    final url = Uri.parse('$baseUrl/Type/CreateType');
+    var request = http.MultipartRequest('POST', url)
+      ..headers['Authorization'] = 'Bearer $token';
+
+    // Add the form fields
+    request.fields['Name'] = typeData['Name'] ?? '';
+
+    // If there's an image, attach it to the request
+    if (imgPath.isNotEmpty) {
+      request.files.add(await http.MultipartFile.fromPath('img', imgPath));
+    }
+
+    // Send the request
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
+
+    if (response.statusCode == 201) {
+      return true; // Successfully created
+    } else {
+      print('Error: ${response.body}');
+      return false;
+    }
+  }
+
+  // Function to delete a type
+  Future<bool> deleteType(String token, int id) async {
+    final url = Uri.parse('$baseUrl/Type/DeleteType/$id');
+    final response = await http.delete(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token', // Pass the JWT token here
+      },
+    );
+
+    if (response.statusCode == 204) {
+      return true; // Successfully deleted
+    } else {
+      print('Error: ${response.body}');
+      return false;
+    }
+  }
+
+  // Function to update a type
+  Future<bool> updateType(String token, int id, Map<String, dynamic> updatedTypeData, {required String imgPath}) async {
+    final url = Uri.parse('$baseUrl/Type/UpdateType/$id');
+    var request = http.MultipartRequest('PUT', url)
+      ..headers['Authorization'] = 'Bearer $token';
+
+    // Add the form fields
+    request.fields['Name'] = updatedTypeData['Name'] ?? '';
+
+    // If there's an image, attach it to the request
+    if (imgPath.isNotEmpty) {
+      request.files.add(await http.MultipartFile.fromPath('img', imgPath));
+    }
+
+    // Send the request
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
+
+    if (response.statusCode == 204) {
+      return true; // Successfully updated
+    } else {
+      print('Error: ${response.body}');
+      return false;
     }
   }
 
