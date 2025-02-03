@@ -1,0 +1,7 @@
+Dark 13
+Electric 14
+Fire 15
+Physic 16
+Rock 17
+Water 18
+
