@@ -53,13 +53,16 @@ class _ManageTypesScreenState extends State<ManageTypesScreen> {
     });
   }
 
-  // Normalize image paths to use forward slashes, but do not change .jfif to .jpg
+  // Normalize image paths to use forward slashes, and ensure a valid URL format
   String _normalizePath(String path) {
-    // Replace backslashes with forward slashes
-    path = path.replaceAll("\\", "/");
-    return path;
+    Uri? uri = Uri.tryParse(path);
+    if (uri == null) {
+      print('Invalid URL: $path');
+      return '';  // Return an empty string if the URL is invalid
+    }
+    // If the URL is relative, ensure it's a fully qualified URL.
+    return uri.isAbsolute ? uri.toString() : 'http://localhost:5130/api/$path';
   }
-
 
   // Pick an image for the type
   Future<void> _pickImage() async {
@@ -200,11 +203,16 @@ class _ManageTypesScreenState extends State<ManageTypesScreen> {
                   child: Text('Pick Image'),
                 ),
                 _image != null
-                    ? Image.file(
-                        File(_image!.path),
-                        height: 100,
-                        width: 100,
-                        fit: BoxFit.cover,
+                    ? Container(
+                        width: 100,  // Set a fixed width
+                        height: 100,  // Set a fixed height (making it a square)
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),  // Optional: rounded corners
+                          image: DecorationImage(
+                            image: FileImage(File(_image!.path)),
+                            fit: BoxFit.cover,  // Ensures the image covers the container area without stretching
+                          ),
+                        ),
                       )
                     : Container(),
                 ElevatedButton(
@@ -217,10 +225,21 @@ class _ManageTypesScreenState extends State<ManageTypesScreen> {
                     itemBuilder: (context, index) {
                       var type = _types[index];
                       String imagePath = _normalizePath(type['img'] ?? '');  // Normalize path and replace .jfif with .jpg
+                      print('Image Path: $imagePath');  // Log image URL for debugging
                       return ListTile(
                         title: Text(type['name'] ?? 'Unknown Type'),
                         subtitle: imagePath.isNotEmpty
-                            ? Image.network(imagePath)
+                            ? Container(
+                                width: 100,  // Set fixed width for the image
+                                height: 100,  // Set fixed height for the image (making it a square)
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8),  // Optional: rounded corners
+                                  image: DecorationImage(
+                                    image: NetworkImage(imagePath),
+                                    fit: BoxFit.cover,  // Ensures the image maintains a square shape and fills the space
+                                  ),
+                                ),
+                              )
                             : null,
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
