@@ -103,7 +103,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   // Logo or Icon
                   Icon(Icons.lock, size: 100, color: Colors.white),
                   SizedBox(height: 20),
-                  
+
                   // Email TextField
                   TextField(
                     controller: _emailController,
@@ -151,7 +151,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       : ElevatedButton(
                           onPressed: _login,
                           style: ElevatedButton.styleFrom(
-                            padding: EdgeInsets.symmetric(vertical: 15, horizontal: 50), 
+                            padding: EdgeInsets.symmetric(vertical: 15, horizontal: 50),
                             backgroundColor: Colors.blueAccent, // Button color
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30),

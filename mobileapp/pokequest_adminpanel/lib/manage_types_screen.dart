@@ -6,7 +6,6 @@ import 'package:image_picker/image_picker.dart'; // For image picking
 import 'package:http/http.dart' as http;
 import 'package:mime/mime.dart'; // To determine MIME type of image
 import 'package:pokequest_adminpanel/services/api_service.dart';
-import 'dart:html' as html; // For blob conversion in Flutter web
 
 class ManageTypesScreen extends StatefulWidget {
   final String token; // Token received from AdminPanelScreen
@@ -24,7 +23,7 @@ class _ManageTypesScreenState extends State<ManageTypesScreen> {
   final _picker = ImagePicker();
 
   final TextEditingController _nameController = TextEditingController();
-  XFile? _image;
+  dynamic _image; // Allow both File types
 
   @override
   void initState() {
@@ -54,17 +53,7 @@ class _ManageTypesScreenState extends State<ManageTypesScreen> {
     });
   }
 
-  // Normalize image paths to use forward slashes, and ensure a valid URL format
-  String _normalizePath(String path) {
-    Uri? uri = Uri.tryParse(path);
-    if (uri == null) {
-      print('Invalid URL: $path');
-      return ''; // Return an empty string if the URL is invalid
-    }
-    return uri.isAbsolute ? uri.toString() : 'http://localhost:5130/api/$path';
-  }
-
-  // Pick an image for the type
+  // Pick an image for the type (Mobile support)
   Future<void> _pickImage() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
@@ -72,38 +61,6 @@ class _ManageTypesScreenState extends State<ManageTypesScreen> {
         _image = pickedFile;
       });
     }
-  }
-
-  // Convert Blob URL to a MultipartFile (for Flutter Web)
-  Future<http.MultipartFile?> convertBlobUrlToMultipartFile(String blobUrl) async {
-    try {
-      final response = await html.window.fetch(blobUrl);
-      final blob = await response.blob();
-      final reader = html.FileReader();
-      final completer = Completer<http.MultipartFile?>();
-
-      reader.onLoadEnd.listen((event) async {
-        final file = html.Blob([reader.result]);
-        final url = html.Url.createObjectUrlFromBlob(file);
-        final byteArray = await _fetchFileBytes(url);
-        final mimeType = lookupMimeType(url)!;
-
-        completer.complete(http.MultipartFile.fromBytes('img', byteArray,
-            contentType: MediaType.parse(mimeType)));
-      });
-
-      reader.readAsArrayBuffer(blob);
-      return completer.future;
-    } catch (e) {
-      print("Error converting Blob URL to MultipartFile: $e");
-      return null;
-    }
-  }
-
-  // Helper function to fetch byte array from a Blob URL
-  Future<List<int>> _fetchFileBytes(String url) async {
-    final response = await http.get(Uri.parse(url));
-    return response.bodyBytes;
   }
 
   // Create a new type
@@ -132,26 +89,15 @@ class _ManageTypesScreenState extends State<ManageTypesScreen> {
       // Add the name parameter
       request.fields['name'] = _nameController.text;
 
-      // Check if the image is a blob URL or a file path
-      if (_image!.path.startsWith('blob:')) {
-        // Convert Blob URL to MultipartFile
-        var multipartFile = await convertBlobUrlToMultipartFile(_image!.path);
-        if (multipartFile == null) {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text('Failed to convert Blob URL')));
-          return;
-        }
-
-        // Add the MultipartFile to the request
-        request.files.add(multipartFile);
-      } else {
-        // Regular file-based upload for mobile (no need to convert)
-        var imageFile = File(_image!.path);
-        var mimeType = lookupMimeType(_image!.path)!;
-        var multipartFile = await http.MultipartFile.fromPath('img', _image!.path,
-            contentType: MediaType.parse(mimeType));
-        request.files.add(multipartFile);
-      }
+      // Mobile platform: use File from image_picker
+      var imageFile = File(_image!.path);
+      var mimeType = lookupMimeType(_image!.path)!;
+      var multipartFile = await http.MultipartFile.fromPath(
+        'img',
+        _image!.path,
+        contentType: MediaType.parse(mimeType),
+      );
+      request.files.add(multipartFile);
 
       var response = await request.send();
       if (response.statusCode == 200) {
@@ -202,26 +148,15 @@ class _ManageTypesScreenState extends State<ManageTypesScreen> {
       // Add the name parameter
       request.fields['name'] = _nameController.text;
 
-      // Check if the image is a blob URL or a file path
-      if (_image!.path.startsWith('blob:')) {
-        // Convert Blob URL to MultipartFile
-        var multipartFile = await convertBlobUrlToMultipartFile(_image!.path);
-        if (multipartFile == null) {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text('Failed to convert Blob URL')));
-          return;
-        }
-
-        // Add the MultipartFile to the request
-        request.files.add(multipartFile);
-      } else {
-        // Regular file-based upload for mobile (no need to convert)
-        var imageFile = File(_image!.path);
-        var mimeType = lookupMimeType(_image!.path)!;
-        var multipartFile = await http.MultipartFile.fromPath('img', _image!.path,
-            contentType: MediaType.parse(mimeType));
-        request.files.add(multipartFile);
-      }
+      // Mobile platform: use File from image_picker
+      var imageFile = File(_image!.path);
+      var mimeType = lookupMimeType(_image!.path)!;
+      var multipartFile = await http.MultipartFile.fromPath(
+        'img',
+        _image!.path,
+        contentType: MediaType.parse(mimeType),
+      );
+      request.files.add(multipartFile);
 
       var response = await request.send();
       if (response.statusCode == 200) {
@@ -267,6 +202,15 @@ class _ManageTypesScreenState extends State<ManageTypesScreen> {
     });
   }
 
+  // Build Image Widget (Handles Mobile)
+  Widget _buildImageDisplay() {
+    if (_image == null) {
+      return Container();
+    } else {
+      return Image.file(File(_image!.path)); // Mobile image
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -300,25 +244,14 @@ class _ManageTypesScreenState extends State<ManageTypesScreen> {
                     ),
                   ),
                   SizedBox(height: 16),
-                  if (_image != null)
-                    Container(
-                      width: 100,
-                      height: 100,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        image: DecorationImage(
-                          image: FileImage(File(_image!.path)),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
+                  _buildImageDisplay(), // Display the image
                   SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: _createType,
-                    child: Text('Create Type'),
                     style: ElevatedButton.styleFrom(
                       padding: EdgeInsets.symmetric(vertical: 12),
                     ),
+                    child: Text('Create Type'),
                   ),
                   SizedBox(height: 16),
                   // Display types in a single row (one column)
@@ -327,7 +260,6 @@ class _ManageTypesScreenState extends State<ManageTypesScreen> {
                       scrollDirection: Axis.horizontal,
                       child: Row(
                         children: _types.map((type) {
-                          String imagePath = _normalizePath(type['img'] ?? '');
                           return Container(
                             width: 200, // Width for each card
                             margin: EdgeInsets.symmetric(horizontal: 8),
@@ -336,14 +268,7 @@ class _ManageTypesScreenState extends State<ManageTypesScreen> {
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  imagePath.isNotEmpty
-                                      ? Image.network(
-                                          imagePath,
-                                          width: 150, // Larger image
-                                          height: 150,
-                                          fit: BoxFit.cover,
-                                        )
-                                      : Container(),
+                                  _buildImageDisplay(), // Display image (remove web handling)
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Text(

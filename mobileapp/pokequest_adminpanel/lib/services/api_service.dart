@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  final String baseUrl = 'http://localhost:5130/api'; // Replace with your actual API base URL
+  final String baseUrl = 'http://10.0.2.2:5130/api'; // Updated base URL for Android Emulator
 
   // Function to login and get JWT token
   Future<String?> login(String email, String password) async {

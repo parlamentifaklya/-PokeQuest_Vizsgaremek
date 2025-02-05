@@ -3,7 +3,7 @@ import 'package:pokequest_adminpanel/services/api_service.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'login_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'manage_types_screen.dart'; 
+import 'manage_types_screen.dart';
 
 class AdminPanelScreen extends StatefulWidget {
   final String token;
@@ -34,6 +34,7 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
       _isLoading = true;
     });
 
+    // Check token expiration
     if (isTokenExpired(widget.token)) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Session expired, please log in again')),
@@ -50,6 +51,7 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
     try {
       final users = await _apiService.getUsers(widget.token);
       setState(() {
+        // Filter out users with 'Admin' role
         _data = users.where((user) {
           return !(user['roles'] != null && user['roles'].contains('Admin'));
         }).toList();
@@ -204,48 +206,48 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
           : ListView.builder(
-              itemCount: _data.length,
-              itemBuilder: (context, index) {
-                var user = _data[index];
-                String userName = user['userName'] ?? 'Unknown';
-                String email = user['email'] ?? 'Unknown';
-                String roles = (user['roles'] != null && user['roles'] is List && user['roles'].isNotEmpty)
-                    ? user['roles'].join(', ')
-                    : 'Unknown';
+        itemCount: _data.length,
+        itemBuilder: (context, index) {
+          var user = _data[index];
+          String userName = user['userName'] ?? 'Unknown';
+          String email = user['email'] ?? 'Unknown';
+          String roles = (user['roles'] != null && user['roles'] is List && user['roles'].isNotEmpty)
+              ? user['roles'].join(', ')
+              : 'Unknown';
 
-                return Card(
-                  margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                  child: ListTile(
-                    leading: CircleAvatar(
-                      child: Text(userName[0].toUpperCase()), // Display first letter of the user's name
-                    ),
-                    title: Text(userName),
-                    subtitle: Text('Email: $email\nRoles: $roles'),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        IconButton(
-                          icon: Icon(Icons.edit),
-                          onPressed: () {
-                            Map<String, dynamic> updatedUser = {
-                              'userName': 'Updated Name',
-                              'email': email,
-                            };
-                            _updateUser(user['id'], updatedUser);
-                          },
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.delete),
-                          onPressed: () {
-                            _deleteUser(user['id']);
-                          },
-                        ),
-                      ],
-                    ),
+          return Card(
+            margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+            child: ListTile(
+              leading: CircleAvatar(
+                child: Text(userName[0].toUpperCase()), // Display first letter of the user's name
+              ),
+              title: Text(userName),
+              subtitle: Text('Email: $email\nRoles: $roles'),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.edit),
+                    onPressed: () {
+                      Map<String, dynamic> updatedUser = {
+                        'userName': 'Updated Name',
+                        'email': email,
+                      };
+                      _updateUser(user['id'], updatedUser);
+                    },
                   ),
-                );
-              },
+                  IconButton(
+                    icon: Icon(Icons.delete),
+                    onPressed: () {
+                      _deleteUser(user['id']);
+                    },
+                  ),
+                ],
+              ),
             ),
+          );
+        },
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showModalBottomSheet(
