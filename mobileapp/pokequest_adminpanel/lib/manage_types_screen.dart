@@ -1,7 +1,12 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:pokequest_adminpanel/services/api_service.dart';
+import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart'; // For image picking
+import 'package:http/http.dart' as http;
+import 'package:mime/mime.dart'; // To determine MIME type of image
+import 'package:pokequest_adminpanel/services/api_service.dart';
+import 'dart:html' as html; // For blob conversion in Flutter web
 
 class ManageTypesScreen extends StatefulWidget {
   final String token; // Token received from AdminPanelScreen
@@ -18,10 +23,7 @@ class _ManageTypesScreenState extends State<ManageTypesScreen> {
   final ApiService _apiService = ApiService();
   final _picker = ImagePicker();
 
-  // Controllers for type name
   final TextEditingController _nameController = TextEditingController();
-
-  // Variable to hold picked image
   XFile? _image;
 
   @override
@@ -37,15 +39,14 @@ class _ManageTypesScreenState extends State<ManageTypesScreen> {
     });
 
     try {
-      final types = await _apiService.getAllTypes(widget.token); // Fetch all types using the token
+      final types = await _apiService.getAllTypes(widget.token);
       setState(() {
         _types = types;
       });
     } catch (e) {
       print('Error fetching types: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load types')),
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Failed to load types')));
     }
 
     setState(() {
@@ -58,9 +59,8 @@ class _ManageTypesScreenState extends State<ManageTypesScreen> {
     Uri? uri = Uri.tryParse(path);
     if (uri == null) {
       print('Invalid URL: $path');
-      return '';  // Return an empty string if the URL is invalid
+      return ''; // Return an empty string if the URL is invalid
     }
-    // If the URL is relative, ensure it's a fully qualified URL.
     return uri.isAbsolute ? uri.toString() : 'http://localhost:5130/api/$path';
   }
 
@@ -68,30 +68,55 @@ class _ManageTypesScreenState extends State<ManageTypesScreen> {
   Future<void> _pickImage() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
-      final fileExtension = pickedFile.path.split('.').last.toLowerCase();
-      // Check if the image extension is valid (JPG or PNG)
-      if (fileExtension == 'jpg' || fileExtension == 'jpeg' || fileExtension == 'png') {
-        setState(() {
-          _image = pickedFile;
-        });
-      } else {
-        // Show error message if the file is not JPG or PNG
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Only JPG, JPEG, and PNG images are allowed')),
-        );
-      }
+      setState(() {
+        _image = pickedFile;
+      });
     }
+  }
+
+  // Convert Blob URL to a MultipartFile (for Flutter Web)
+  Future<http.MultipartFile?> convertBlobUrlToMultipartFile(String blobUrl) async {
+    try {
+      final response = await html.window.fetch(blobUrl);
+      final blob = await response.blob();
+      final reader = html.FileReader();
+      final completer = Completer<http.MultipartFile?>();
+
+      reader.onLoadEnd.listen((event) async {
+        final file = html.Blob([reader.result]);
+        final url = html.Url.createObjectUrlFromBlob(file);
+        final byteArray = await _fetchFileBytes(url);
+        final mimeType = lookupMimeType(url)!;
+
+        completer.complete(http.MultipartFile.fromBytes('img', byteArray,
+            contentType: MediaType.parse(mimeType)));
+      });
+
+      reader.readAsArrayBuffer(blob);
+      return completer.future;
+    } catch (e) {
+      print("Error converting Blob URL to MultipartFile: $e");
+      return null;
+    }
+  }
+
+  // Helper function to fetch byte array from a Blob URL
+  Future<List<int>> _fetchFileBytes(String url) async {
+    final response = await http.get(Uri.parse(url));
+    return response.bodyBytes;
   }
 
   // Create a new type
   Future<void> _createType() async {
     if (_nameController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Name is required')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Name is required')));
       return;
     }
 
     if (_image == null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Image is required')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Image is required')));
       return;
     }
 
@@ -100,24 +125,120 @@ class _ManageTypesScreenState extends State<ManageTypesScreen> {
     });
 
     try {
-      bool success = await _apiService.createType(
-        widget.token,
-        {'name': _nameController.text},
-        imgPath: _image!.path, // Pass the image path if selected
-      );
+      var uri = Uri.parse("http://localhost:5130/api/Type/CreateType");
+      var request = http.MultipartRequest('POST', uri);
+      request.headers['Authorization'] = 'Bearer ${widget.token}';
 
-      if (success) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Type created successfully')));
+      // Add the name parameter
+      request.fields['name'] = _nameController.text;
+
+      // Check if the image is a blob URL or a file path
+      if (_image!.path.startsWith('blob:')) {
+        // Convert Blob URL to MultipartFile
+        var multipartFile = await convertBlobUrlToMultipartFile(_image!.path);
+        if (multipartFile == null) {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text('Failed to convert Blob URL')));
+          return;
+        }
+
+        // Add the MultipartFile to the request
+        request.files.add(multipartFile);
+      } else {
+        // Regular file-based upload for mobile (no need to convert)
+        var imageFile = File(_image!.path);
+        var mimeType = lookupMimeType(_image!.path)!;
+        var multipartFile = await http.MultipartFile.fromPath('img', _image!.path,
+            contentType: MediaType.parse(mimeType));
+        request.files.add(multipartFile);
+      }
+
+      var response = await request.send();
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Type created successfully')));
         _fetchTypes(); // Refresh the list
         _nameController.clear();
         setState(() {
           _image = null;
         });
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to create type')));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Failed to create type')));
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Error: $e')));
+    }
+
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+  // Update an existing type
+  Future<void> _updateType(int typeId) async {
+    if (_nameController.text.isEmpty) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Name is required')));
+      return;
+    }
+
+    if (_image == null) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Image is required')));
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      var uri = Uri.parse("http://localhost:5130/api/Type/UpdateType/$typeId");
+      var request = http.MultipartRequest('POST', uri);
+      request.headers['Authorization'] = 'Bearer ${widget.token}';
+
+      // Add the name parameter
+      request.fields['name'] = _nameController.text;
+
+      // Check if the image is a blob URL or a file path
+      if (_image!.path.startsWith('blob:')) {
+        // Convert Blob URL to MultipartFile
+        var multipartFile = await convertBlobUrlToMultipartFile(_image!.path);
+        if (multipartFile == null) {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text('Failed to convert Blob URL')));
+          return;
+        }
+
+        // Add the MultipartFile to the request
+        request.files.add(multipartFile);
+      } else {
+        // Regular file-based upload for mobile (no need to convert)
+        var imageFile = File(_image!.path);
+        var mimeType = lookupMimeType(_image!.path)!;
+        var multipartFile = await http.MultipartFile.fromPath('img', _image!.path,
+            contentType: MediaType.parse(mimeType));
+        request.files.add(multipartFile);
+      }
+
+      var response = await request.send();
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Type updated successfully')));
+        _fetchTypes(); // Refresh the list
+        _nameController.clear();
+        setState(() {
+          _image = null;
+        });
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Failed to update type')));
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Error: $e')));
     }
 
     setState(() {
@@ -131,51 +252,14 @@ class _ManageTypesScreenState extends State<ManageTypesScreen> {
       _isLoading = true;
     });
 
-    bool success = await _apiService.deleteType(widget.token, typeId); // Use token here for deletion
+    bool success = await _apiService.deleteType(widget.token, typeId);
     if (success) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Type deleted successfully')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Type deleted successfully')));
       _fetchTypes(); // Refresh the list
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to delete type')));
-    }
-
-    setState(() {
-      _isLoading = false;
-    });
-  }
-
-  // Update an existing type
-  Future<void> _updateType(int typeId) async {
-    if (_nameController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Name is required')));
-      return;
-    }
-
-    if (_image == null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Image is required')));
-      return;
-    }
-
-    setState(() {
-      _isLoading = true;
-    });
-
-    bool success = await _apiService.updateType(
-      widget.token, // Use the token here
-      typeId,
-      {'name': _nameController.text},
-      imgPath: _image!.path, // Pass image path if selected
-    );
-
-    if (success) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Type updated successfully')));
-      _fetchTypes(); // Refresh the list
-      _nameController.clear();
-      setState(() {
-        _image = null;
-      });
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to update type')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Failed to delete type')));
     }
 
     setState(() {
@@ -189,85 +273,115 @@ class _ManageTypesScreenState extends State<ManageTypesScreen> {
       appBar: AppBar(title: Text('Manage Types')),
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
-          : Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: TextField(
+          : Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Manage Types',
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
+                  SizedBox(height: 16),
+                  TextField(
                     controller: _nameController,
-                    decoration: InputDecoration(labelText: 'Type Name'),
+                    decoration: InputDecoration(
+                      labelText: 'Type Name',
+                      border: OutlineInputBorder(),
+                    ),
                   ),
-                ),
-                ElevatedButton(
-                  onPressed: _pickImage,
-                  child: Text('Pick Image'),
-                ),
-                _image != null
-                    ? Container(
-                        width: 100,  // Set a fixed width
-                        height: 100,  // Set a fixed height (making it a square)
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),  // Optional: rounded corners
-                          image: DecorationImage(
-                            image: FileImage(File(_image!.path)),
-                            fit: BoxFit.cover,  // Ensures the image covers the container area without stretching
-                          ),
+                  SizedBox(height: 16),
+                  ElevatedButton.icon(
+                    onPressed: _pickImage,
+                    icon: Icon(Icons.image),
+                    label: Text('Pick Image'),
+                    style: ElevatedButton.styleFrom(
+                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                  if (_image != null)
+                    Container(
+                      width: 100,
+                      height: 100,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        image: DecorationImage(
+                          image: FileImage(File(_image!.path)),
+                          fit: BoxFit.cover,
                         ),
-                      )
-                    : Container(),
-                ElevatedButton(
-                  onPressed: _createType,
-                  child: Text('Create Type'),
-                ),
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: _types.length,
-                    itemBuilder: (context, index) {
-                      var type = _types[index];
-                      String imagePath = _normalizePath(type['img'] ?? '');  // Normalize path and replace .jfif with .jpg
-                      print('Image Path: $imagePath');  // Log image URL for debugging
-                      return ListTile(
-                        title: Text(type['name'] ?? 'Unknown Type'),
-                        subtitle: imagePath.isNotEmpty
-                            ? Container(
-                                width: 100,  // Set fixed width for the image
-                                height: 100,  // Set fixed height for the image (making it a square)
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8),  // Optional: rounded corners
-                                  image: DecorationImage(
-                                    image: NetworkImage(imagePath),
-                                    fit: BoxFit.cover,  // Ensures the image maintains a square shape and fills the space
+                      ),
+                    ),
+                  SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: _createType,
+                    child: Text('Create Type'),
+                    style: ElevatedButton.styleFrom(
+                      padding: EdgeInsets.symmetric(vertical: 12),
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                  // Display types in a single row (one column)
+                  Expanded(
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: _types.map((type) {
+                          String imagePath = _normalizePath(type['img'] ?? '');
+                          return Container(
+                            width: 200, // Width for each card
+                            margin: EdgeInsets.symmetric(horizontal: 8),
+                            child: Card(
+                              elevation: 4,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  imagePath.isNotEmpty
+                                      ? Image.network(
+                                          imagePath,
+                                          width: 150, // Larger image
+                                          height: 150,
+                                          fit: BoxFit.cover,
+                                        )
+                                      : Container(),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      type['name'] ?? 'Unknown Type',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
                                   ),
-                                ),
-                              )
-                            : null,
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              icon: Icon(Icons.edit),
-                              onPressed: () {
-                                _nameController.text = type['name'] ?? '';
-                                setState(() {
-                                  _image = null;
-                                });
-                                // You can open a dialog or just directly update the type
-                                _updateType(type['id']);
-                              },
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      IconButton(
+                                        icon: Icon(Icons.edit),
+                                        onPressed: () {
+                                          // Handle edit
+                                          _updateType(type['id']);
+                                        },
+                                      ),
+                                      IconButton(
+                                        icon: Icon(Icons.delete),
+                                        onPressed: () {
+                                          // Handle delete
+                                          _deleteType(type['id']);
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
-                            IconButton(
-                              icon: Icon(Icons.delete),
-                              onPressed: () {
-                                _deleteType(type['id']);
-                              },
-                            ),
-                          ],
-                        ),
-                      );
-                    },
+                          );
+                        }).toList(),
+                      ),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
     );
   }

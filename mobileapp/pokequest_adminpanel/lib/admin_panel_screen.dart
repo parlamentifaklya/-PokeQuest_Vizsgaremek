@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:pokequest_adminpanel/services/api_service.dart';
-import 'package:jwt_decoder/jwt_decoder.dart'; // For checking token expiration
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'login_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'manage_types_screen.dart'; // Import the ManageTypesScreen
+import 'manage_types_screen.dart'; 
 
 class AdminPanelScreen extends StatefulWidget {
-  final String token; // Token passed from the login screen
+  final String token;
 
-  const AdminPanelScreen({super.key, required this.token}); // Receiving the token
+  const AdminPanelScreen({super.key, required this.token});
 
   @override
   _AdminPanelScreenState createState() => _AdminPanelScreenState();
@@ -17,17 +17,16 @@ class AdminPanelScreen extends StatefulWidget {
 class _AdminPanelScreenState extends State<AdminPanelScreen> {
   bool _isLoading = false;
   List<dynamic> _data = [];
-  final ApiService _apiService = ApiService(); // Instance of ApiService
+  final ApiService _apiService = ApiService();
 
-  // Controllers for text fields to create admin
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController(); // Add password controller
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _fetchProtectedData(); // Fetch protected data after initialization
+    _fetchProtectedData();
   }
 
   Future<void> _fetchProtectedData() async {
@@ -35,13 +34,12 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
       _isLoading = true;
     });
 
-    // Check if token is expired before making the request
     if (isTokenExpired(widget.token)) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Session expired, please log in again')),
       );
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.remove('jwt_token'); // Clear saved token
+      prefs.remove('jwt_token');
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => LoginScreen()),
@@ -50,16 +48,14 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
     }
 
     try {
-      final users = await _apiService.getUsers(widget.token); // Using getUsers method
-
+      final users = await _apiService.getUsers(widget.token);
       setState(() {
-        _data = users;
+        _data = users.where((user) {
+          return !(user['roles'] != null && user['roles'].contains('Admin'));
+        }).toList();
       });
     } catch (e) {
-      print('Error fetching data: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load data')),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to load data')));
     }
 
     setState(() {
@@ -68,25 +64,20 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
   }
 
   bool isTokenExpired(String token) {
-    return JwtDecoder.isExpired(token); // Using jwt_decoder package to check token expiry
+    return JwtDecoder.isExpired(token);
   }
 
-  // Function to update a user
   Future<void> _updateUser(String userId, Map<String, dynamic> updatedUser) async {
     setState(() {
       _isLoading = true;
     });
 
-    // Ensure the Inventory field is present (either empty or with existing data)
-    updatedUser['Inventory'] = updatedUser['Inventory'] ?? {
-      'OwnedFeylings': [],
-      'UserItems': [],
-    };
+    updatedUser['Inventory'] = updatedUser['Inventory'] ?? {'OwnedFeylings': [], 'UserItems': []};
 
     bool success = await _apiService.updateUser(widget.token, userId, updatedUser);
     if (success) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('User updated successfully')));
-      _fetchProtectedData(); // Refresh data after update
+      _fetchProtectedData();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to update user')));
     }
@@ -96,7 +87,6 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
     });
   }
 
-  // Function to delete a user
   Future<void> _deleteUser(String userId) async {
     setState(() {
       _isLoading = true;
@@ -105,7 +95,7 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
     bool success = await _apiService.deleteUser(widget.token, userId);
     if (success) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('User deleted successfully')));
-      _fetchProtectedData(); // Refresh data after deletion
+      _fetchProtectedData();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to delete user')));
     }
@@ -115,7 +105,6 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
     });
   }
 
-  // Function to create a new admin
   Future<void> _createAdmin() async {
     if (_nameController.text.isEmpty || _emailController.text.isEmpty || _passwordController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('All fields are required')));
@@ -125,8 +114,8 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
     Map<String, dynamic> newAdmin = {
       'name': _nameController.text,
       'email': _emailController.text,
-      'role': 'Admin', // Role is fixed to 'Admin'
-      'password': _passwordController.text, // Use the entered password
+      'role': 'Admin',
+      'password': _passwordController.text,
     };
 
     setState(() {
@@ -136,7 +125,7 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
     bool success = await _apiService.createAdmin(widget.token, newAdmin);
     if (success) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Admin created successfully')));
-      _fetchProtectedData(); // Refresh data after creating admin
+      _fetchProtectedData();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to create admin')));
     }
@@ -146,20 +135,18 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
     });
   }
 
-  // Navigate to ManageTypesScreen
   void _navigateToManageTypesScreen() {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ManageTypesScreen(token: widget.token), // Pass token to ManageTypesScreen
+        builder: (context) => ManageTypesScreen(token: widget.token),
       ),
     );
   }
 
-  // Log out user
   Future<void> _logout() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.remove('jwt_token'); // Clear saved token
+    prefs.remove('jwt_token');
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => LoginScreen()),
@@ -169,7 +156,15 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Admin Panel')),
+      appBar: AppBar(
+        title: Text('Admin Panel'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.exit_to_app),
+            onPressed: _logout,
+          ),
+        ],
+      ),
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
@@ -188,16 +183,19 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
             ),
             ListTile(
               title: Text('Manage Users'),
+              leading: Icon(Icons.group),
               onTap: () {
                 Navigator.pushReplacementNamed(context, '/manageUsers', arguments: widget.token);
               },
             ),
             ListTile(
               title: Text('Manage Types'),
-              onTap: _navigateToManageTypesScreen, // Navigate to ManageTypesScreen
+              leading: Icon(Icons.settings),
+              onTap: _navigateToManageTypesScreen,
             ),
             ListTile(
               title: Text('Logout'),
+              leading: Icon(Icons.logout),
               onTap: _logout,
             ),
           ],
@@ -215,29 +213,35 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
                     ? user['roles'].join(', ')
                     : 'Unknown';
 
-                return ListTile(
-                  title: Text(userName),
-                  subtitle: Text('Email: $email\nRoles: $roles'),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: Icon(Icons.edit),
-                        onPressed: () {
-                          Map<String, dynamic> updatedUser = {
-                            'userName': 'Updated Name',
-                            'email': email,
-                          };
-                          _updateUser(user['id'], updatedUser);
-                        },
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.delete),
-                        onPressed: () {
-                          _deleteUser(user['id']);
-                        },
-                      ),
-                    ],
+                return Card(
+                  margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      child: Text(userName[0].toUpperCase()), // Display first letter of the user's name
+                    ),
+                    title: Text(userName),
+                    subtitle: Text('Email: $email\nRoles: $roles'),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: Icon(Icons.edit),
+                          onPressed: () {
+                            Map<String, dynamic> updatedUser = {
+                              'userName': 'Updated Name',
+                              'email': email,
+                            };
+                            _updateUser(user['id'], updatedUser);
+                          },
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.delete),
+                          onPressed: () {
+                            _deleteUser(user['id']);
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                 );
               },
@@ -262,8 +266,8 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
                     ),
                     TextField(
                       controller: _passwordController,
-                      decoration: InputDecoration(labelText: 'Password'), // Password input
-                      obscureText: true, // Hide password text
+                      decoration: InputDecoration(labelText: 'Password'),
+                      obscureText: true,
                     ),
                     SizedBox(height: 20),
                     ElevatedButton(

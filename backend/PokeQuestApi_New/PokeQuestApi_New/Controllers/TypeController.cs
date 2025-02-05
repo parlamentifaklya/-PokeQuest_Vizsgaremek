@@ -48,7 +48,7 @@ namespace PokeQuestApi_New.Controllers
             return Ok(res);
         }
 
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<Models.Type>> CreateType([FromForm] Models.Type type, IFormFile? img)
         {

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 
 class ApiService {
@@ -6,7 +7,7 @@ class ApiService {
 
   // Function to login and get JWT token
   Future<String?> login(String email, String password) async {
-    final url = Uri.parse('$baseUrl/User/Login'); // Assuming the login endpoint
+    final url = Uri.parse('$baseUrl/User/Login');
 
     final response = await http.post(
       url,
@@ -16,10 +17,7 @@ class ApiService {
 
     if (response.statusCode == 200) {
       final responseData = json.decode(response.body);
-      return responseData['token']; // Extract token from response
-    } else if (response.statusCode == 401 || response.statusCode == 403) {
-      print('Unauthorized or Forbidden: ${response.body}');
-      return null; // Token might be invalid or expired
+      return responseData['token'];
     } else {
       print('Login failed: ${response.body}');
       return null;
@@ -67,24 +65,6 @@ class ApiService {
     }
   }
 
-  // Function to delete a user by userId
-  Future<bool> deleteUser(String token, String userId) async {
-    final url = Uri.parse('$baseUrl/User/DeleteUser/$userId');
-    final response = await http.delete(
-      url,
-      headers: {
-        'Authorization': 'Bearer $token', // Pass the JWT token here
-      },
-    );
-
-    if (response.statusCode == 200) {
-      return true; // Successfully deleted
-    } else {
-      print('Error: ${response.body}');
-      return false;
-    }
-  }
-
   // Function to create an admin
   Future<bool> createAdmin(String token, Map<String, dynamic> adminDetails) async {
     final url = Uri.parse('$baseUrl/User/CreateAdmin');
@@ -123,7 +103,7 @@ class ApiService {
     }
   }
 
-  // Function to create a type
+  // Function to create a type with image path
   Future<bool> createType(String token, Map<String, dynamic> typeData, {required String imgPath}) async {
     final url = Uri.parse('$baseUrl/Type/CreateType');
     var request = http.MultipartRequest('POST', url)
@@ -137,37 +117,41 @@ class ApiService {
       request.files.add(await http.MultipartFile.fromPath('img', imgPath));
     }
 
-    // Send the request
     final streamedResponse = await request.send();
     final response = await http.Response.fromStream(streamedResponse);
 
     if (response.statusCode == 201) {
-      return true; // Successfully created
+      return true;
     } else {
       print('Error: ${response.body}');
       return false;
     }
   }
 
-  // Function to delete a type
-  Future<bool> deleteType(String token, int id) async {
-    final url = Uri.parse('$baseUrl/Type/DeleteType/$id');
-    final response = await http.delete(
+  // Function to create a type with base64 image
+  Future<bool> createTypeWithBase64(String token, Map<String, dynamic> typeData, {required String base64Image}) async {
+    final url = Uri.parse('$baseUrl/Type/CreateType');
+    final response = await http.post(
       url,
       headers: {
-        'Authorization': 'Bearer $token', // Pass the JWT token here
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
       },
+      body: json.encode({
+        'Name': typeData['Name'] ?? '',
+        'Image': base64Image, // Send base64 image
+      }),
     );
 
-    if (response.statusCode == 204) {
-      return true; // Successfully deleted
+    if (response.statusCode == 201) {
+      return true;
     } else {
       print('Error: ${response.body}');
       return false;
     }
   }
 
-  // Function to update a type
+  // Function to update a type with image path
   Future<bool> updateType(String token, int id, Map<String, dynamic> updatedTypeData, {required String imgPath}) async {
     final url = Uri.parse('$baseUrl/Type/UpdateType/$id');
     var request = http.MultipartRequest('PUT', url)
@@ -181,16 +165,80 @@ class ApiService {
       request.files.add(await http.MultipartFile.fromPath('img', imgPath));
     }
 
-    // Send the request
     final streamedResponse = await request.send();
     final response = await http.Response.fromStream(streamedResponse);
 
     if (response.statusCode == 204) {
-      return true; // Successfully updated
+      return true;
     } else {
       print('Error: ${response.body}');
       return false;
     }
+  }
+
+  // Function to update a type with base64 image
+  Future<bool> updateTypeWithBase64(String token, int id, Map<String, dynamic> updatedTypeData, {required String base64Image}) async {
+    final url = Uri.parse('$baseUrl/Type/UpdateType/$id');
+    final response = await http.put(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: json.encode({
+        'Name': updatedTypeData['Name'] ?? '',
+        'Image': base64Image, // Send base64 image
+      }),
+    );
+
+    if (response.statusCode == 204) {
+      return true;
+    } else {
+      print('Error: ${response.body}');
+      return false;
+    }
+  }
+
+  // Function to delete a type
+  Future<bool> deleteType(String token, int id) async {
+    final url = Uri.parse('$baseUrl/Type/DeleteType/$id');
+    final response = await http.delete(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 204) {
+      return true;
+    } else {
+      print('Error: ${response.body}');
+      return false;
+    }
+  }
+
+  // Function to delete a user by userId
+  Future<bool> deleteUser(String token, String userId) async {
+    final url = Uri.parse('$baseUrl/User/DeleteUser/$userId');
+    final response = await http.delete(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 204) {
+      return true;
+    } else {
+      print('Error: ${response.body}');
+      return false;
+    }
+  }
+
+  // Helper function to convert image to base64
+  String encodeImageToBase64(File imageFile) {
+    List<int> imageBytes = imageFile.readAsBytesSync();
+    return base64Encode(imageBytes);
   }
 
   // Function to check if the user has the 'Admin' role
@@ -198,15 +246,13 @@ class ApiService {
     try {
       final decodedToken = _decodeJwt(token);
       if (decodedToken != null) {
-        // Check if the token is expired
         if (isTokenExpired(decodedToken)) {
           print("Token has expired.");
           return false;
         }
 
-        // Check for the custom role claim: "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
         final role = decodedToken['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
-        print("Decoded Token Role: $role"); // Debug: Log the role
+        print("Decoded Token Role: $role");
 
         if (role == 'Admin') {
           return true;
@@ -221,7 +267,7 @@ class ApiService {
   bool isTokenExpired(Map<String, dynamic> decodedToken) {
     final exp = decodedToken['exp'];
     if (exp != null) {
-      final expirationTime = DateTime.fromMillisecondsSinceEpoch(exp * 1000); // Convert from seconds to milliseconds
+      final expirationTime = DateTime.fromMillisecondsSinceEpoch(exp * 1000);
       final currentTime = DateTime.now();
       if (currentTime.isAfter(expirationTime)) {
         return true;
