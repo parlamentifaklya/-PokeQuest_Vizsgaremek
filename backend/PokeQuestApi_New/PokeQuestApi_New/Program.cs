@@ -23,7 +23,9 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAllOrigins", builder =>
     {
-        builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+        builder.AllowAnyOrigin()  // Allows all origins, which is good for development
+               .AllowAnyMethod()  // Allows all HTTP methods (GET, POST, PUT, DELETE, etc.)
+               .AllowAnyHeader(); // Allows all headers in requests
     });
 });
 
@@ -114,17 +116,23 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.UseCors("AllowAllOrigins");
+app.UseCors("AllowAllOrigins"); // Apply the AllowAllOrigins CORS policy globally
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Uploads")),
-    RequestPath = "/api/Uploads"
+    RequestPath = "/api/Uploads", // Path that will be used for accessing images
+    OnPrepareResponse = ctx =>
+    {
+        // Disable caching for development or when using local IP
+        ctx.Context.Response.Headers.Append("Cache-Control", "no-cache, no-store, must-revalidate");
+    }
 });
-app.UseStaticFiles();
+app.UseStaticFiles(); // This serves static files at root level
 
 // Create roles during startup using scoped service
 CreateRoles(app.Services).Wait();

@@ -44,8 +44,8 @@ class _ManageTypesScreenState extends State<ManageTypesScreen> {
       });
     } catch (e) {
       print('Error fetching types: $e');
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Failed to load types')));
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to load types')));
     }
 
     setState(() {
@@ -66,14 +66,14 @@ class _ManageTypesScreenState extends State<ManageTypesScreen> {
   // Create a new type
   Future<void> _createType() async {
     if (_nameController.text.isEmpty) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Name is required')));
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Name is required')));
       return;
     }
 
     if (_image == null) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Image is required')));
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Image is required')));
       return;
     }
 
@@ -82,7 +82,8 @@ class _ManageTypesScreenState extends State<ManageTypesScreen> {
     });
 
     try {
-      var uri = Uri.parse("http://localhost:5130/api/Type/CreateType");
+      var uri = Uri.parse(
+          "http://10.0.2.2:5130/api/Type/CreateType"); // Emulator special URL
       var request = http.MultipartRequest('POST', uri);
       request.headers['Authorization'] = 'Bearer ${widget.token}';
 
@@ -101,20 +102,20 @@ class _ManageTypesScreenState extends State<ManageTypesScreen> {
 
       var response = await request.send();
       if (response.statusCode == 200) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Type created successfully')));
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Type created successfully')));
         _fetchTypes(); // Refresh the list
         _nameController.clear();
         setState(() {
           _image = null;
         });
       } else {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Failed to create type')));
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to create type')));
       }
     } catch (e) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Error: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e')));
     }
 
     setState(() {
@@ -125,14 +126,14 @@ class _ManageTypesScreenState extends State<ManageTypesScreen> {
   // Update an existing type
   Future<void> _updateType(int typeId) async {
     if (_nameController.text.isEmpty) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Name is required')));
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Name is required')));
       return;
     }
 
     if (_image == null) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Image is required')));
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Image is required')));
       return;
     }
 
@@ -141,7 +142,8 @@ class _ManageTypesScreenState extends State<ManageTypesScreen> {
     });
 
     try {
-      var uri = Uri.parse("http://localhost:5130/api/Type/UpdateType/$typeId");
+      var uri = Uri.parse(
+          "http://10.0.2.2:5130/api/Type/UpdateType/$typeId"); // Emulator special URL
       var request = http.MultipartRequest('POST', uri);
       request.headers['Authorization'] = 'Bearer ${widget.token}';
 
@@ -160,20 +162,20 @@ class _ManageTypesScreenState extends State<ManageTypesScreen> {
 
       var response = await request.send();
       if (response.statusCode == 200) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Type updated successfully')));
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Type updated successfully')));
         _fetchTypes(); // Refresh the list
         _nameController.clear();
         setState(() {
           _image = null;
         });
       } else {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Failed to update type')));
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to update type')));
       }
     } catch (e) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Error: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e')));
     }
 
     setState(() {
@@ -189,12 +191,12 @@ class _ManageTypesScreenState extends State<ManageTypesScreen> {
 
     bool success = await _apiService.deleteType(widget.token, typeId);
     if (success) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Type deleted successfully')));
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Type deleted successfully')));
       _fetchTypes(); // Refresh the list
     } else {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Failed to delete type')));
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to delete type')));
     }
 
     setState(() {
@@ -203,13 +205,19 @@ class _ManageTypesScreenState extends State<ManageTypesScreen> {
   }
 
   // Build Image Widget (Handles Mobile)
-  Widget _buildImageDisplay() {
-    if (_image == null) {
-      return Container();
+  Widget _buildImageDisplay(String? imageUrl) {
+    if (_image != null) {
+      return Image.file(File(_image!.path)); // Display image picked from mobile
+    } else if (imageUrl != null && imageUrl.isNotEmpty) {
+      String baseUrl = 'http://10.0.2.2:5130/api'; // Base URL without `/Uploads`
+      String fullUrl = '$baseUrl/$imageUrl'; // Concatenate the imageUrl directly to the base URL
+      return Image.network(fullUrl); // Display image from backend
     } else {
-      return Image.file(File(_image!.path)); // Mobile image
+      return Placeholder(fallbackHeight: 150,
+          fallbackWidth: 150); // Show placeholder when no image
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -218,96 +226,101 @@ class _ManageTypesScreenState extends State<ManageTypesScreen> {
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
           : Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Manage Types',
-                    style: Theme.of(context).textTheme.headlineSmall,
-                  ),
-                  SizedBox(height: 16),
-                  TextField(
-                    controller: _nameController,
-                    decoration: InputDecoration(
-                      labelText: 'Type Name',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  SizedBox(height: 16),
-                  ElevatedButton.icon(
-                    onPressed: _pickImage,
-                    icon: Icon(Icons.image),
-                    label: Text('Pick Image'),
-                    style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    ),
-                  ),
-                  SizedBox(height: 16),
-                  _buildImageDisplay(), // Display the image
-                  SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: _createType,
-                    style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(vertical: 12),
-                    ),
-                    child: Text('Create Type'),
-                  ),
-                  SizedBox(height: 16),
-                  // Display types in a single row (one column)
-                  Expanded(
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: _types.map((type) {
-                          return Container(
-                            width: 200, // Width for each card
-                            margin: EdgeInsets.symmetric(horizontal: 8),
-                            child: Card(
-                              elevation: 4,
-                              child: Column(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Manage Types',
+              style: Theme
+                  .of(context)
+                  .textTheme
+                  .headlineSmall,
+            ),
+            SizedBox(height: 16),
+            TextField(
+              controller: _nameController,
+              decoration: InputDecoration(
+                labelText: 'Type Name',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            SizedBox(height: 16),
+            ElevatedButton.icon(
+              onPressed: _pickImage,
+              icon: Icon(Icons.image),
+              label: Text('Pick Image'),
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              ),
+            ),
+            SizedBox(height: 16),
+            _buildImageDisplay(null), // Display the image
+            SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: _createType,
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(vertical: 12),
+              ),
+              child: Text('Create Type'),
+            ),
+            SizedBox(height: 16),
+            // Display types in a vertical list (Scrollable)
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: _types.map((type) {
+                    return Container(
+                      width: double.infinity,
+                      // Full width of screen
+                      margin: EdgeInsets.symmetric(vertical: 8),
+                      // Vertical margin between cards
+                      child: Card(
+                        elevation: 4,
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            children: [
+                              _buildImageDisplay(type['img']),
+                              // Display backend image
+                              SizedBox(height: 8),
+                              Text(
+                                type['name'] ?? 'Unknown Type',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              SizedBox(height: 8),
+                              Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  _buildImageDisplay(), // Display image (remove web handling)
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      type['name'] ?? 'Unknown Type',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold),
-                                    ),
+                                  IconButton(
+                                    icon: Icon(Icons.edit),
+                                    onPressed: () {
+                                      // Handle edit
+                                      _updateType(type['id']);
+                                    },
                                   ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      IconButton(
-                                        icon: Icon(Icons.edit),
-                                        onPressed: () {
-                                          // Handle edit
-                                          _updateType(type['id']);
-                                        },
-                                      ),
-                                      IconButton(
-                                        icon: Icon(Icons.delete),
-                                        onPressed: () {
-                                          // Handle delete
-                                          _deleteType(type['id']);
-                                        },
-                                      ),
-                                    ],
+                                  IconButton(
+                                    icon: Icon(Icons.delete),
+                                    onPressed: () {
+                                      // Handle delete
+                                      _deleteType(type['id']);
+                                    },
                                   ),
                                 ],
                               ),
-                            ),
-                          );
-                        }).toList(),
+                            ],
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                ],
+                    );
+                  }).toList(),
+                ),
               ),
             ),
+          ],
+        ),
+      ),
     );
   }
 }
