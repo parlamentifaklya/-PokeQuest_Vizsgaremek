@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Cors;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -48,6 +49,7 @@ namespace PokeQuestApi_New.Controllers
         }
 
         // Create a new ability with optional image upload
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<Ability>> CreateAbility([FromForm] CreateAbilityDto dto)
         {
@@ -80,6 +82,7 @@ namespace PokeQuestApi_New.Controllers
         }
 
         // Bulk insert abilities with images (if provided)
+        [Authorize(Roles = "Admin")]
         [HttpPost("Ability-bulk-insert")]
         public async Task<ActionResult> AbilityBulkInsert([FromForm] List<CreateAbilityDto> abilities)
         {
@@ -120,6 +123,7 @@ namespace PokeQuestApi_New.Controllers
         }
 
         // Delete ability by ID
+        [Authorize(Roles = "Admin")]
         [HttpDelete]
         public async Task<ActionResult> DeleteAbility(int id)
         {
@@ -136,6 +140,7 @@ namespace PokeQuestApi_New.Controllers
         }
 
         // Update an existing ability with optional image upload
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateAbility(int id, [FromForm] CreateAbilityDto dto)
         {

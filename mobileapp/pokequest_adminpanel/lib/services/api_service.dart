@@ -1,6 +1,6 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 
 class ApiService {
   final String baseUrl = 'http://10.0.2.2:5130/api'; // Updated base URL for Android Emulator
@@ -128,20 +128,22 @@ class ApiService {
     }
   }
 
-  // Function to create a type with base64 image
-  Future<bool> createTypeWithBase64(String token, Map<String, dynamic> typeData, {required String base64Image}) async {
+  // Function to create a type with XFile image
+  Future<bool> createTypeWithXFile(String token, Map<String, dynamic> typeData, {required XFile imageFile}) async {
     final url = Uri.parse('$baseUrl/Type/CreateType');
-    final response = await http.post(
-      url,
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
-      body: json.encode({
-        'Name': typeData['Name'] ?? '',
-        'Image': base64Image, // Send base64 image
-      }),
-    );
+    var request = http.MultipartRequest('POST', url)
+      ..headers['Authorization'] = 'Bearer $token';
+
+    // Add the form fields
+    request.fields['Name'] = typeData['Name'] ?? '';
+
+    // If there's an image, attach it to the request
+    if (imageFile.path.isNotEmpty) {
+      request.files.add(await http.MultipartFile.fromPath('img', imageFile.path));
+    }
+
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
 
     if (response.statusCode == 201) {
       return true;
@@ -176,20 +178,22 @@ class ApiService {
     }
   }
 
-  // Function to update a type with base64 image
-  Future<bool> updateTypeWithBase64(String token, int id, Map<String, dynamic> updatedTypeData, {required String base64Image}) async {
+  // Function to update a type with XFile image
+  Future<bool> updateTypeWithXFile(String token, int id, Map<String, dynamic> updatedTypeData, {required XFile imageFile}) async {
     final url = Uri.parse('$baseUrl/Type/UpdateType/$id');
-    final response = await http.put(
-      url,
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
-      body: json.encode({
-        'Name': updatedTypeData['Name'] ?? '',
-        'Image': base64Image, // Send base64 image
-      }),
-    );
+    var request = http.MultipartRequest('PUT', url)
+      ..headers['Authorization'] = 'Bearer $token';
+
+    // Add the form fields
+    request.fields['Name'] = updatedTypeData['Name'] ?? '';
+
+    // If there's an image, attach it to the request
+    if (imageFile.path.isNotEmpty) {
+      request.files.add(await http.MultipartFile.fromPath('img', imageFile.path));
+    }
+
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
 
     if (response.statusCode == 204) {
       return true;
@@ -235,11 +239,107 @@ class ApiService {
     }
   }
 
-  // Helper function to convert image to base64
-  String encodeImageToBase64(File imageFile) {
-    List<int> imageBytes = imageFile.readAsBytesSync();
-    return base64Encode(imageBytes);
+  // Function to get all abilities
+  Future<List<dynamic>> getAllAbilities(String token) async {
+    final url = Uri.parse('$baseUrl/Ability/GetAllAbilities');
+    final response = await http.get(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token', // Pass the JWT token here
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body); // Return the list of abilities
+    } else {
+      print('Error: ${response.body}');
+      return [];
+    }
   }
+
+  // Function to create a new ability with image upload (XFile)
+  Future<bool> createAbility(String token, Map<String, dynamic> abilityData, {required XFile file}) async {
+    final url = Uri.parse('$baseUrl/Ability/CreateAbility');
+    var request = http.MultipartRequest('POST', url)
+      ..headers['Authorization'] = 'Bearer $token';
+
+    // Add the form fields
+    request.fields['Name'] = abilityData['Name'] ?? '';
+    request.fields['Description'] = abilityData['Description'] ?? '';
+    request.fields['Damage'] = abilityData['Damage'].toString();
+    request.fields['HealthPoint'] = abilityData['HealthPoint'].toString();
+    request.fields['RechargeTime'] = abilityData['RechargeTime'].toString();
+    request.fields['TypeId'] = abilityData['TypeId'].toString();
+
+    // If there's an image, attach it to the request
+    if (file.path.isNotEmpty) {
+      request.files.add(await http.MultipartFile.fromPath('File', file.path));
+    }
+
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
+
+    if (response.statusCode == 201) {
+      return true;
+    } else {
+      print('Error: ${response.body}');
+      return false;
+    }
+  }
+
+  // Function to update an existing ability with image upload (XFile)
+  Future<bool> updateAbility(String token, int id, Map<String, dynamic> updatedAbilityData, {required XFile file}) async {
+    final url = Uri.parse('$baseUrl/Ability/UpdateAbility/$id');
+    var request = http.MultipartRequest('PUT', url)
+      ..headers['Authorization'] = 'Bearer $token';
+
+    // Add the form fields
+    request.fields['Name'] = updatedAbilityData['Name'] ?? '';
+    request.fields['Description'] = updatedAbilityData['Description'] ?? '';
+    request.fields['Damage'] = updatedAbilityData['Damage'].toString();
+    request.fields['HealthPoint'] = updatedAbilityData['HealthPoint'].toString();
+    request.fields['RechargeTime'] = updatedAbilityData['RechargeTime'].toString();
+    request.fields['TypeId'] = updatedAbilityData['TypeId'].toString();
+
+    // If there's an image, attach it to the request
+    if (file.path.isNotEmpty) {
+      request.files.add(await http.MultipartFile.fromPath('File', file.path));
+    }
+
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
+
+    if (response.statusCode == 204) {
+      return true;
+    } else {
+      print('Error: ${response.body}');
+      return false;
+    }
+  }
+
+  // Function to delete an ability by ID
+  Future<bool> deleteAbility(String token, int id) async {
+    final url = Uri.parse('$baseUrl/Ability/DeleteAbility?id=$id');
+    final response = await http.delete(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      print('Error: ${response.body}');
+      return false;
+    }
+  }
+
+  // Helper function to convert image to base64 (not used anymore)
+  // String encodeImageToBase64(File imageFile) {
+  //   List<int> imageBytes = imageFile.readAsBytesSync();
+  //   return base64Encode(imageBytes);
+  // }
 
   // Function to check if the user has the 'Admin' role
   bool isAdmin(String token) {
