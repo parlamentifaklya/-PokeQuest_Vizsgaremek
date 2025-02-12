@@ -1,0 +1,79 @@
+/* Centered Login Container */
+.loginHolder {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Login Form */
+.myForm {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 40px;
+    width: 350px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+    text-align: center;
+}
+
+/* Title */
+.title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+/* Input Fields */
+.inputField {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    outline: none;
+    transition: border 0.3s ease-in-out;
+}
+
+.inputField:focus {
+    border: 1px solid #FFD700;
+}
+
+/* Button */
+.buttonTemp {
+    background-color: #FFD700;
+    color: black;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    padding: 10px;
+    cursor: pointer;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    transition: all 0.3s ease-in-out;
+}
+
+.buttonTemp:hover {
+    background-color: #FFC107;
+    transform: scale(1.05);
+}
+
+/* Register Text */
+.registerText {
+    font-size: 14px;
+    color: #555;
+}
+
+.registerText a {
+    color: #FFD700;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.registerText a:hover {
+    text-decoration: underline;
+}
