@@ -4,7 +4,8 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 import 'login_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'manage_types_screen.dart';
-import 'manage_abilities_screen.dart'; // Make sure to import ManageAbilitiesScreen
+import 'manage_abilities_screen.dart';
+import 'manage_items_screen.dart'; // Make sure to import ManageItemsScreen
 
 class AdminPanelScreen extends StatefulWidget {
   final String token;
@@ -156,6 +157,16 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
     );
   }
 
+  // Add the new method to navigate to ManageItemsScreen
+  void _navigateToManageItemsScreen() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ManageItemsScreen(token: widget.token),
+      ),
+    );
+  }
+
   Future<void> _logout() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove('jwt_token');
@@ -209,6 +220,11 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
               title: Text('Manage Abilities'), // New option
               leading: Icon(Icons.flash_on),
               onTap: _navigateToManageAbilitiesScreen, // Navigate to ManageAbilitiesScreen
+            ),
+            ListTile(
+              title: Text('Manage Items'), // New option for ManageItemsScreen
+              leading: Icon(Icons.inventory),
+              onTap: _navigateToManageItemsScreen, // Navigate to ManageItemsScreen
             ),
             ListTile(
               title: Text('Logout'),

@@ -37,6 +37,7 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
     options.Password.RequireLowercase = true;
     options.Password.RequireUppercase = true;
     options.Password.RequireNonAlphanumeric = true;
+    options.User.RequireUniqueEmail = true;
 }).AddEntityFrameworkStores<PokeQuestApiContext>().AddDefaultTokenProviders();
 
 builder.Services.AddAuthentication(options =>

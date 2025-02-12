@@ -34,6 +34,13 @@ namespace PokeQuestApi_New.Controllers
         [HttpPost]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
         {
+            // Check if the email already exists
+            var existingUser = await _userManager.FindByEmailAsync(model.Email);
+            if (existingUser != null)
+            {
+                return BadRequest(new { Message = "Email is already in use." });
+            }
+
             var newUser = new User
             {
                 UserName = model.UserName,
@@ -41,12 +48,15 @@ namespace PokeQuestApi_New.Controllers
                 UserLevel = 1
             };
 
+            // Create the user
             var result = await _userManager.CreateAsync(newUser, model.Password);
 
             if (result.Succeeded)
             {
+                // Assign the user to the "User" role
                 await _userManager.AddToRoleAsync(newUser, "User");
 
+                // Create the user inventory
                 var userInventory = new UserInventory
                 {
                     UserId = newUser.Id,
@@ -55,6 +65,7 @@ namespace PokeQuestApi_New.Controllers
                 await _context.UserInventories.AddAsync(userInventory);
                 await _context.SaveChangesAsync();
 
+                // Ensure that default Feyling and Item records exist in the database
                 var defaultFeylingIds = new List<int> { 1, 2, 3 };
                 var defaultItemIds = new List<int> { 1, 2, 3 };
 
@@ -66,6 +77,7 @@ namespace PokeQuestApi_New.Controllers
                     return BadRequest(new { Message = "Some Feyling or Item records are missing." });
                 }
 
+                // Assign the default Feylings to the user's inventory
                 foreach (var feylingId in defaultFeylingIds)
                 {
                     var ownedFeyling = new OwnedFeyling
@@ -77,6 +89,7 @@ namespace PokeQuestApi_New.Controllers
                 }
                 await _context.SaveChangesAsync();
 
+                // Assign the default Items to the user's inventory
                 foreach (var itemId in defaultItemIds)
                 {
                     var ownedItem = new OwnedItem
@@ -89,9 +102,11 @@ namespace PokeQuestApi_New.Controllers
                 }
                 await _context.SaveChangesAsync();
 
+                // Return success response
                 return Ok(new { Message = "User registered successfully!" });
             }
 
+            // Return error if the user could not be created
             return BadRequest(result.Errors);
         }
 

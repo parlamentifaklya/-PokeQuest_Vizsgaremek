@@ -153,8 +153,8 @@ class ApiService {
     }
   }
 
-  // Function to update a type with image path
-  Future<bool> updateType(String token, int id, Map<String, dynamic> updatedTypeData, {required String imgPath}) async {
+  // Function to update a type with optional XFile image
+  Future<bool> updateTypeWithXFile(String token, int id, Map<String, dynamic> updatedTypeData, {XFile? imageFile}) async {
     final url = Uri.parse('$baseUrl/Type/UpdateType/$id');
     var request = http.MultipartRequest('PUT', url)
       ..headers['Authorization'] = 'Bearer $token';
@@ -163,32 +163,7 @@ class ApiService {
     request.fields['Name'] = updatedTypeData['Name'] ?? '';
 
     // If there's an image, attach it to the request
-    if (imgPath.isNotEmpty) {
-      request.files.add(await http.MultipartFile.fromPath('img', imgPath));
-    }
-
-    final streamedResponse = await request.send();
-    final response = await http.Response.fromStream(streamedResponse);
-
-    if (response.statusCode == 204) {
-      return true;
-    } else {
-      print('Error: ${response.body}');
-      return false;
-    }
-  }
-
-  // Function to update a type with XFile image
-  Future<bool> updateTypeWithXFile(String token, int id, Map<String, dynamic> updatedTypeData, {required XFile imageFile}) async {
-    final url = Uri.parse('$baseUrl/Type/UpdateType/$id');
-    var request = http.MultipartRequest('PUT', url)
-      ..headers['Authorization'] = 'Bearer $token';
-
-    // Add the form fields
-    request.fields['Name'] = updatedTypeData['Name'] ?? '';
-
-    // If there's an image, attach it to the request
-    if (imageFile.path.isNotEmpty) {
+    if (imageFile != null && imageFile.path.isNotEmpty) {
       request.files.add(await http.MultipartFile.fromPath('img', imageFile.path));
     }
 
@@ -267,7 +242,7 @@ class ApiService {
     request.fields['Name'] = abilityData['Name'] ?? '';
     request.fields['Description'] = abilityData['Description'] ?? '';
     request.fields['Damage'] = abilityData['Damage'].toString();
-    request.fields['HealthPoint'] = abilityData['HealthPoint'].toString();
+    request.fields['healthPoint'] = abilityData['healthPoint'].toString();
     request.fields['RechargeTime'] = abilityData['RechargeTime'].toString();
     request.fields['TypeId'] = abilityData['TypeId'].toString();
 
@@ -287,8 +262,8 @@ class ApiService {
     }
   }
 
-  // Function to update an existing ability with image upload (XFile)
-  Future<bool> updateAbility(String token, int id, Map<String, dynamic> updatedAbilityData, {required XFile file}) async {
+  // Function to update an existing ability with optional image upload (XFile)
+  Future<bool> updateAbility(String token, int id, Map<String, dynamic> updatedAbilityData, {XFile? file}) async {
     final url = Uri.parse('$baseUrl/Ability/UpdateAbility/$id');
     var request = http.MultipartRequest('PUT', url)
       ..headers['Authorization'] = 'Bearer $token';
@@ -297,12 +272,12 @@ class ApiService {
     request.fields['Name'] = updatedAbilityData['Name'] ?? '';
     request.fields['Description'] = updatedAbilityData['Description'] ?? '';
     request.fields['Damage'] = updatedAbilityData['Damage'].toString();
-    request.fields['HealthPoint'] = updatedAbilityData['HealthPoint'].toString();
+    request.fields['healthPoint'] = updatedAbilityData['healthPoint'].toString();
     request.fields['RechargeTime'] = updatedAbilityData['RechargeTime'].toString();
     request.fields['TypeId'] = updatedAbilityData['TypeId'].toString();
 
     // If there's an image, attach it to the request
-    if (file.path.isNotEmpty) {
+    if (file != null && file.path.isNotEmpty) {
       request.files.add(await http.MultipartFile.fromPath('File', file.path));
     }
 
@@ -335,11 +310,100 @@ class ApiService {
     }
   }
 
-  // Helper function to convert image to base64 (not used anymore)
-  // String encodeImageToBase64(File imageFile) {
-  //   List<int> imageBytes = imageFile.readAsBytesSync();
-  //   return base64Encode(imageBytes);
-  // }
+  // Function to get all items
+  Future<List<dynamic>> getAllItems(String token) async {
+    final url = Uri.parse('$baseUrl/Item/all');
+    final response = await http.get(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token', // Pass the JWT token here
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body); // Return the list of items
+    } else {
+      print('Error: ${response.body}');
+      return [];
+    }
+  }
+
+  // Function to create an item with image upload (Image is required)
+  Future<bool> createItem(String token, Map<String, dynamic> itemData, {required XFile imageFile}) async {
+    final url = Uri.parse('$baseUrl/Item/CreateItem');
+    var request = http.MultipartRequest('POST', url)
+      ..headers['Authorization'] = 'Bearer $token';
+
+    // Add the form fields
+    request.fields['name'] = itemData['name'] ?? '';
+    request.fields['description'] = itemData['description'] ?? '';
+    request.fields['itemAbility'] = itemData['itemAbility'] ?? '';
+    request.fields['rarity'] = itemData['rarity'] ?? '';
+
+    // If there's an image, attach it to the request
+    if (imageFile.path.isNotEmpty) {
+      request.files.add(await http.MultipartFile.fromPath('file', imageFile.path));
+    } else {
+      print("Error: Image file is required.");
+      return false;
+    }
+
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
+
+    if (response.statusCode == 201) {
+      return true;
+    } else {
+      print('Error: ${response.body}');
+      return false;
+    }
+  }
+
+  // Function to update an existing item with optional image upload
+  Future<bool> updateItem(String token, int id, Map<String, dynamic> updatedItemData, {XFile? imageFile}) async {
+    final url = Uri.parse('$baseUrl/Item/$id');
+    var request = http.MultipartRequest('PUT', url)
+      ..headers['Authorization'] = 'Bearer $token';
+
+    // Add the form fields
+    request.fields['name'] = updatedItemData['name'] ?? '';
+    request.fields['description'] = updatedItemData['description'] ?? '';
+    request.fields['itemAbility'] = updatedItemData['itemAbility'] ?? '';
+    request.fields['rarity'] = updatedItemData['rarity'] ?? '';
+
+    // If there's an image file, attach it to the request
+    if (imageFile != null && imageFile.path.isNotEmpty) {
+      request.files.add(await http.MultipartFile.fromPath('file', imageFile.path));
+    }
+
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
+
+    if (response.statusCode == 204) {
+      return true;
+    } else {
+      print('Error: ${response.body}');
+      return false;
+    }
+  }
+
+  // Function to delete an item by ID
+  Future<bool> deleteItem(String token, int id) async {
+    final url = Uri.parse('$baseUrl/Item/$id');
+    final response = await http.delete(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 204) {
+      return true;
+    } else {
+      print('Error: ${response.body}');
+      return false;
+    }
+  }
 
   // Function to check if the user has the 'Admin' role
   bool isAdmin(String token) {

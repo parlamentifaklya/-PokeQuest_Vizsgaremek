@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Cors;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -50,6 +51,7 @@ namespace PokeQuestApi_New.Controllers
         }
 
         // Create a new item (with optional image upload)
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<Item>> CreateItem([FromForm] Item item, IFormFile file)
         {
@@ -82,6 +84,7 @@ namespace PokeQuestApi_New.Controllers
         }
 
         // Update an existing item (with optional image upload)
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateItem(int id, [FromForm] Item updatedItem, IFormFile file)
         {
@@ -116,6 +119,7 @@ namespace PokeQuestApi_New.Controllers
         }
 
         // Delete an item by ID
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteItem(int id)
         {

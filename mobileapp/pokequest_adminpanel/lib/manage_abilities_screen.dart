@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http_parser/http_parser.dart';
-import 'package:image_picker/image_picker.dart'; // For image picking
+import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
-import 'package:mime/mime.dart'; // To determine MIME type of image
+import 'package:mime/mime.dart';
 import 'package:pokequest_adminpanel/services/api_service.dart';
 
 class ManageAbilitiesScreen extends StatefulWidget {
@@ -98,7 +98,7 @@ class _ManageAbilitiesScreenState extends State<ManageAbilitiesScreen> {
       request.fields['name'] = _nameController.text;
       request.fields['damage'] = _damageController.text;
       request.fields['description'] = _descriptionController.text;
-      request.fields['HealthPoint'] = _healthPointController.text;
+      request.fields['healthPoint'] = _healthPointController.text;
       request.fields['rechargeTime'] = _rechargeTimeController.text;
 
       // Mobile platform: use File from image_picker
@@ -143,7 +143,7 @@ class _ManageAbilitiesScreenState extends State<ManageAbilitiesScreen> {
     _nameController.text = _abilities.firstWhere((ability) => ability['id'] == abilityId)['name'];
     _damageController.text = _abilities.firstWhere((ability) => ability['id'] == abilityId)['damage'].toString();
     _descriptionController.text = _abilities.firstWhere((ability) => ability['id'] == abilityId)['description'];
-    _healthPointController.text = _abilities.firstWhere((ability) => ability['id'] == abilityId)['HealthPoint'].toString();
+    _healthPointController.text = _abilities.firstWhere((ability) => ability['id'] == abilityId)['healthPoint'].toString();
     _rechargeTimeController.text = _abilities.firstWhere((ability) => ability['id'] == abilityId)['rechargeTime'].toString();
 
     // Show dialog with current ability data prefilled
@@ -152,39 +152,41 @@ class _ManageAbilitiesScreenState extends State<ManageAbilitiesScreen> {
       builder: (context) {
         return AlertDialog(
           title: Text('Update Ability'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: _nameController,
-                decoration: InputDecoration(labelText: 'Ability Name'),
-              ),
-              TextField(
-                controller: _damageController,
-                decoration: InputDecoration(labelText: 'Damage'),
-                keyboardType: TextInputType.number,
-              ),
-              TextField(
-                controller: _descriptionController,
-                decoration: InputDecoration(labelText: 'Description'),
-              ),
-              TextField(
-                controller: _healthPointController,
-                decoration: InputDecoration(labelText: 'Health Point'),
-                keyboardType: TextInputType.number,
-              ),
-              TextField(
-                controller: _rechargeTimeController,
-                decoration: InputDecoration(labelText: 'Recharge Time'),
-                keyboardType: TextInputType.number,
-              ),
-              SizedBox(height: 8),
-              ElevatedButton.icon(
-                onPressed: _pickImage,
-                icon: Icon(Icons.image),
-                label: Text('Pick Image'),
-              ),
-            ],
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: _nameController,
+                  decoration: InputDecoration(labelText: 'Ability Name'),
+                ),
+                TextField(
+                  controller: _damageController,
+                  decoration: InputDecoration(labelText: 'Damage'),
+                  keyboardType: TextInputType.number,
+                ),
+                TextField(
+                  controller: _descriptionController,
+                  decoration: InputDecoration(labelText: 'Description'),
+                ),
+                TextField(
+                  controller: _healthPointController,
+                  decoration: InputDecoration(labelText: 'Health Point'),
+                  keyboardType: TextInputType.number,
+                ),
+                TextField(
+                  controller: _rechargeTimeController,
+                  decoration: InputDecoration(labelText: 'Recharge Time'),
+                  keyboardType: TextInputType.number,
+                ),
+                SizedBox(height: 8),
+                ElevatedButton.icon(
+                  onPressed: _pickImage,
+                  icon: Icon(Icons.image),
+                  label: Text('Pick Image'),
+                ),
+              ],
+            ),
           ),
           actions: [
             TextButton(
@@ -197,7 +199,7 @@ class _ManageAbilitiesScreenState extends State<ManageAbilitiesScreen> {
                 request.fields['name'] = _nameController.text;
                 request.fields['damage'] = _damageController.text;
                 request.fields['description'] = _descriptionController.text;
-                request.fields['HealthPoint'] = _healthPointController.text;
+                request.fields['healthPoint'] = _healthPointController.text;
                 request.fields['rechargeTime'] = _rechargeTimeController.text;
 
                 if (_image != null) {
@@ -260,12 +262,11 @@ class _ManageAbilitiesScreenState extends State<ManageAbilitiesScreen> {
     if (_image != null) {
       return Image.file(File(_image!.path)); // Display image picked from mobile
     } else if (imageUrl != null && imageUrl.isNotEmpty) {
-      String baseUrl = 'http://10.0.2.2:5130/api'; // Base URL without `/Uploads`
+      String baseUrl = 'http://10.0.2.2:5130/api'; // Base URL without /Uploads
       String fullUrl = '$baseUrl/$imageUrl'; // Concatenate the imageUrl directly to the base URL
       return Image.network(fullUrl); // Display image from backend
     } else {
-      return Placeholder(fallbackHeight: 150,
-          fallbackWidth: 150); // Show placeholder when no image
+      return Placeholder(fallbackHeight: 150, fallbackWidth: 150); // Show placeholder when no image
     }
   }
 
@@ -275,8 +276,8 @@ class _ManageAbilitiesScreenState extends State<ManageAbilitiesScreen> {
       appBar: AppBar(title: Text('Manage Abilities')),
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
-          : Padding(
-        padding: const EdgeInsets.all(16.0),
+          : SingleChildScrollView(
+        padding: EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -285,101 +286,134 @@ class _ManageAbilitiesScreenState extends State<ManageAbilitiesScreen> {
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             SizedBox(height: 16),
-            TextField(
-              controller: _nameController,
-              decoration: InputDecoration(labelText: 'Ability Name'),
-            ),
-            TextField(
-              controller: _damageController,
-              decoration: InputDecoration(labelText: 'Damage'),
-              keyboardType: TextInputType.number,
-            ),
-            TextField(
-              controller: _descriptionController,
-              decoration: InputDecoration(labelText: 'Description'),
-            ),
-            TextField(
-              controller: _healthPointController,
-              decoration: InputDecoration(labelText: 'Health Point'),
-              keyboardType: TextInputType.number,
-            ),
-            TextField(
-              controller: _rechargeTimeController,
-              decoration: InputDecoration(labelText: 'Recharge Time'),
-              keyboardType: TextInputType.number,
-            ),
-            ElevatedButton.icon(
-              onPressed: _pickImage,
-              icon: Icon(Icons.image),
-              label: Text('Pick Image'),
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              ),
-            ),
-            SizedBox(height: 16),
-            _buildImageDisplay(null), // Display the image
-            ElevatedButton(
-              onPressed: _createAbility,
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(vertical: 12),
-              ),
-              child: Text('Create Ability'),
-            ),
-            SizedBox(height: 16),
             // Display abilities in a vertical list (Scrollable)
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: _abilities.map((ability) {
-                    return Container(
-                      width: double.infinity,
-                      margin: EdgeInsets.symmetric(vertical: 8),
-                      child: Card(
-                        elevation: 4,
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
+            Column(
+              children: _abilities.map((ability) {
+                return Container(
+                  width: double.infinity,
+                  margin: EdgeInsets.symmetric(vertical: 8),
+                  child: Card(
+                    elevation: 4,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        children: [
+                          _buildImageDisplay(ability['img']),
+                          SizedBox(height: 8),
+                          Text(
+                            ability['name'] ?? 'Unknown Ability',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Text('Damage: ${ability['damage']}'),
+                          Text('Health Point: ${ability['healthPoint']}'),
+                          Text('Recharge Time: ${ability['rechargeTime']}'),
+                          SizedBox(height: 8),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              _buildImageDisplay(ability['img']),
-                              SizedBox(height: 8),
-                              Text(
-                                ability['name'] ?? 'Unknown Ability',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                              IconButton(
+                                icon: Icon(Icons.edit),
+                                onPressed: () {
+                                  _updateAbility(ability['id']);
+                                },
                               ),
-                              Text('Damage: ${ability['damage']}'),
-                              Text('Health Point: ${ability['HealthPoint']}'),
-                              Text('Recharge Time: ${ability['rechargeTime']}'),
-                              SizedBox(height: 8),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  IconButton(
-                                    icon: Icon(Icons.edit),
-                                    onPressed: () {
-                                      _updateAbility(ability['id']);
-                                    },
-                                  ),
-                                  IconButton(
-                                    icon: Icon(Icons.delete),
-                                    onPressed: () {
-                                      _deleteAbility(ability['id']);
-                                    },
-                                  ),
-                                ],
+                              IconButton(
+                                icon: Icon(Icons.delete),
+                                onPressed: () {
+                                  _deleteAbility(ability['id']);
+                                },
                               ),
                             ],
                           ),
-                        ),
+                        ],
                       ),
-                    );
-                  }).toList(),
-                ),
-              ),
+                    ),
+                  ),
+                );
+              }).toList(),
             ),
           ],
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          _showCreateAbilityDialog(); // Show dialog when + is pressed
+        },
+        child: Icon(Icons.add),
+      ),
+    );
+  }
+
+  // Function to show the Create Ability dialog
+  void _showCreateAbilityDialog() {
+    // Clear previous inputs if any
+    _nameController.clear();
+    _damageController.clear();
+    _descriptionController.clear();
+    _healthPointController.clear();
+    _rechargeTimeController.clear();
+    setState(() {
+      _image = null;
+    });
+
+    // Show the dialog for creating the ability
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Create Ability'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: _nameController,
+                  decoration: InputDecoration(labelText: 'Ability Name'),
+                ),
+                TextField(
+                  controller: _damageController,
+                  decoration: InputDecoration(labelText: 'Damage'),
+                  keyboardType: TextInputType.number,
+                ),
+                TextField(
+                  controller: _descriptionController,
+                  decoration: InputDecoration(labelText: 'Description'),
+                ),
+                TextField(
+                  controller: _healthPointController,
+                  decoration: InputDecoration(labelText: 'Health Point'),
+                  keyboardType: TextInputType.number,
+                ),
+                TextField(
+                  controller: _rechargeTimeController,
+                  decoration: InputDecoration(labelText: 'Recharge Time'),
+                  keyboardType: TextInputType.number,
+                ),
+                SizedBox(height: 8),
+                ElevatedButton.icon(
+                  onPressed: _pickImage,
+                  icon: Icon(Icons.image),
+                  label: Text('Pick Image'),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                _createAbility();
+                Navigator.pop(context);
+              },
+              child: Text('Create'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context), // Close dialog
+              child: Text('Cancel'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
