@@ -66,8 +66,8 @@ namespace PokeQuestApi_New.Controllers
                 await _context.SaveChangesAsync();
 
                 // Ensure that default Feyling and Item records exist in the database
-                var defaultFeylingIds = new List<int> { 1, 2, 3 };
-                var defaultItemIds = new List<int> { 1, 2, 3 };
+                var defaultFeylingIds = new List<int> { 3, 4, 5 };
+                var defaultItemIds = new List<int> { 45, 46, 47 };
 
                 var feylingExists = await _context.Feylings.AnyAsync(f => defaultFeylingIds.Contains(f.Id));
                 var itemExists = await _context.Items.AnyAsync(i => defaultItemIds.Contains(i.Id));
@@ -284,6 +284,54 @@ namespace PokeQuestApi_New.Controllers
 
             return 0; // Default level
         }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<IEnumerable<User>>> GetUser(string id)
+        {
+            var res = await _context.Users.FindAsync(id);
+            if (res == null)
+            {
+                return NotFound();
+            }
+
+            return Ok();
+        }
+
+        // Add this method in the UserController class
+        [Authorize]
+        [HttpGet("loggedin")]
+        public async Task<IActionResult> GetLoggedIn()
+        {
+            // Get the current logged-in user based on the JWT claims
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized(new { Message = "User is not authenticated." });
+            }
+
+            // Fetch the user from the database
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound(new { Message = "User not found." });
+            }
+
+            // Fetch roles assigned to the user
+            var userRoles = await _userManager.GetRolesAsync(user);
+
+            // Return user data with roles and level
+            var userDto = new
+            {
+                user.Id,
+                user.UserName,
+                user.Email,
+                user.UserLevel,
+                Roles = userRoles // Include roles
+            };
+
+            return Ok(userDto);
+        }
+
 
         // Get list of users (admin only)
         [Authorize(Roles = "Admin")]

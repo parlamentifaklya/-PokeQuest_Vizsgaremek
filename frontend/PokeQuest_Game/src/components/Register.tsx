@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { registerData } from '../services/ApiServices';
 import styles from './Register.module.css';
 
 const Register = () => {
@@ -8,9 +9,19 @@ const Register = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [registrationSuccess, setRegistrationSuccess] = useState(false);
   const navigate = useNavigate();
 
-  const handleRegister = () => {
+  useEffect(() => {
+    console.log("Registration success state: ", registrationSuccess);
+    if (registrationSuccess) {
+      console.log("Navigating to login...");
+      navigate('/login');
+    }
+  }, [registrationSuccess, navigate]);
+
+  const handleRegister = async () => {
     if (!username || !email || !password || !confirmPassword) {
       setError('All fields are required.');
       return;
@@ -21,8 +32,32 @@ const Register = () => {
       return;
     }
 
-    // Simulate successful registration and navigate to login
-    navigate('/login');
+    const payload = {
+      username,
+      email,
+      password,
+    };
+
+    try {
+      const data = await registerData('User/Register', payload);
+      console.log('API Response:', data);
+
+      if (data && data.success) {
+        console.log('User registered successfully!');
+        setRegistrationSuccess(true);
+      } else {
+        setError(data.message || 'Registration failed, please try again.');
+      }
+    } catch (err) {
+      setError('Error during registration.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleButtonClick = () => {
+    setIsSubmitting(true);
+    handleRegister();
   };
 
   return (
@@ -74,9 +109,9 @@ const Register = () => {
           onChange={(e) => setConfirmPassword(e.target.value)}
         />
 
-        {error && <p className={styles.errorMessage}>{error}</p>} 
+        {error && <p className={styles.errorMessage}>{error}</p>}
 
-        <button className={styles.buttonTemp} type="button" onClick={handleRegister}>
+        <button className={styles.buttonTemp} type="button" onClick={handleButtonClick} disabled={isSubmitting}>
           Register
         </button>
 

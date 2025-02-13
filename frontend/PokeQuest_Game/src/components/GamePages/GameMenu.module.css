@@ -1,0 +1,160 @@
+.gamemenuBackground {
+    width: 100vw;
+    height: 100vh;
+    background-image: url('bgmain.png'); 
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    overflow: hidden;
+}
+
+.header {
+    display: flex;
+    width: 100vw;
+    height: 9vh;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgb(233, 194, 122);
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.lvlHolder, .middlePart, .gemHolder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.lvlHolder, .gemHolder{
+    width: 10vw;
+}
+
+.middlePart {
+    background-color: rgba(187, 99, 17, 0.87);
+    flex-grow: 1;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+}
+
+.middlePart img {
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
+    float: left;
+}
+
+.textDesign {
+    font-size: 2rem;
+    font-weight: bold;
+    color: yellow;
+    text-shadow: -2px -2px 0 black, 2px -2px 0 black, -2px 2px 0 black, 2px 2px 0 black;
+}
+
+.gemHolder img {
+    position: absolute;
+    right: 7.5vw;
+    width: 5vw;
+    height: 9vh;
+}
+
+.gemtextStyle {
+    margin-right: 2vw;
+    font-size: 2rem;
+    font-weight: bold;
+    color: rgb(236, 59, 192);
+    text-shadow: -2px -2px 0 black, 2px -2px 0 black, -2px 2px 0 black, 2px 2px 0 black;
+}
+
+.maincontainer {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 0 20px;
+    height: calc(100vh - 9vh); 
+    position: relative;
+}
+
+.buttonHolder {
+    display: flex;
+    flex-direction: column;
+    gap: 3vh;
+    background-color: rgba(20, 1, 20, 0.4);
+    padding: 3vw;
+    position: relative;
+    justify-content: flex-start;
+}
+
+.rightsideContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: auto;
+    height: auto;
+    padding-right: 20px;
+}
+
+.rightsideContainer img {
+    width: 30vw;
+    height: 30vw;
+    position: absolute;
+    right: -10vw;
+    top: 50%;
+    transform: translateY(-50%) rotate(30deg);
+}
+
+
+.versionContainer {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    right: 15vw;
+    top: -10vw;
+    align-items: center;
+    justify-content: center;
+    width: 15vw;
+    height: 5vw;
+    background-color: rgba(100, 0, 100, 0.7);
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.versionText {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: bold;
+    color: white;
+    text-shadow: -2px -2px 0 black, 2px -2px 0 black, -2px 2px 0 black, 2px 2px 0 black;
+}
+
+.chestHolder {
+    display: flex;
+    gap: 5vw;
+    background-color: rgba(20, 1, 20, 0.4);
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.itemchest{
+    width: 5vw;
+    height: 10vh;
+}
+
+.summon{
+    width: 8vw;
+    height: 20vh;
+}

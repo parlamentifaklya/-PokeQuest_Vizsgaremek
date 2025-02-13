@@ -706,6 +706,42 @@
   },
   {
     "ContainingType": "PokeQuestApi_New.Controllers.UserController",
+    "Method": "GetLoggedIn",
+    "RelativePath": "api/User/GetLoggedIn/loggedin",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "PokeQuestApi_New.Controllers.UserController",
+    "Method": "GetUser",
+    "RelativePath": "api/User/GetUser/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[PokeQuestApi_New.Models.User, PokeQuestApi_New, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "PokeQuestApi_New.Controllers.UserController",
     "Method": "GetUserLevel",
     "RelativePath": "api/User/GetUserLevel/level",
     "HttpMethod": "GET",
