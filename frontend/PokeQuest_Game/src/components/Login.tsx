@@ -1,22 +1,50 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { loginData } from '../services/ApiServices';
 import styles from './Login.module.css';
 
-const Login = () => {
-  const [username, setUsername] = useState('');
+const Login: React.FC = () => {
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const navigate = useNavigate(); // Hook for navigation
+  const [submit, setSubmit] = useState(false); 
+  const navigate = useNavigate();
 
-  // Default credentials
-  const defaultUsername = "admin";
-  const defaultPassword = "admin";
+  useEffect(() => {
+    if (submit) {
+      const handleLogin = async () => {
+        const payload = { email, password };
+        try {
+          console.log('Attempting login with:', payload);
 
-  const handleLogin = () => {
-    if (username === defaultUsername && password === defaultPassword) {
-      navigate('/mainmenu'); // Navigate to MainMenu
+          const data = await loginData("User/Login", payload);
+
+          if (data && data.token) {
+            localStorage.setItem("authToken", data.token);
+
+            console.log('Login successful, navigating to /mainmenu');
+            navigate('/mainmenu');
+          } else {
+            setError('Invalid email or password!');
+            console.error('Invalid response from server');
+          }
+        } catch (err) {
+          setError('Login failed, please try again.');
+          console.error('Error during login:', err);
+        } finally {
+          setSubmit(false);
+        }
+      };
+
+      handleLogin();
+    }
+  }, [submit, email, password, navigate]);
+
+  const handleButtonClick = () => {
+    if (email && password) {
+      setSubmit(true);
     } else {
-      setError('Invalid username or password!');
+      setError('Please enter both email and password.');
     }
   };
 
@@ -25,15 +53,15 @@ const Login = () => {
       <div className={styles.myForm}>
         <h2 className={styles.title}>Login</h2>
 
-        <label htmlFor="username">Username</label>
+        <label htmlFor="email">Email</label>
         <input
-          type="text"
-          name="username"
-          id="username"
+          type="email"
+          name="email"
+          id="email"
           className={styles.inputField}
-          placeholder="Enter your username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          placeholder="Enter your email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
         />
 
         <label htmlFor="password">Password</label>
@@ -47,9 +75,9 @@ const Login = () => {
           onChange={(e) => setPassword(e.target.value)}
         />
 
-        {error && <p className={styles.errorMessage}>{error}</p>} {/* Display error message if login fails */}
+        {error && <p className={styles.errorMessage}>{error}</p>}
 
-        <button className={styles.buttonTemp} type="button" onClick={handleLogin}>
+        <button className={styles.buttonTemp} type="button" onClick={handleButtonClick}>
           Login
         </button>
 
