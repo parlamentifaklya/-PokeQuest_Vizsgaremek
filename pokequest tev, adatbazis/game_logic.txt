@@ -1,0 +1,3 @@
+Weak hit: 50% dmg
+Strong hit: 150% dmg
+Normal hit: 100% dmg
