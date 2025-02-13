@@ -84,21 +84,6 @@ namespace PokeQuestApi_New.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpPost("Type-bulk-insert")]
-        public async Task<ActionResult> TypeBulkInsert([FromBody] List<Models.Type> types)
-        {
-            if (types == null || types.Count == 0)
-            {
-                return BadRequest();
-            }
-
-            await _context.Types.AddRangeAsync(types);
-            await _context.SaveChangesAsync();
-
-            return Ok();
-        }
-
-        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteType(int id)
         {

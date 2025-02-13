@@ -81,47 +81,6 @@ namespace PokeQuestApi_New.Controllers
             return CreatedAtAction(nameof(GetAbility), new { id = newAbility.Id }, newAbility);
         }
 
-        // Bulk insert abilities with images (if provided)
-        [Authorize(Roles = "Admin")]
-        [HttpPost("Ability-bulk-insert")]
-        public async Task<ActionResult> AbilityBulkInsert([FromForm] List<CreateAbilityDto> abilities)
-        {
-            if (abilities == null || abilities.Count == 0)
-            {
-                return BadRequest("No abilities to insert.");
-            }
-
-            var abilitiesToAdd = new List<Ability>();
-
-            foreach (var dto in abilities)
-            {
-                // Create a new Ability instance for each DTO
-                var ability = new Ability
-                {
-                    Name = dto.Name,
-                    Description = dto.Description,
-                    Damage = dto.Damage,
-                    HealthPoint = dto.HealthPoint,
-                    RechargeTime = dto.RechargeTime,
-                    TypeId = dto.TypeId
-                };
-
-                // If a file is provided, upload the image and get the file path
-                if (dto.File != null)
-                {
-                    var filePath = await _imageUploadService.UploadImage(dto.File, "AbilityImgs");
-                    ability.Img = filePath;  // Assign the file path to the Img property
-                }
-
-                abilitiesToAdd.Add(ability);
-            }
-
-            await _context.Abilities.AddRangeAsync(abilitiesToAdd);
-            await _context.SaveChangesAsync();
-
-            return Ok(new { Message = "Abilities inserted successfully!" });
-        }
-
         // Delete ability by ID
         [Authorize(Roles = "Admin")]
         [HttpDelete]

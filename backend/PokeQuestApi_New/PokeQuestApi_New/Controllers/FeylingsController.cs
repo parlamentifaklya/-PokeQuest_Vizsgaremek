@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Cors;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -54,6 +55,7 @@ namespace PokeQuestApi_New.Controllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<Feyling>> CreateFeyling([FromForm] CreateFeylingDto dto)
         {
@@ -139,7 +141,7 @@ namespace PokeQuestApi_New.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateFeyling(int id, [FromForm] CreateFeylingDto dto)
         {
@@ -204,21 +206,7 @@ namespace PokeQuestApi_New.Controllers
             return NoContent(); // Successfully updated
         }
 
-
-        [HttpPost("Feyling-bulk-insert")]
-        public async Task<ActionResult> FeylingBulkInsert([FromBody] List<Feyling> feylings)
-        {
-            if (feylings == null || feylings.Count == 0)
-            {
-                return BadRequest();
-            }
-
-            await _context.Feylings.AddRangeAsync(feylings);
-            await _context.SaveChangesAsync();
-
-            return Ok();
-        }
-
+        [Authorize(Roles = "Admin")]
         [HttpDelete]
         public async Task<ActionResult> DeleteFeyling(int id)
         {

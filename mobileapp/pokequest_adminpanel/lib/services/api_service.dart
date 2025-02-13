@@ -405,6 +405,112 @@ class ApiService {
     }
   }
 
+  // Method to get all Feylings
+  Future<List<dynamic>> getAllFeylings(String token) async {
+    final url = Uri.parse('$baseUrl/Feylings/GetAllFeylings');
+    final response = await http.get(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token', // Pass the JWT token here
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body); // Return the list of Feylings
+    } else {
+      print('Error: ${response.body}');
+      return [];
+    }
+  }
+
+  // Method to create a new Feyling
+  Future<bool> createFeyling(String token, Map<String, dynamic> feylingData, {required XFile imgFile}) async {
+    final url = Uri.parse('$baseUrl/Feylings/CreateFeyling');
+    var request = http.MultipartRequest('POST', url)
+      ..headers['Authorization'] = 'Bearer $token';
+
+    // Add the form fields
+    request.fields['name'] = feylingData['name'] ?? '';
+    request.fields['description'] = feylingData['description'] ?? '';
+    request.fields['typeId'] = feylingData['typeId'].toString();
+    request.fields['abilityId'] = feylingData['abilityId'].toString();
+    request.fields['isUnlocked'] = feylingData['isUnlocked'].toString();
+    request.fields['hp'] = feylingData['hp'].toString();
+    request.fields['atk'] = feylingData['atk'].toString();
+    request.fields['itemId'] = feylingData['itemId']?.toString() ?? '';  // Nullable ItemId
+    request.fields['weakAgainstId'] = feylingData['weakAgainstId'].toString();
+    request.fields['strongAgainstId'] = feylingData['strongAgainstId'].toString();
+    request.fields['sellPrice'] = feylingData['sellPrice'].toString();
+
+    // If there's an image, attach it to the request
+    if (imgFile.path.isNotEmpty) {
+      request.files.add(await http.MultipartFile.fromPath('Img', imgFile.path));
+    }
+
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
+
+    if (response.statusCode == 201) {
+      return true;
+    } else {
+      print('Error: ${response.body}');
+      return false;
+    }
+  }
+
+  // Method to update an existing Feyling
+  Future<bool> updateFeyling(String token, int id, Map<String, dynamic> updatedFeylingData, {XFile? imgFile}) async {
+    final url = Uri.parse('$baseUrl/Feylings/UpdateFeyling/$id');
+    var request = http.MultipartRequest('PUT', url)
+      ..headers['Authorization'] = 'Bearer $token';
+
+    // Add the form fields
+    request.fields['name'] = updatedFeylingData['name'] ?? '';
+    request.fields['description'] = updatedFeylingData['description'] ?? '';
+    request.fields['typeId'] = updatedFeylingData['typeId'].toString();
+    request.fields['abilityId'] = updatedFeylingData['abilityId'].toString();
+    request.fields['isUnlocked'] = updatedFeylingData['isUnlocked'].toString();
+    request.fields['hp'] = updatedFeylingData['hp'].toString();
+    request.fields['atk'] = updatedFeylingData['atk'].toString();
+    request.fields['itemId'] = updatedFeylingData['itemId']?.toString() ?? '';
+    request.fields['weakAgainstId'] = updatedFeylingData['weakAgainstId'].toString();
+    request.fields['strongAgainstId'] = updatedFeylingData['strongAgainstId'].toString();
+    request.fields['sellPrice'] = updatedFeylingData['sellPrice'].toString();
+
+    // If there's an image, attach it to the request
+    if (imgFile != null && imgFile.path.isNotEmpty) {
+      request.files.add(await http.MultipartFile.fromPath('Img', imgFile.path));
+    }
+
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
+
+    if (response.statusCode == 204) {
+      return true;
+    } else {
+      print('Error: ${response.body}');
+      return false;
+    }
+  }
+
+  // Method to delete a Feyling
+  Future<bool> deleteFeyling(String token, int id) async {
+    final url = Uri.parse('$baseUrl/Feylings/DeleteFeyling?id=$id');
+    final response = await http.delete(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 204) {
+      return true;
+    } else {
+      print('Error: ${response.body}');
+      return false;
+    }
+  }
+
   // Function to check if the user has the 'Admin' role
   bool isAdmin(String token) {
     try {

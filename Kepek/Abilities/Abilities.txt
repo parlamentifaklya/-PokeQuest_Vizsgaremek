@@ -9,7 +9,7 @@ Embergriff: Ashen Gaze - A fiery stare that incinerates foes.
 
 VIZES
 
-Aquaflare: Flame Dance - Creates a dazzling display of bioluminescent flames that confuses and dazzles enemies.
+Abyssidon: Flame Dance - Creates a dazzling display of bioluminescent flames that confuses and dazzles enemies.
 Kelpishell: Coral Swap - Changes shells to gain different defensive abilities or resistances.
 Hydrofein: Silver Surge - A swift attack that allows it to move through water and strike with shimmering speed.
 Ripplee: Starlight Pulse - Emits a pulse of bioluminescent energy that heals itself or stuns enemies.

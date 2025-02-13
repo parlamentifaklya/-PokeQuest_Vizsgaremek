@@ -134,44 +134,5 @@ namespace PokeQuestApi_New.Controllers
 
             return NoContent();
         }
-
-        // Bulk insert items
-        [HttpPost("bulk-insert")]
-        public async Task<ActionResult> BulkInsertItems([FromForm] List<Item> items, [FromForm] List<IFormFile> files)
-        {
-            if (items == null || items.Count == 0)
-            {
-                return BadRequest("No items to insert.");
-            }
-
-            if (files != null && files.Count != items.Count)
-            {
-                return BadRequest("The number of files must match the number of items.");
-            }
-
-            // List to hold the items that will be added to the database
-            var itemsToAdd = new List<Item>();
-
-            for (int i = 0; i < items.Count; i++)
-            {
-                var item = items[i];
-
-                // If there is a file for the current item, upload it and get the file path
-                if (files != null && files.Count > i && files[i] != null)
-                {
-                    var filePath = await _imageUploadService.UploadImage(files[i], "ItemImgs");
-                    item.Img = filePath;  // Set the Img field to the uploaded file path
-                }
-
-                // Add the item to the list that will be inserted into the database
-                itemsToAdd.Add(item);
-            }
-
-            // Bulk insert the items into the database
-            await _context.Items.AddRangeAsync(itemsToAdd);
-            await _context.SaveChangesAsync();
-
-            return Ok(new { Message = "Items inserted successfully!" });
-        }
     }
 }
