@@ -4,6 +4,7 @@ import 'login_screen.dart';
 import 'admin_panel_screen.dart';
 import 'manage_types_screen.dart';
 import 'manage_abilities_screen.dart'; // Make sure this is imported if you're using it
+import 'manage_feylings_screen.dart'; // Add this import
 
 void main() {
   runApp(MyApp());
@@ -27,11 +28,11 @@ class MyApp extends StatelessWidget {
         // Handling dynamic route generation
         if (settings.name == '/adminPanel') {
           final token =
-              settings.arguments as String?; // Retrieve token from arguments
+          settings.arguments as String?; // Retrieve token from arguments
           if (token == null) {
             return MaterialPageRoute(
               builder: (context) =>
-                  const LoginScreen(), // Redirect to login if no token
+              const LoginScreen(), // Redirect to login if no token
             );
           }
           return MaterialPageRoute(
@@ -39,11 +40,11 @@ class MyApp extends StatelessWidget {
           );
         } else if (settings.name == '/manageItems') {
           final token =
-              settings.arguments as String?; // Retrieve token from arguments
+          settings.arguments as String?; // Retrieve token from arguments
           if (token == null) {
             return MaterialPageRoute(
               builder: (context) =>
-                  const LoginScreen(), // Redirect to login if no token
+              const LoginScreen(), // Redirect to login if no token
             );
           }
           return MaterialPageRoute(
@@ -51,11 +52,11 @@ class MyApp extends StatelessWidget {
           );
         } else if (settings.name == '/manageTypes') {
           final token =
-              settings.arguments as String?; // Retrieve token from arguments
+          settings.arguments as String?; // Retrieve token from arguments
           if (token == null) {
             return MaterialPageRoute(
               builder: (context) =>
-                  const LoginScreen(), // Redirect to login if no token
+              const LoginScreen(), // Redirect to login if no token
             );
           }
           return MaterialPageRoute(
@@ -63,15 +64,27 @@ class MyApp extends StatelessWidget {
           );
         } else if (settings.name == '/manageAbilities') {
           final token =
-              settings.arguments as String?; // Retrieve token from arguments
+          settings.arguments as String?; // Retrieve token from arguments
           if (token == null) {
             return MaterialPageRoute(
               builder: (context) =>
-                  const LoginScreen(), // Redirect to login if no token
+              const LoginScreen(), // Redirect to login if no token
             );
           }
           return MaterialPageRoute(
             builder: (context) => ManageAbilitiesScreen(token: token),
+          );
+        } else if (settings.name == '/manageFeylings') { // Add this condition
+          final token =
+          settings.arguments as String?; // Retrieve token from arguments
+          if (token == null) {
+            return MaterialPageRoute(
+              builder: (context) =>
+              const LoginScreen(), // Redirect to login if no token
+            );
+          }
+          return MaterialPageRoute(
+            builder: (context) => ManageFeylingsScreen(token: token), // Add ManageFeylingsScreen route
           );
         }
         return null; // Return null for unknown routes

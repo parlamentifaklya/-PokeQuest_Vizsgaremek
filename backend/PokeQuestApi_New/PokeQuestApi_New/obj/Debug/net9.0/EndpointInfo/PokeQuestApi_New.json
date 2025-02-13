@@ -109,40 +109,6 @@
         }
       }
     },
-    "/api/Ability/AbilityBulkInsert/Ability-bulk-insert": {
-      "post": {
-        "tags": [
-          "Ability"
-        ],
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "abilities": {
-                    "type": "array",
-                    "items": {
-                      "$ref": "#/components/schemas/CreateAbilityDto"
-                    }
-                  }
-                }
-              },
-              "encoding": {
-                "abilities": {
-                  "style": "form"
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
     "/api/Ability/DeleteAbility": {
       "delete": {
         "tags": [
@@ -526,46 +492,6 @@
         }
       }
     },
-    "/api/Feylings/FeylingBulkInsert/Feyling-bulk-insert": {
-      "post": {
-        "tags": [
-          "Feylings"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/Feyling"
-                }
-              }
-            },
-            "text/json": {
-              "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/Feyling"
-                }
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/Feyling"
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
     "/api/Feylings/DeleteFeyling": {
       "delete": {
         "tags": [
@@ -870,50 +796,6 @@
         }
       }
     },
-    "/api/Item/bulk-insert": {
-      "post": {
-        "tags": [
-          "Item"
-        ],
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "items": {
-                    "type": "array",
-                    "items": {
-                      "$ref": "#/components/schemas/Item"
-                    }
-                  },
-                  "files": {
-                    "type": "array",
-                    "items": {
-                      "type": "string",
-                      "format": "binary"
-                    }
-                  }
-                }
-              },
-              "encoding": {
-                "items": {
-                  "style": "form"
-                },
-                "files": {
-                  "style": "form"
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
     "/api/Type/GetType/{id}": {
       "get": {
         "tags": [
@@ -1016,46 +898,6 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "/api/Type/TypeBulkInsert/Type-bulk-insert": {
-      "post": {
-        "tags": [
-          "Type"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/Type"
-                }
-              }
-            },
-            "text/json": {
-              "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/Type"
-                }
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/Type"
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK"
           }
         }
       }
@@ -1477,49 +1319,6 @@
           },
           "type": {
             "$ref": "#/components/schemas/Type"
-          }
-        },
-        "additionalProperties": false
-      },
-      "CreateAbilityDto": {
-        "required": [
-          "name",
-          "typeId"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "file": {
-            "type": "string",
-            "format": "binary",
-            "nullable": true
-          },
-          "name": {
-            "minLength": 1,
-            "type": "string"
-          },
-          "description": {
-            "type": "string",
-            "nullable": true
-          },
-          "damage": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "healthPoint": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "rechargeTime": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "typeId": {
-            "type": "integer",
-            "format": "int32"
           }
         },
         "additionalProperties": false

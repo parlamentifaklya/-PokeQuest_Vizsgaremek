@@ -1,22 +1,6 @@
 [
   {
     "ContainingType": "PokeQuestApi_New.Controllers.AbilityController",
-    "Method": "AbilityBulkInsert",
-    "RelativePath": "api/Ability/AbilityBulkInsert/Ability-bulk-insert",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "abilities",
-        "Type": "System.Collections.Generic.List\u00601[[PokeQuestApi_New.Controllers.CreateAbilityDto, PokeQuestApi_New, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "IsRequired": false
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "PokeQuestApi_New.Controllers.AbilityController",
     "Method": "CreateAbility",
     "RelativePath": "api/Ability/CreateAbility",
     "HttpMethod": "POST",
@@ -272,22 +256,6 @@
         "Name": "id",
         "Type": "System.Int32",
         "IsRequired": false
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "PokeQuestApi_New.Controllers.FeylingsController",
-    "Method": "FeylingBulkInsert",
-    "RelativePath": "api/Feylings/FeylingBulkInsert/Feyling-bulk-insert",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "feylings",
-        "Type": "System.Collections.Generic.List\u00601[[PokeQuestApi_New.Models.Feyling, PokeQuestApi_New, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "IsRequired": true
       }
     ],
     "ReturnTypes": []
@@ -586,27 +554,6 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "PokeQuestApi_New.Controllers.ItemController",
-    "Method": "BulkInsertItems",
-    "RelativePath": "api/Item/bulk-insert",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "items",
-        "Type": "System.Collections.Generic.List\u00601[[PokeQuestApi_New.Models.Item, PokeQuestApi_New, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "IsRequired": false
-      },
-      {
-        "Name": "files",
-        "Type": "System.Collections.Generic.List\u00601[[Microsoft.AspNetCore.Http.IFormFile, Microsoft.AspNetCore.Http.Features, Version=9.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60]]",
-        "IsRequired": false
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
     "ContainingType": "PokeQuestApi_New.Controllers.TypeController",
     "Method": "CreateType",
     "RelativePath": "api/Type/CreateType",
@@ -684,22 +631,6 @@
       {
         "Name": "id",
         "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "PokeQuestApi_New.Controllers.TypeController",
-    "Method": "TypeBulkInsert",
-    "RelativePath": "api/Type/TypeBulkInsert/Type-bulk-insert",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "types",
-        "Type": "System.Collections.Generic.List\u00601[[PokeQuestApi_New.Models.Type, PokeQuestApi_New, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "IsRequired": true
       }
     ],

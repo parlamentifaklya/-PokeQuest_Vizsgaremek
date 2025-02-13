@@ -18,6 +18,7 @@ class ManageAbilitiesScreen extends StatefulWidget {
 class _ManageAbilitiesScreenState extends State<ManageAbilitiesScreen> {
   bool _isLoading = false;
   List<dynamic> _abilities = [];
+  List<dynamic> _types = []; // List to hold the types fetched from the API
   final ApiService _apiService = ApiService();
   final _picker = ImagePicker();
 
@@ -27,11 +28,13 @@ class _ManageAbilitiesScreenState extends State<ManageAbilitiesScreen> {
   final TextEditingController _healthPointController = TextEditingController();
   final TextEditingController _rechargeTimeController = TextEditingController();
   dynamic _image; // Allow both File types
+  String? _selectedTypeId; // Store the selected type ID
 
   @override
   void initState() {
     super.initState();
     _fetchAbilities();
+    _fetchTypes(); // Fetch types on init
   }
 
   // Fetch all abilities from API
@@ -56,6 +59,20 @@ class _ManageAbilitiesScreenState extends State<ManageAbilitiesScreen> {
     });
   }
 
+  // Fetch all types from API
+  Future<void> _fetchTypes() async {
+    try {
+      final types = await _apiService.getAllTypes(widget.token);
+      setState(() {
+        _types = types;
+      });
+    } catch (e) {
+      print('Error fetching types: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to load types')));
+    }
+  }
+
   // Pick an image for the ability (Mobile support)
   Future<void> _pickImage() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
@@ -72,7 +89,8 @@ class _ManageAbilitiesScreenState extends State<ManageAbilitiesScreen> {
         _damageController.text.isEmpty ||
         _descriptionController.text.isEmpty ||
         _healthPointController.text.isEmpty ||
-        _rechargeTimeController.text.isEmpty) {
+        _rechargeTimeController.text.isEmpty ||
+        _selectedTypeId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('All fields are required')));
       return;
@@ -89,8 +107,7 @@ class _ManageAbilitiesScreenState extends State<ManageAbilitiesScreen> {
     });
 
     try {
-      var uri = Uri.parse(
-          "http://10.0.2.2:5130/api/Ability/CreateAbility"); // Emulator special URL
+      var uri = Uri.parse("http://10.0.2.2:5130/api/Ability/CreateAbility"); // Emulator special URL
       var request = http.MultipartRequest('POST', uri);
       request.headers['Authorization'] = 'Bearer ${widget.token}';
 
@@ -100,6 +117,7 @@ class _ManageAbilitiesScreenState extends State<ManageAbilitiesScreen> {
       request.fields['description'] = _descriptionController.text;
       request.fields['healthPoint'] = _healthPointController.text;
       request.fields['rechargeTime'] = _rechargeTimeController.text;
+      request.fields['typeId'] = _selectedTypeId!; // Add the selected type ID
 
       // Mobile platform: use File from image_picker
       var imageFile = File(_image!.path);
@@ -123,6 +141,7 @@ class _ManageAbilitiesScreenState extends State<ManageAbilitiesScreen> {
         _rechargeTimeController.clear();
         setState(() {
           _image = null;
+          _selectedTypeId = null;
         });
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -138,13 +157,16 @@ class _ManageAbilitiesScreenState extends State<ManageAbilitiesScreen> {
     });
   }
 
-  // Update an existing ability via dialog
+  // Update an existing ability via dialog (Updated to PUT and with typeId)
   Future<void> _updateAbility(int abilityId) async {
-    _nameController.text = _abilities.firstWhere((ability) => ability['id'] == abilityId)['name'];
-    _damageController.text = _abilities.firstWhere((ability) => ability['id'] == abilityId)['damage'].toString();
-    _descriptionController.text = _abilities.firstWhere((ability) => ability['id'] == abilityId)['description'];
-    _healthPointController.text = _abilities.firstWhere((ability) => ability['id'] == abilityId)['healthPoint'].toString();
-    _rechargeTimeController.text = _abilities.firstWhere((ability) => ability['id'] == abilityId)['rechargeTime'].toString();
+    var ability = _abilities.firstWhere((ability) => ability['id'] == abilityId);
+
+    _nameController.text = ability['name'];
+    _damageController.text = ability['damage'].toString();
+    _descriptionController.text = ability['description'];
+    _healthPointController.text = ability['healthPoint'].toString();
+    _rechargeTimeController.text = ability['rechargeTime'].toString();
+    _selectedTypeId = ability['typeId'].toString(); // Prefill the typeId
 
     // Show dialog with current ability data prefilled
     await showDialog(
@@ -180,6 +202,22 @@ class _ManageAbilitiesScreenState extends State<ManageAbilitiesScreen> {
                   keyboardType: TextInputType.number,
                 ),
                 SizedBox(height: 8),
+                DropdownButton<String>(
+                  value: _selectedTypeId,
+                  hint: Text('Select Ability Type'),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      _selectedTypeId = newValue;
+                    });
+                  },
+                  items: _types.map<DropdownMenuItem<String>>((type) {
+                    return DropdownMenuItem<String>(
+                      value: type['id'].toString(),
+                      child: Text(type['name']),
+                    );
+                  }).toList(),
+                ),
+                SizedBox(height: 8),
                 ElevatedButton.icon(
                   onPressed: _pickImage,
                   icon: Icon(Icons.image),
@@ -194,13 +232,14 @@ class _ManageAbilitiesScreenState extends State<ManageAbilitiesScreen> {
                 // Handle update
                 var uri = Uri.parse(
                     "http://10.0.2.2:5130/api/Ability/UpdateAbility/$abilityId");
-                var request = http.MultipartRequest('POST', uri);
+                var request = http.MultipartRequest('PUT', uri);
                 request.headers['Authorization'] = 'Bearer ${widget.token}';
                 request.fields['name'] = _nameController.text;
                 request.fields['damage'] = _damageController.text;
                 request.fields['description'] = _descriptionController.text;
                 request.fields['healthPoint'] = _healthPointController.text;
                 request.fields['rechargeTime'] = _rechargeTimeController.text;
+                request.fields['typeId'] = _selectedTypeId!;
 
                 if (_image != null) {
                   var imageFile = File(_image!.path);
@@ -270,6 +309,83 @@ class _ManageAbilitiesScreenState extends State<ManageAbilitiesScreen> {
     }
   }
 
+  // Function to show the dialog for creating a new ability
+  void _showCreateAbilityDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Create New Ability'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: _nameController,
+                  decoration: InputDecoration(labelText: 'Ability Name'),
+                ),
+                TextField(
+                  controller: _damageController,
+                  decoration: InputDecoration(labelText: 'Damage'),
+                  keyboardType: TextInputType.number,
+                ),
+                TextField(
+                  controller: _descriptionController,
+                  decoration: InputDecoration(labelText: 'Description'),
+                ),
+                TextField(
+                  controller: _healthPointController,
+                  decoration: InputDecoration(labelText: 'Health Point'),
+                  keyboardType: TextInputType.number,
+                ),
+                TextField(
+                  controller: _rechargeTimeController,
+                  decoration: InputDecoration(labelText: 'Recharge Time'),
+                  keyboardType: TextInputType.number,
+                ),
+                SizedBox(height: 8),
+                DropdownButton<String>(
+                  value: _selectedTypeId,
+                  hint: Text('Select Ability Type'),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      _selectedTypeId = newValue;
+                    });
+                  },
+                  items: _types.map<DropdownMenuItem<String>>((type) {
+                    return DropdownMenuItem<String>(
+                      value: type['id'].toString(),
+                      child: Text(type['name']),
+                    );
+                  }).toList(),
+                ),
+                SizedBox(height: 8),
+                ElevatedButton.icon(
+                  onPressed: _pickImage,
+                  icon: Icon(Icons.image),
+                  label: Text('Pick Image'),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                _createAbility();
+                Navigator.pop(context); // Close dialog after creating ability
+              },
+              child: Text('Create Ability'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context), // Close dialog
+              child: Text('Cancel'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -308,21 +424,20 @@ class _ManageAbilitiesScreenState extends State<ManageAbilitiesScreen> {
                           Text('Damage: ${ability['damage']}'),
                           Text('Health Point: ${ability['healthPoint']}'),
                           Text('Recharge Time: ${ability['rechargeTime']}'),
+                          Text('Description: ${ability['description']}'),
                           SizedBox(height: 8),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               IconButton(
+                                onPressed: () =>
+                                    _updateAbility(ability['id']),
                                 icon: Icon(Icons.edit),
-                                onPressed: () {
-                                  _updateAbility(ability['id']);
-                                },
                               ),
                               IconButton(
+                                onPressed: () =>
+                                    _deleteAbility(ability['id']),
                                 icon: Icon(Icons.delete),
-                                onPressed: () {
-                                  _deleteAbility(ability['id']);
-                                },
                               ),
                             ],
                           ),
@@ -337,83 +452,9 @@ class _ManageAbilitiesScreenState extends State<ManageAbilitiesScreen> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          _showCreateAbilityDialog(); // Show dialog when + is pressed
-        },
+        onPressed: _showCreateAbilityDialog,
         child: Icon(Icons.add),
       ),
-    );
-  }
-
-  // Function to show the Create Ability dialog
-  void _showCreateAbilityDialog() {
-    // Clear previous inputs if any
-    _nameController.clear();
-    _damageController.clear();
-    _descriptionController.clear();
-    _healthPointController.clear();
-    _rechargeTimeController.clear();
-    setState(() {
-      _image = null;
-    });
-
-    // Show the dialog for creating the ability
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('Create Ability'),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: _nameController,
-                  decoration: InputDecoration(labelText: 'Ability Name'),
-                ),
-                TextField(
-                  controller: _damageController,
-                  decoration: InputDecoration(labelText: 'Damage'),
-                  keyboardType: TextInputType.number,
-                ),
-                TextField(
-                  controller: _descriptionController,
-                  decoration: InputDecoration(labelText: 'Description'),
-                ),
-                TextField(
-                  controller: _healthPointController,
-                  decoration: InputDecoration(labelText: 'Health Point'),
-                  keyboardType: TextInputType.number,
-                ),
-                TextField(
-                  controller: _rechargeTimeController,
-                  decoration: InputDecoration(labelText: 'Recharge Time'),
-                  keyboardType: TextInputType.number,
-                ),
-                SizedBox(height: 8),
-                ElevatedButton.icon(
-                  onPressed: _pickImage,
-                  icon: Icon(Icons.image),
-                  label: Text('Pick Image'),
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                _createAbility();
-                Navigator.pop(context);
-              },
-              child: Text('Create'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.pop(context), // Close dialog
-              child: Text('Cancel'),
-            ),
-          ],
-        );
-      },
     );
   }
 }

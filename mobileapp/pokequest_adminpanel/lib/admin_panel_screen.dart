@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'manage_types_screen.dart';
 import 'manage_abilities_screen.dart';
 import 'manage_items_screen.dart'; // Make sure to import ManageItemsScreen
+import 'manage_feylings_screen.dart'; // Add import for ManageFeylingsScreen
 
 class AdminPanelScreen extends StatefulWidget {
   final String token;
@@ -18,7 +19,8 @@ class AdminPanelScreen extends StatefulWidget {
 
 class _AdminPanelScreenState extends State<AdminPanelScreen> {
   bool _isLoading = false;
-  List<dynamic> _data = [];
+  List<dynamic> _users = [];
+  List<dynamic> _admins = [];
   final ApiService _apiService = ApiService();
 
   final TextEditingController _nameController = TextEditingController();
@@ -53,9 +55,13 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
     try {
       final users = await _apiService.getUsers(widget.token);
       setState(() {
-        // Filter out users with 'Admin' role
-        _data = users.where((user) {
+        // Separate users and admins
+        _users = users.where((user) {
           return !(user['roles'] != null && user['roles'].contains('Admin'));
+        }).toList();
+
+        _admins = users.where((user) {
+          return user['roles'] != null && user['roles'].contains('Admin');
         }).toList();
       });
     } catch (e) {
@@ -157,12 +163,20 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
     );
   }
 
-  // Add the new method to navigate to ManageItemsScreen
   void _navigateToManageItemsScreen() {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => ManageItemsScreen(token: widget.token),
+      ),
+    );
+  }
+
+  void _navigateToManageFeylingsScreen() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ManageFeylingsScreen(token: widget.token),
       ),
     );
   }
@@ -217,14 +231,19 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
               onTap: _navigateToManageTypesScreen,
             ),
             ListTile(
-              title: Text('Manage Abilities'), // New option
+              title: Text('Manage Abilities'),
               leading: Icon(Icons.flash_on),
-              onTap: _navigateToManageAbilitiesScreen, // Navigate to ManageAbilitiesScreen
+              onTap: _navigateToManageAbilitiesScreen,
             ),
             ListTile(
-              title: Text('Manage Items'), // New option for ManageItemsScreen
+              title: Text('Manage Items'),
               leading: Icon(Icons.inventory),
-              onTap: _navigateToManageItemsScreen, // Navigate to ManageItemsScreen
+              onTap: _navigateToManageItemsScreen,
+            ),
+            ListTile(
+              title: Text('Manage Feylings'),
+              leading: Icon(Icons.pets),
+              onTap: _navigateToManageFeylingsScreen,
             ),
             ListTile(
               title: Text('Logout'),
@@ -236,48 +255,15 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
       ),
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
-          : ListView.builder(
-        itemCount: _data.length,
-        itemBuilder: (context, index) {
-          var user = _data[index];
-          String userName = user['userName'] ?? 'Unknown';
-          String email = user['email'] ?? 'Unknown';
-          String roles = (user['roles'] != null && user['roles'] is List && user['roles'].isNotEmpty)
-              ? user['roles'].join(', ')
-              : 'Unknown';
-
-          return Card(
-            margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-            child: ListTile(
-              leading: CircleAvatar(
-                child: Text(userName[0].toUpperCase()), // Display first letter of the user's name
-              ),
-              title: Text(userName),
-              subtitle: Text('Email: $email\nRoles: $roles'),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.edit),
-                    onPressed: () {
-                      Map<String, dynamic> updatedUser = {
-                        'userName': 'Updated Name',
-                        'email': email,
-                      };
-                      _updateUser(user['id'], updatedUser);
-                    },
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.delete),
-                    onPressed: () {
-                      _deleteUser(user['id']);
-                    },
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
+          : ListView(
+        children: [
+          if (_admins.isNotEmpty) ...[
+            _buildAdminSection(),
+          ],
+          if (_users.isNotEmpty) ...[
+            _buildUserSection(),
+          ],
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -316,6 +302,75 @@ class _AdminPanelScreenState extends State<AdminPanelScreen> {
         tooltip: 'Create Admin',
         child: Icon(Icons.add),
       ),
+    );
+  }
+
+  Widget _buildAdminSection() {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            'Admins',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+        ),
+        ..._admins.map((admin) => Card(
+          margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+          child: ListTile(
+            leading: CircleAvatar(
+              child: Text(admin['userName'][0].toUpperCase()),
+            ),
+            title: Text(admin['userName']),
+            subtitle: Text('Email: ${admin['email']}'),
+          ),
+        ))
+      ],
+    );
+  }
+
+  Widget _buildUserSection() {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            'Users',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+        ),
+        ..._users.map((user) => Card(
+          margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+          child: ListTile(
+            leading: CircleAvatar(
+              child: Text(user['userName'][0].toUpperCase()),
+            ),
+            title: Text(user['userName']),
+            subtitle: Text('Email: ${user['email']}'),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: Icon(Icons.edit),
+                  onPressed: () {
+                    Map<String, dynamic> updatedUser = {
+                      'userName': 'Updated Name',
+                      'email': user['email'],
+                    };
+                    _updateUser(user['id'], updatedUser);
+                  },
+                ),
+                IconButton(
+                  icon: Icon(Icons.delete),
+                  onPressed: () {
+                    _deleteUser(user['id']);
+                  },
+                ),
+              ],
+            ),
+          ),
+        )),
+      ],
     );
   }
 }
