@@ -11,7 +11,10 @@ const MainMenu: React.FC = () => {
       </div>
 
       <div className={styles.menuButtons}>
-        <button className={styles.menuButton}>Play</button>
+        <Link to={"/gamemenu"}>
+          <button className={styles.menuButton}>Play</button>
+        </Link>
+        
         <Link to={"/settings"}>
           <button className={styles.menuButton}>Settings</button>
         </Link>
