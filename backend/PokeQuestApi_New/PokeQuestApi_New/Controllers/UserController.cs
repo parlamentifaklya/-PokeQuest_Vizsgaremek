@@ -297,40 +297,40 @@ namespace PokeQuestApi_New.Controllers
             return Ok();
         }
 
-        // Add this method in the UserController class
-        [Authorize]
-        [HttpGet("loggedin")]
-        public async Task<IActionResult> GetLoggedIn()
-        {
-            // Get the current logged-in user based on the JWT claims
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userId))
-            {
-                return Unauthorized(new { Message = "User is not authenticated." });
-            }
+        //// Add this method in the UserController class
+        //[Authorize]
+        //[HttpGet("loggedin")]
+        //public async Task<IActionResult> GetLoggedIn()
+        //{
+        //    // Get the current logged-in user based on the JWT claims
+        //    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        //    if (string.IsNullOrEmpty(userId))
+        //    {
+        //        return Unauthorized(new { Message = "User is not authenticated." });
+        //    }
 
-            // Fetch the user from the database
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user == null)
-            {
-                return NotFound(new { Message = "User not found." });
-            }
+        //    // Fetch the user from the database
+        //    var user = await _userManager.FindByIdAsync(userId);
+        //    if (user == null)
+        //    {
+        //        return NotFound(new { Message = "User not found." });
+        //    }
 
-            // Fetch roles assigned to the user
-            var userRoles = await _userManager.GetRolesAsync(user);
+        //    // Fetch roles assigned to the user
+        //    var userRoles = await _userManager.GetRolesAsync(user);
 
-            // Return user data with roles and level
-            var userDto = new
-            {
-                user.Id,
-                user.UserName,
-                user.Email,
-                user.UserLevel,
-                Roles = userRoles // Include roles
-            };
+        //    // Return user data with roles and level
+        //    var userDto = new
+        //    {
+        //        user.Id,
+        //        user.UserName,
+        //        user.Email,
+        //        user.UserLevel,
+        //        Roles = userRoles // Include roles
+        //    };
 
-            return Ok(userDto);
-        }
+        //    return Ok(userDto);
+        //}
 
 
         // Get list of users (admin only)

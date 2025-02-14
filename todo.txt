@@ -4,6 +4,4 @@ Mobile:
 -add type id selection to update and create ability /done 
 
 Backend:
--delete functions delete the uploaded image too
--update functions update the uploaded image too (if they don't already idk)
 -remove not used bulk-insert functions /done
