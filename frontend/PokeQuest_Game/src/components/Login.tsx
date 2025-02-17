@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { loginData } from '../services/ApiServices';
+import { decodeJWT } from '../services/TokenService'; // Import the decodeJWT function
 import styles from './Login.module.css';
 
 const Login: React.FC = () => {
@@ -20,7 +21,16 @@ const Login: React.FC = () => {
           const data = await loginData("User/Login", payload);
 
           if (data && data.token) {
+            // Decode the JWT token and store user info
+            const decodedToken = decodeJWT(data.token);
+
+            console.log("Decoded token header: ", decodedToken.header);
+            console.log("Decoded token payload: ", decodedToken.payload);
+
             localStorage.setItem("authToken", data.token);
+
+            // Store the decoded user data (e.g., username, level) in localStorage or state
+            localStorage.setItem("userData", JSON.stringify(decodedToken.payload));
 
             console.log('Login successful, navigating to /mainmenu');
             navigate('/mainmenu');

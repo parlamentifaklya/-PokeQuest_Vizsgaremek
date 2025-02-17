@@ -39,6 +39,7 @@
     text-align: center;
     display: flex;
     justify-content: center;
+    padding: 8px;
 }
 
 .middlePart img {
@@ -49,6 +50,7 @@
 }
 
 .textDesign {
+    margin: 0;
     font-size: 2rem;
     font-weight: bold;
     color: yellow;
@@ -157,4 +159,9 @@
 .summon{
     width: 8vw;
     height: 20vh;
+}
+
+.itemchestButton {
+    all: unset; /* Removes default button styles */
+    cursor: pointer;
 }

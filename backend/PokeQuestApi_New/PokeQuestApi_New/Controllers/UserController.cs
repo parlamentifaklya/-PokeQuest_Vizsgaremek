@@ -10,7 +10,9 @@ using Microsoft.EntityFrameworkCore;
 using PokeQuestApi_New.Data;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Authorization;
+using Newtonsoft.Json;
 using System.Diagnostics.Eventing.Reader;
+using System.Text.Json.Serialization;
 
 namespace PokeQuestApi_New.Controllers
 {
@@ -126,7 +128,11 @@ namespace PokeQuestApi_New.Controllers
                 new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim("User Level", user.UserLevel.ToString()),
+                new Claim("CoinAmount", user.CoinAmount.ToString()),
                 };
+
+                var userInventoryJson = JsonConvert.SerializeObject(user.Inventory);
+                authClaims.Add(new Claim("UserInventory", userInventoryJson));
 
                 foreach (var role in userRoles)
                 {

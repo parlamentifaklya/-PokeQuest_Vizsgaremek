@@ -706,16 +706,6 @@
   },
   {
     "ContainingType": "PokeQuestApi_New.Controllers.UserController",
-    "Method": "GetLoggedIn",
-    "RelativePath": "api/User/GetLoggedIn/loggedin",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "PokeQuestApi_New.Controllers.UserController",
     "Method": "GetUser",
     "RelativePath": "api/User/GetUser/{id}",
     "HttpMethod": "GET",

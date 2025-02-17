@@ -1,47 +1,46 @@
-import React from 'react';
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import styles from './GameMenu.module.css';
 import Button from '../../modules/Button';
 import { Link } from 'react-router-dom';
-import { getUser } from '../../services/ApiServices';
+import { User } from '../../types/User';
+import ItemChest from '../GamePages/Chests/ItemChest'; // Import ItemChest
 
 const GameMenu = () => {
-  const [userData, setUserData] = useState<any>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  const token = localStorage.getItem('authToken');
+  const [user, setUser] = useState<User | null>(null);
+  const [isChestOpen, setIsChestOpen] = useState<boolean>(false); // State to control chest opening
+  const [opening, setOpening] = useState(false); // State to track if the opening process started
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      if (token) {
-        try {
-          const data = await getUser('User/GetLoggedIn', token);
-          setUserData(data);
-        } catch (err) {
-          setError('Failed to fetch user data');
-          console.error(err);
-        }
-      } else {
-        setError('No authentication token found.');
-      }
-    };
+    // Retrieve the user data from localStorage when the component mounts
+    const storedUserData = localStorage.getItem('userData');
+    console.log('Stored User Data:', storedUserData); // Debugging log
 
-    fetchUserData();
-  }, [token]);
+    if (storedUserData) {
+      // Parse and map the user data to the User type
+      const parsedData = JSON.parse(storedUserData);
 
-  if (error) {
-    return <div>{error}</div>;
-  }
+      // Assuming that the decoded token is mapped to this structure
+      const userData: User = {
+        userName: parsedData.sub, // 'sub' can be used as 'userName'
+        userLevel: parseInt(parsedData["User Level"], 10), // Convert 'User Level' from string to number
+        userInventory: {}, // Set an empty object or populate this later
+        coinAmount: parseInt(parsedData["CoinAmount"], 10),
+      };
 
-  if (!userData) {
-    return <div>Loading...</div>;
-  }
+      setUser(userData); // Set the user data to state
+    }
+  }, []);
+
+  const openChestHandler = () => {
+    setIsChestOpen(true); // Set chest to open
+    setOpening(true); // Trigger opening animation in ItemChest
+  };
 
   return (
     <div className={styles.gamemenuBackground}>
       <header className={styles.header}>
         <div className={styles.lvlHolder}>
-          <h2 className={styles.textDesign}>Lvl {userData.level}</h2>
+          <h2 className={styles.textDesign}>Lvl {user ? user.userLevel : 'Loading...'}</h2>
         </div>
 
         <div className={styles.middlePart}>
@@ -49,13 +48,12 @@ const GameMenu = () => {
             <img src="settings.png" alt="settings" />
           </Link>
 
-          <h2 className={styles.textDesign}>{userData.username}</h2>
+          <h2 className={styles.textDesign}>{user ? user.userName : 'Loading...'}</h2>
         </div>
 
         <div className={styles.gemHolder}>
           <img src="gem.png" alt="gem" />
-
-          <h2 className={styles.gemtextStyle}>{userData.gems}</h2>
+          <h2 className={styles.gemtextStyle}>{user ? user.coinAmount : 'Loading...'}</h2>
         </div>
       </header>
 
@@ -77,14 +75,17 @@ const GameMenu = () => {
       </main>
 
       <footer className={styles.chestHolder}>
-        <Link to={"/"}>
+        <div onClick={openChestHandler}>
           <img className={styles.itemchest} src="itemchest.png" alt="itemchest" />
-        </Link>
+        </div>
 
         <Link to={"/"}>
           <img className={styles.summon} src="summon.png" alt="summon" />
         </Link>
       </footer>
+
+      {/* Conditionally render the ItemChest component when chest is opened */}
+      {isChestOpen && <ItemChest isOpening={opening} setIsOpening={setOpening} />}
     </div>
   );
 };

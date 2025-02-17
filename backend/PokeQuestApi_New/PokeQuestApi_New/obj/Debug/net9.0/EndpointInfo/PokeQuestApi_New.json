@@ -1206,18 +1206,6 @@
         }
       }
     },
-    "/api/User/GetLoggedIn/loggedin": {
-      "get": {
-        "tags": [
-          "User"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
     "/api/User/GetUsers": {
       "get": {
         "tags": [
