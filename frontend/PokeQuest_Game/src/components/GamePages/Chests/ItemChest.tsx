@@ -66,7 +66,8 @@ const ItemChest = ({ isOpening, setIsOpening }: ItemChestProps) => {
           // Stop the animation and set the position to the current position
           if (animationRef.current) {
             const currentX = gsap.getProperty(itemListRef.current, "x");
-            gsap.set(itemListRef.current, { x: currentX }); // Set the current position
+            const targetX = -indexUnderIndicator * itemWidth; // Calculate the target position based on the selected item index
+            gsap.to(itemListRef.current, { x: targetX, duration: 0.5 }); // Move to the target position smoothly
             animationRef.current.kill(); // Stop the animation
           }
 
@@ -77,9 +78,9 @@ const ItemChest = ({ isOpening, setIsOpening }: ItemChestProps) => {
 
       return () => {
         clearTimeout(selectItemTimeout);
-        //if (animationRef.current) {
-        //  animationRef.current.kill(); // causes problem with stopping the animation
-        //}
+        if (animationRef.current) {
+          animationRef.current.kill(); // Clean up the animation
+        }
       };
     }
   }, [isOpening, items]);
