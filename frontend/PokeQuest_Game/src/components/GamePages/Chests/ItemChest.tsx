@@ -1,139 +1,141 @@
-import React, { useState, useEffect, useRef } from 'react';
-import './ItemChest.css';
+import React, { useState, useRef, useEffect } from "react";
+import "./ItemChest.css";
+import { Link } from "react-router-dom";
 
-// List of items to simulate
-const items: string[] = [
-  "asd",
-  "asdd",
-  "asddd",
-  "asdddd",
-  "asddddd",
-  "asaddddd",
-  "asddddddd",
-  "asdddddddd"
-];
+// Define the type for an item
+type Item = {
+  id: number;
+  rarity: string;
+};
 
-// Constants
-const ITEM_WIDTH = 120;  // Width of each item
-const VISIBLE_ITEMS = 5;  // Number of items visible at once
-const ANIMATION_DURATION = 5000;  // Animation duration in milliseconds (5 seconds)
+// Randomly select an item color (representing rarity)
+const getItemColor = (rand: number) => {
+  if (rand < 0.5) return "yellow";
+  if (rand < 2) return "red";
+  if (rand < 5) return "pink";
+  if (rand < 20) return "purple";
+  return "blue";
+};
 
 const ItemChest: React.FC = () => {
-  const [isSpinning, setIsSpinning] = useState<boolean>(false);
-  const [position, setPosition] = useState<number>(0);
-  const [shuffledItems, setShuffledItems] = useState<string[]>([]); // Store shuffled items here
-  const [winningIndex, setWinningIndex] = useState<number | null>(null); // The winning item after animation stops
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const targetRef = useRef<HTMLDivElement | null>(null); // Invisible div for reference
+  const [items, setItems] = useState<Item[]>([]);
+  const [isSpinning, setIsSpinning] = useState(false);
+  const [reward, setReward] = useState("");
+  const [openCaseDialog, setOpenCaseDialog] = useState(false);
+  const itemsContainerRef = useRef<HTMLDivElement | null>(null);
+  const [selectedItem, setSelectedItem] = useState<Item | null>(null);
 
-  // Function to shuffle the items array
-  const shuffleArray = (arr: string[]) => {
-    let shuffled = [...arr];
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]; // Swap elements
+  // Reset the items (simulating the case)
+  const reset = () => {
+    const newItems: Item[] = [];
+    for (let i = 0; i < 500; i++) { // Generate 500 items
+      const rand = Math.random() * 100;
+      const rarity = getItemColor(rand);
+      newItems.push({ id: i, rarity });
     }
-    return shuffled;
+    setItems(newItems);
   };
 
-  // Create a long array for infinite scrolling using the shuffled array
-  const getLongArray = (repeatCount: number, shuffledArr: string[]) => {
-    const longArray = [];
-    for (let i = 0; i < repeatCount; i++) {
-      longArray.push(...shuffledArr);
-    }
-    return longArray;
-  };
+  // Use effect to ensure the items are populated once the component is mounted
+  useEffect(() => {
+    reset();
+  }, []);
 
-  // Start spin logic
-  const startSpin = (): void => {
-    if (isSpinning) return;
-
+  // Open the case and animate
+  const openCase = () => {
+    if (isSpinning || openCaseDialog) return; // Prevent re-triggering while spinning or dialog open
     setIsSpinning(true);
-    setWinningIndex(null);  // Reset previous winner
 
-    // Shuffle the array once when the spin begins
-    const shuffled = shuffleArray(items);
-    const longShuffledItems = getLongArray(10, shuffled); // Simulate infinite scroll with 10 repetitions of the shuffled items array
-    setShuffledItems(longShuffledItems);
+    // Ensure items are populated before continuing
+    if (items.length === 0) {
+      console.error("Items are not populated yet.");
+      setIsSpinning(false);
+      return;
+    }
 
-    // Start the animation
-    let startTime = performance.now();
-    let totalTime = ANIMATION_DURATION;
-    let velocity = 10;  // Initial speed of animation
+    // Randomly select the winning item (ensure valid index)
+    const rand = Math.floor(Math.random() * items.length);
+    const selectedItem = items[rand];
+    setSelectedItem(selectedItem);
 
-    const animate = (timestamp: number) => {
-      let elapsedTime = timestamp - startTime;
+    // Scroll the items horizontally to the selected item
+    if (itemsContainerRef.current) {
+      const itemWidth = 130; // Width of each item
+      const containerWidth = itemsContainerRef.current.offsetWidth; // Width of the container
+      const maxScroll = items.length * itemWidth; // Max scroll width
 
-      if (elapsedTime < totalTime) {
-        // Decelerate the animation as it progresses
-        let velocityAdjustment = Math.max(velocity - (elapsedTime / totalTime) * velocity, 0);
-        setPosition((prevPosition) => {
-          return prevPosition - velocityAdjustment;
-        });
+      // Calculate the target scroll position to center the selected item
+      const targetScroll = rand * itemWidth - (containerWidth / 2) + (itemWidth / 2);
 
-        requestAnimationFrame(animate);  // Continue the animation
-      } else {
-        // Final stop after 5 seconds
-        setPosition((prevPosition) => {
-          // Get the position closest to the reference div's position
-          const referenceDivPosition = targetRef.current?.getBoundingClientRect().left || 0;
-          let closestItemIndex = 0;
-          let minDistance = Infinity;
+      // Ensure the container has enough width to display all items
+      itemsContainerRef.current.style.width = `${maxScroll}px`;
 
-          shuffledItems.forEach((item, index) => {
-            const itemPosition = ITEM_WIDTH * index;
-            const distance = Math.abs(itemPosition - referenceDivPosition);
+      // Apply smooth scrolling transition with a slower animation (8s)
+      itemsContainerRef.current.style.transition = `transform 8s ease-out`;
+      itemsContainerRef.current.style.transform = `translateX(-${Math.min(Math.max(targetScroll, 0), maxScroll)}px)`; // Ensure it doesn't scroll past the end
+    }
 
-            if (distance < minDistance) {
-              closestItemIndex = index;
-              minDistance = distance;
-            }
-          });
+    // After the animation, show the reward
+    setTimeout(() => {
+      setReward(`You have received a ${selectedItem.rarity} item!`);
+      setOpenCaseDialog(true);
+      setIsSpinning(false);
+    }, 8000); // Wait for the animation to finish
+  };
 
-          setWinningIndex(closestItemIndex);  // Set the winning index based on the closest item
-          return prevPosition;
-        });
-
-        setIsSpinning(false);  // Stop the spinning after the animation finishes
-      }
-    };
-
-    requestAnimationFrame(animate);
+  // Handle dialog close
+  const handleDialogClose = () => {
+    setOpenCaseDialog(false);
   };
 
   return (
     <div className="case-opening">
-      <div className="indicator" />
       <div className="window">
-        <div
-          className="items-container"
-          ref={containerRef}
-          style={{
-            transform: `translateX(${position}px)`, // Apply dynamic position for scrolling
-            display: 'flex',  // Use flexbox for horizontal layout
-            transition: 'none', // Disable any CSS transitions to allow full control by JS
-          }}
-        >
-          {shuffledItems.map((item, index) => (
+        {/* Fixed indicator in the middle */}
+        <div className="indicator"></div>
+        <div className="items-container" ref={itemsContainerRef}>
+          {items.map((item, index) => (
             <div
-              key={index}
-              className={`item ${winningIndex === index ? 'winning' : ''}`}
+              key={item.id}
+              className={`item ${item.rarity} ${isSpinning && item.id === selectedItem?.id ? "winning" : ""}`}
               style={{
-                width: ITEM_WIDTH,  // Set the width of each item
-                flexShrink: 0,  // Prevent items from shrinking
+                backgroundColor:
+                  item.rarity === "yellow"
+                    ? "#FFD700"
+                    : item.rarity === "red"
+                    ? "#FF0000"
+                    : item.rarity === "pink"
+                    ? "#FF1493"
+                    : item.rarity === "purple"
+                    ? "#800080"
+                    : "#0000FF",
+                width: "130px", // Ensure each item has consistent width
+                height: "100px", // Height of the item
+                marginRight: "10px", // Spacing between items
               }}
             >
-              {item}
+              {item.rarity}
             </div>
           ))}
         </div>
-        {/* Invisible div to mark the center */}
-        <div ref={targetRef} className="invisible-div" />
       </div>
-      <button onClick={startSpin} disabled={isSpinning} className="chest-open-button">
+      <button
+        onClick={openCase}
+        disabled={isSpinning || openCaseDialog}
+        className="chest-open-button"
+      >
         Open Case
       </button>
+
+      {/* Dialog to show the reward */}
+      {openCaseDialog && (
+        <div id="dialog" className="dialog">
+          <div id="dialog-msg">{reward}</div>
+          <Link to="/gamemenu">
+            <button className="chest-open-button" onClick={handleDialogClose}>Close</button>
+          </Link>
+        </div>
+      )}
     </div>
   );
 };

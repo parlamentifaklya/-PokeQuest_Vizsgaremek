@@ -1,4 +1,4 @@
-.case-opening{
+.case-opening {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -8,7 +8,7 @@
   border-radius: 10px;
 }
 
-.window{
+.window {
   width: 400px;
   height: 100px;
   overflow: hidden;
@@ -18,12 +18,14 @@
   box-shadow: opx opx 15px #0ff;
 }
 
-.items-container{
+.items-container {
   display: flex;
   white-space: nowrap;
+  transition: transform 5s linear;
+  z-index: 1;
 }
 
-.item{
+.item {
   width: 130px;
   height: 100px;
   display: flex;
@@ -39,24 +41,25 @@
   transition: transform 0.3s ease;
 }
 
-.winning{
+.winning {
   box-shadow: 0px 0px 20px gold;
   transform: scale(1.1);
   background: #ffcc00;
   color: black;
 }
 
-.indicator{
+.indicator {
   position: absolute;
   top: 0;
   left: 50%;
   width: 4px;
   height: 100%;
-  background: red;
+  background: orange;
   transform: translateX(-50%);
+  z-index: 10;
 }
 
-.chest-open-button{
+.chest-open-button {
   margin-top: 20px;
   padding: 10px 20px;
   font-size: 16px;
@@ -70,12 +73,20 @@
   transition: all 0.3s ease;
 }
 
-.chest-open-button:disabled{
+.chest-open-button:disabled {
   background: gray;
   cursor: not-allowed;
 }
 
-.chest-open-button:hover{
+.chest-open-button:hover {
   background: #0cc;
   box-shadow: 0px 0px 15px #0cc;
+}
+
+.dialog {
+  background-color: #333;
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
 }
