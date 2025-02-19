@@ -56,7 +56,7 @@
   transform: translateX(-50%);
 }
 
-button{
+.chest-open-button{
   margin-top: 20px;
   padding: 10px 20px;
   font-size: 16px;
@@ -70,12 +70,12 @@ button{
   transition: all 0.3s ease;
 }
 
-button:disabled{
+.chest-open-button:disabled{
   background: gray;
   cursor: not-allowed;
 }
 
-button:hover{
+.chest-open-button:hover{
   background: #0cc;
   box-shadow: 0px 0px 15px #0cc;
 }
