@@ -75,17 +75,14 @@ const GameMenu = () => {
       </main>
 
       <footer className={styles.chestHolder}>
-        <div onClick={openChestHandler}>
+        <Link to={"/itemchest"}>
           <img className={styles.itemchest} src="itemchest.png" alt="itemchest" />
-        </div>
+        </Link>
 
         <Link to={"/"}>
           <img className={styles.summon} src="summon.png" alt="summon" />
         </Link>
       </footer>
-
-      {/* Conditionally render the ItemChest component when chest is opened */}
-      {isChestOpen && <ItemChest isOpening={opening} setIsOpening={setOpening} />}
     </div>
   );
 };

@@ -7,6 +7,7 @@ import Login from './components/Login';
 import Register from './components/Register';
 import GameMenu from './components/GamePages/GameMenu';
 import { AudioProvider } from './context/AudioContext';
+import ItemChest from './components/GamePages/Chests/ItemChest';
 
 const App: React.FC = () => {
   return (
@@ -19,6 +20,7 @@ const App: React.FC = () => {
           <Route path="/register" Component={Register}></Route>
           <Route path="/settings" Component={Settings}></Route>
           <Route path="/gamemenu" Component={GameMenu}></Route>
+          <Route path='/itemchest' Component={ItemChest}/>
         </Routes>
       </BrowserRouter>
     </AudioProvider>
