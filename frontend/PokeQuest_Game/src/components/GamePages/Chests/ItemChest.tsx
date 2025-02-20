@@ -24,6 +24,8 @@ const ItemChest: React.FC = () => {
   const itemsContainerRef = useRef<HTMLDivElement | null>(null);
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
 
+  const itemWidth = 130; // Width of each item (this can be adjusted dynamically if needed)
+
   // Fetch items from the API and set the state
   const fetchItems = async () => {
     try {
@@ -38,6 +40,15 @@ const ItemChest: React.FC = () => {
   useEffect(() => {
     fetchItems();
   }, []);
+
+  // Update the container width based on the number of items
+  useEffect(() => {
+    if (itemsContainerRef.current) {
+      // Using itemWidth to manually calculate max scroll
+      const maxScroll = items.length * itemWidth;
+      itemsContainerRef.current.style.width = `${maxScroll}px`; // Set the container width
+    }
+  }, [items]);
 
   // Open the case and animate
   const openCase = () => {
@@ -58,15 +69,14 @@ const ItemChest: React.FC = () => {
 
     // Scroll the items horizontally to the selected item
     if (itemsContainerRef.current) {
-      const itemWidth = 130; // Width of each item
-      const containerWidth = itemsContainerRef.current.offsetWidth; // Width of the container
-      const maxScroll = items.length * itemWidth; // Max scroll width
+      // Get current container width
+      const containerWidth = itemsContainerRef.current.offsetWidth; 
+
+      // Calculate the max scroll based on the fixed item width
+      const maxScroll = items.length * itemWidth; 
 
       // Calculate the target scroll position to center the selected item
       const targetScroll = rand * itemWidth - (containerWidth / 2) + (itemWidth / 2);
-
-      // Ensure the container has enough width to display all items
-      itemsContainerRef.current.style.width = `${maxScroll}px`;
 
       // Apply smooth scrolling transition with a slower animation (8s)
       itemsContainerRef.current.style.transition = `transform 8s ease-out`;
@@ -107,7 +117,7 @@ const ItemChest: React.FC = () => {
                     : item.rarity === 3
                     ? "#8A2BE2" // Purple
                     : "#FFD700", // Yellow
-                width: "130px", // Ensure each item has consistent width
+                width: `${itemWidth}px`, // Ensure each item has consistent width
                 height: "150px", // Increased height to give more space for text
                 marginRight: "10px", // Spacing between items
                 display: "flex",
