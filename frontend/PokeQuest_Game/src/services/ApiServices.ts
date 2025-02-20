@@ -1,3 +1,4 @@
+import { Item } from "../types/Item";
 //login
 export const loginData = async (endpoint: string, payload: { email: string; password: string }) => {
   const BASE_URL = "http://localhost:5130/api/";
@@ -65,12 +66,12 @@ export const registerData = async (endpoint: string, payload: { username: string
   }
 };
 
-export const GetAllItems = async () => {
-  const BASE_URL = "http://localhost:5130/api/";  // Replace with your actual API base URL
+export const GetAllItems = async (): Promise<Item[]> => {
+  const BASE_URL = "http://localhost:5130/api/";  // Your API base URL, where items are fetched
 
   try {
-    const response = await fetch(`${BASE_URL}Item/all`, {  // Replace 'items' with your API's actual endpoint
-      method: 'GET',  // Use 'GET' to fetch data
+    const response = await fetch(`${BASE_URL}Item/all`, {  // Correct endpoint for fetching items
+      method: 'GET',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -80,12 +81,25 @@ export const GetAllItems = async () => {
       throw new Error(`Error: ${response.statusText}`);
     }
 
-    const data = await response.json();  // Parse the JSON response
-    console.log('Fetched items:', data);  // Log or process the data
+    const data = await response.json();  // Parse the response into JSON
 
-    return data;  // Return the fetched data (e.g., list of items)
+    // Correct image URLs by checking for relative paths
+    const itemsWithCorrectImages = data.map((item: Item) => {
+      const imageUrl = item.img.startsWith("http") 
+        ? item.img  // If it's already a full URL, use it
+        : `http://localhost:5130/api/${item.img}`;  // Prepend only once
+
+      return {
+        ...item,
+        img: imageUrl,  // Update the img URL
+      };
+    });
+
+    console.log('Fetched items with corrected image URLs:', itemsWithCorrectImages);
+    return itemsWithCorrectImages;  // Return updated list of items
   } catch (error) {
     console.error("Error fetching items:", error);  // Log errors if any
-    throw error;  // Rethrow the error or handle it accordingly
+    throw error;  // Rethrow error if necessary
   }
 };
+

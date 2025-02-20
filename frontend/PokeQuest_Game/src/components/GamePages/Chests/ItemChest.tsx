@@ -1,20 +1,19 @@
 import React, { useState, useRef, useEffect } from "react";
 import "./ItemChest.css";
 import { Link } from "react-router-dom";
-
-// Define the type for an item
-type Item = {
-  id: number;
-  rarity: string;
-};
+import { Item } from "../../../types/Item";
+import { GetAllItems } from "../../../services/ApiServices";
 
 // Randomly select an item color (representing rarity)
-const getItemColor = (rand: number) => {
-  if (rand < 0.5) return "yellow";
-  if (rand < 2) return "red";
-  if (rand < 5) return "pink";
-  if (rand < 20) return "purple";
-  return "blue";
+const getItemColor = (rarity: number) => {
+  switch (rarity) {
+    case 0: return "grey";
+    case 1: return "green";
+    case 2: return "blue";
+    case 3: return "purple";
+    case 4: return "yellow";
+    default: return "grey"; // Fallback color
+  }
 };
 
 const ItemChest: React.FC = () => {
@@ -25,20 +24,19 @@ const ItemChest: React.FC = () => {
   const itemsContainerRef = useRef<HTMLDivElement | null>(null);
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
 
-  // Reset the items (simulating the case)
-  const reset = () => {
-    const newItems: Item[] = [];
-    for (let i = 0; i < 500; i++) { // Generate 500 items
-      const rand = Math.random() * 100;
-      const rarity = getItemColor(rand);
-      newItems.push({ id: i, rarity });
+  // Fetch items from the API and set the state
+  const fetchItems = async () => {
+    try {
+      const fetchedItems = await GetAllItems();
+      setItems(fetchedItems);
+    } catch (error) {
+      console.error("Error fetching items:", error);
     }
-    setItems(newItems);
   };
 
-  // Use effect to ensure the items are populated once the component is mounted
+  // Use effect to fetch items once the component is mounted
   useEffect(() => {
-    reset();
+    fetchItems();
   }, []);
 
   // Open the case and animate
@@ -77,7 +75,7 @@ const ItemChest: React.FC = () => {
 
     // After the animation, show the reward
     setTimeout(() => {
-      setReward(`You have received a ${selectedItem.rarity} item!`);
+      setReward(`You have received a <strong>${selectedItem.name}</strong>!`);
       setOpenCaseDialog(true);
       setIsSpinning(false);
     }, 8000); // Wait for the animation to finish
@@ -97,24 +95,56 @@ const ItemChest: React.FC = () => {
           {items.map((item, index) => (
             <div
               key={item.id}
-              className={`item ${item.rarity} ${isSpinning && item.id === selectedItem?.id ? "winning" : ""}`}
+              className={`item ${getItemColor(item.rarity)} ${isSpinning && item.id === selectedItem?.id ? "winning" : ""}`}
               style={{
                 backgroundColor:
-                  item.rarity === "yellow"
-                    ? "#FFD700"
-                    : item.rarity === "red"
-                    ? "#FF0000"
-                    : item.rarity === "pink"
-                    ? "#FF1493"
-                    : item.rarity === "purple"
-                    ? "#800080"
-                    : "#0000FF",
+                  item.rarity === 0
+                    ? "#808080" // Grey
+                    : item.rarity === 1
+                    ? "#32CD32" // Green
+                    : item.rarity === 2
+                    ? "#4682B4" // Blue
+                    : item.rarity === 3
+                    ? "#8A2BE2" // Purple
+                    : "#FFD700", // Yellow
                 width: "130px", // Ensure each item has consistent width
-                height: "100px", // Height of the item
+                height: "150px", // Increased height to give more space for text
                 marginRight: "10px", // Spacing between items
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "flex-start",
+                textAlign: "center",
+                padding: "10px",
+                overflow: "hidden", // Prevent overflow
               }}
             >
-              {item.rarity}
+              <img
+                src={item.img}
+                alt={item.name}
+                style={{
+                  width: "100%",
+                  height: "70%", // Reduce the image height to allow more space for text
+                  objectFit: "contain",
+                  marginBottom: "5px", // Small gap between image and text
+                }}
+              />
+              <div
+                style={{
+                  fontSize: "14px",
+                  color: "white",
+                  wordWrap: "break-word", // Allow text to wrap
+                  whiteSpace: "normal",  // Allow wrapping
+                  overflow: "visible",    // Make sure all text is visible
+                  padding: "0 5px",
+                  height: "auto", // Allow height to expand as needed
+                  flexGrow: 1,    // Ensure text area expands
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "flex-start", // Align text at the top
+                }}
+              >
+                {item.name}
+              </div>
             </div>
           ))}
         </div>
@@ -130,7 +160,7 @@ const ItemChest: React.FC = () => {
       {/* Dialog to show the reward */}
       {openCaseDialog && (
         <div id="dialog" className="dialog">
-          <div id="dialog-msg">{reward}</div>
+          <div id="dialog-msg" dangerouslySetInnerHTML={{__html: reward}}></div>
           <Link to="/gamemenu">
             <button className="chest-open-button" onClick={handleDialogClose}>Close</button>
           </Link>
