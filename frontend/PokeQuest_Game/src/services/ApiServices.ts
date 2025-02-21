@@ -95,7 +95,6 @@ export const GetAllItems = async (): Promise<Item[]> => {
       };
     });
 
-    console.log('Fetched items with corrected image URLs:', itemsWithCorrectImages);
     return itemsWithCorrectImages;  // Return updated list of items
   } catch (error) {
     console.error("Error fetching items:", error);  // Log errors if any

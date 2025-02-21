@@ -7,13 +7,10 @@ import ItemChest from '../GamePages/Chests/ItemChest'; // Import ItemChest
 
 const GameMenu = () => {
   const [user, setUser] = useState<User | null>(null);
-  const [isChestOpen, setIsChestOpen] = useState<boolean>(false); // State to control chest opening
-  const [opening, setOpening] = useState(false); // State to track if the opening process started
 
   useEffect(() => {
     // Retrieve the user data from localStorage when the component mounts
     const storedUserData = localStorage.getItem('userData');
-    console.log('Stored User Data:', storedUserData); // Debugging log
 
     if (storedUserData) {
       // Parse and map the user data to the User type
@@ -30,11 +27,6 @@ const GameMenu = () => {
       setUser(userData); // Set the user data to state
     }
   }, []);
-
-  const openChestHandler = () => {
-    setIsChestOpen(true); // Set chest to open
-    setOpening(true); // Trigger opening animation in ItemChest
-  };
 
   return (
     <div className={styles.gamemenuBackground}>

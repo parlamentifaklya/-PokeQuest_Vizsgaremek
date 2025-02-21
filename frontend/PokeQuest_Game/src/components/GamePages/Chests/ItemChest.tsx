@@ -50,46 +50,93 @@ const ItemChest: React.FC = () => {
     }
   }, [items]);
 
-  // Open the case and animate
+
+
+
+
   const openCase = () => {
     if (isSpinning || openCaseDialog) return; // Prevent re-triggering while spinning or dialog open
     setIsSpinning(true);
-
+  
     // Ensure items are populated before continuing
     if (items.length === 0) {
       console.error("Items are not populated yet.");
       setIsSpinning(false);
       return;
     }
-
+  
     // Randomly select the winning item (ensure valid index)
     const rand = Math.floor(Math.random() * items.length);
     const selectedItem = items[rand];
     setSelectedItem(selectedItem);
-
-    // Scroll the items horizontally to the selected item
+  
+    // Scroll the items horizontally to a random position first
     if (itemsContainerRef.current) {
-      // Get current container width
-      const containerWidth = itemsContainerRef.current.offsetWidth; 
-
-      // Calculate the max scroll based on the fixed item width
-      const maxScroll = items.length * itemWidth; 
-
-      // Calculate the target scroll position to center the selected item
-      const targetScroll = rand * itemWidth - (containerWidth / 2) + (itemWidth / 2);
-
-      // Apply smooth scrolling transition with a slower animation (8s)
-      itemsContainerRef.current.style.transition = `transform 8s ease-out`;
-      itemsContainerRef.current.style.transform = `translateX(-${Math.min(Math.max(targetScroll, 0), maxScroll)}px)`; // Ensure it doesn't scroll past the end
+      const containerWidth = 404.8; // Updated container width (from dev tools)
+      const itemWidth = 120; // Updated item width (from dev tools)
+  
+      // Calculate the total width of all items
+      const totalItemsWidth = items.length * itemWidth;
+      const maxScroll = totalItemsWidth - containerWidth; // The maximum scrollable area
+  
+      // Randomly scroll within the max scroll range
+      const randomScrollPosition = Math.floor(Math.random() * maxScroll);
+  
+      // Apply random scroll position
+      itemsContainerRef.current.style.transition = `transform 4s ease-out`; // Smooth transition
+      itemsContainerRef.current.style.transform = `translateX(-${randomScrollPosition}px)`; // Scroll to random position
     }
-
-    // After the animation, show the reward
+  
+    // After scrolling animation ends, calculate the closest item to the center
     setTimeout(() => {
-      setReward(`You have received a <strong>${selectedItem.name}</strong>!`);
-      setOpenCaseDialog(true);
-      setIsSpinning(false);
-    }, 8000); // Wait for the animation to finish
+      if (itemsContainerRef.current) {
+        const containerWidth = 404.8; // Container width
+        const itemWidth = 120; // Item width
+        const scrollPosition = Math.abs(parseFloat(itemsContainerRef.current.style.transform.replace('translateX(', '').replace('px)', ''))); // Current scroll position
+        const middlePosition = scrollPosition + containerWidth / 2;
+  
+        // Find the closest item to the middle of the container
+        let closestItemIndex = Math.floor(middlePosition / itemWidth);
+  
+        // Adjust if the scroll is closer to the next item
+        if (middlePosition % itemWidth >= itemWidth / 2) {
+          closestItemIndex++;
+        }
+  
+        // Calculate the correct position for the closest item
+        const targetItemIndex = closestItemIndex;
+        const targetItemPosition = targetItemIndex * itemWidth - (containerWidth - itemWidth) / 2;
+        const maxScroll = items.length * itemWidth - containerWidth;
+  
+        // Ensure we don't exceed max scroll
+        let snappedPosition = Math.min(Math.max(targetItemPosition, 0), maxScroll);
+  
+        // Smoothly scroll to the correct position
+        itemsContainerRef.current.style.transition = `transform 1s ease-out`; // Shorter transition for snap
+        itemsContainerRef.current.style.transform = `translateX(-${snappedPosition}px)`; // Scroll to the snapped position
+  
+        // After the scroll ends, show the correct item in the dialog
+        setTimeout(() => {
+          let itemToShow;
+  
+          // If the random number is less than 9, show the actual snapped item
+          if (rand < 9) {
+            itemToShow = items[targetItemIndex]; // Show the snapped item
+          } else {
+            const previousItemIndex = Math.max(0, targetItemIndex - 1); // Get the previous item
+            itemToShow = items[previousItemIndex]; // Show the previous item
+          }
+  
+          setSelectedItem(itemToShow); // Show the correct item in the dialog
+          setReward(`You have received a <strong>${itemToShow.name}</strong>!`); // Show the reward for the item
+          setOpenCaseDialog(true); // Show the dialog only after snapping is done
+          setIsSpinning(false); // End spinning
+        }, 1000); // Wait for snap animation to finish before showing the dialog
+      }
+    }, 4000); // Adjust the timeout to match the first animation time (4s)
   };
+  
+  
 
   // Handle dialog close
   const handleDialogClose = () => {
@@ -105,7 +152,7 @@ const ItemChest: React.FC = () => {
           {items.map((item, index) => (
             <div
               key={item.id}
-              className={`item ${getItemColor(item.rarity)} ${isSpinning && item.id === selectedItem?.id ? "winning" : ""}`}
+              className={`item ${getItemColor(item.rarity)} ${selectedItem && item.id === selectedItem.id ? "winning" : ""}`}
               style={{
                 backgroundColor:
                   item.rarity === 0
