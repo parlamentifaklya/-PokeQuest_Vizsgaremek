@@ -1,53 +1,12 @@
-import { useState, useEffect } from 'react';
 import styles from './GameMenu.module.css';
 import Button from '../../modules/Button';
 import { Link } from 'react-router-dom';
-import { User } from '../../types/User';
-import ItemChest from '../GamePages/Chests/ItemChest'; // Import ItemChest
+import Header from '../Header';
 
 const GameMenu = () => {
-  const [user, setUser] = useState<User | null>(null);
-
-  useEffect(() => {
-    // Retrieve the user data from localStorage when the component mounts
-    const storedUserData = localStorage.getItem('userData');
-
-    if (storedUserData) {
-      // Parse and map the user data to the User type
-      const parsedData = JSON.parse(storedUserData);
-
-      // Assuming that the decoded token is mapped to this structure
-      const userData: User = {
-        userName: parsedData.sub, // 'sub' can be used as 'userName'
-        userLevel: parseInt(parsedData["User Level"], 10), // Convert 'User Level' from string to number
-        userInventory: {}, // Set an empty object or populate this later
-        coinAmount: parseInt(parsedData["CoinAmount"], 10),
-      };
-
-      setUser(userData); // Set the user data to state
-    }
-  }, []);
-
   return (
     <div className={styles.gamemenuBackground}>
-      <header className={styles.header}>
-        <div className={styles.lvlHolder}>
-          <h2 className={styles.textDesign}>Lvl {user ? user.userLevel : 'Loading...'}</h2>
-        </div>
-
-        <div className={styles.middlePart}>
-          <Link to={"/settings"}>
-            <img src="settings.png" alt="settings" />
-          </Link>
-
-          <h2 className={styles.textDesign}>{user ? user.userName : 'Loading...'}</h2>
-        </div>
-
-        <div className={styles.gemHolder}>
-          <img src="gem.png" alt="gem" />
-          <h2 className={styles.gemtextStyle}>{user ? user.coinAmount : 'Loading...'}</h2>
-        </div>
-      </header>
+      <Header /> {/* Use Header component here */}
 
       <main className={styles.maincontainer}>
         <div className={styles.buttonHolder}>
@@ -56,7 +15,7 @@ const GameMenu = () => {
           <Button text="Inventory" route='/' />
 
           <Link to={"/feylings"}>
-          <Button text="Feylings" route='/' />
+            <Button text="Feylings" route='/' />
           </Link>
         </div>
 
