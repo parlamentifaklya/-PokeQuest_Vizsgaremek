@@ -1,3 +1,4 @@
+import { Ability } from "../types/Ability";
 import { Feyling } from "../types/Feyling";
 import { Item } from "../types/Item";
 import { Type } from "../types/Type";
@@ -176,3 +177,41 @@ export const GetAllTypes = async (): Promise<Type[]> => {
     throw error;  // Rethrow error if necessary
   }
 };
+
+
+export const GetAllAbility = async (): Promise<Ability[]> => {
+  const BASE_URL = "http://localhost:5130/api/";  // Your API base URL, where items are fetched
+
+  try {
+    const response = await fetch(`${BASE_URL}Ability/GetAllAbilities`, {  // Correct endpoint for fetching items
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error: ${response.statusText}`);
+    }
+
+    const data = await response.json();  // Parse the response into JSON
+
+    // Correct image URLs by checking for relative paths
+    const itemsWithCorrectImages = data.map((ability: Ability) => {
+      const imageUrl = ability.img.startsWith("http") 
+        ? ability.img  // If it's already a full URL, use it
+        : `http://localhost:5130/api/${ability.img}`;  // Prepend only once
+
+      return {
+        ...ability,
+        img: imageUrl,  // Update the img URL
+      };
+    });
+
+    return itemsWithCorrectImages;  // Return updated list of items
+  } catch (error) {
+    console.error("Error fetching abilities:", error);  // Log errors if any
+    throw error;  // Rethrow error if necessary
+  }
+};
+
