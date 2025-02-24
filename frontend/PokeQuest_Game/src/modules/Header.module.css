@@ -7,6 +7,10 @@
     background-color: rgb(233, 194, 122);
     margin-bottom: 0;
     padding-bottom: 0;
+    position: fixed; /* Makes the header fixed at the top */
+    top: 0;
+    left: 0;
+    z-index: 1000; /* Makes sure the header stays on top of other content */
 }
 
 .lvlHolder, .middlePart, .gemHolder {
@@ -56,4 +60,9 @@
     font-weight: bold;
     color: rgb(236, 59, 192);
     text-shadow: -2px -2px 0 black, 2px -2px 0 black, -2px 2px 0 black, 2px 2px 0 black;
+}
+
+/* This will create space below the fixed header */
+body {
+    padding-top: 9vh; /* Adjust this value to match the height of your header */
 }

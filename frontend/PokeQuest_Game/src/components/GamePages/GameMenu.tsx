@@ -1,7 +1,7 @@
 import styles from './GameMenu.module.css';
 import Button from '../../modules/Button';
 import { Link } from 'react-router-dom';
-import Header from '../Header';
+import Header from '../../modules/Header';
 
 const GameMenu = () => {
   return (

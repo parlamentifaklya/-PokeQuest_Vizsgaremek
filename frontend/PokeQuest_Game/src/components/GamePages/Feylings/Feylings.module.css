@@ -20,15 +20,19 @@ html, body {
   flex-wrap: wrap;
   gap: 10px;
   padding: 20px;
+  background-color: rgba(0, 0, 0, 0.5);
+  align-items: center;
+  justify-content: center;
 }
 
 .feylingImage {
-  width: 100px;
-  height: 100px;
+  width: 5vw;
+  height: 10vh;
   object-fit: cover;
   cursor: pointer;
   transition: transform 0.2s ease;
   border-radius: 8px;
+  user-select: none;
 }
 
 .feylingImage:hover {
@@ -37,7 +41,7 @@ html, body {
 
 .overlay {
   position: fixed;
-  top: 0;
+  top: 5vh;
   left: 0;
   width: 100%;
   height: 100%;
@@ -48,7 +52,8 @@ html, body {
 }
 
 .modal {
-  background: white;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
   padding: 20px;
   border-radius: 10px;
   text-align: center;
@@ -75,4 +80,12 @@ html, body {
   cursor: pointer;
   font-size: 16px;
   border-radius: 5px;
+}
+
+.buttonHolder{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+  margin-top: 5vh;
 }

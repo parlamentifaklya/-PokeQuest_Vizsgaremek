@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react';
 import styles from './Feylings.module.css';
 import { GetAllFeylings } from '../../../services/ApiServices';
 import { Feyling } from '../../../types/Feyling';
-import Header from '../../Header'; // Import Header
+import Header from '../../../modules/Header'; // Import Header
+import { Link } from 'react-router-dom';
+import Button from '../../../modules/Button';
 
 const Feylings = () => {
   const [feylings, setFeylings] = useState<Feyling[]>([]);
@@ -56,8 +58,12 @@ const Feylings = () => {
               <p><strong>Sell Price:</strong> {selectedFeyling.sellPrice}</p>
             </div>
           </div>
-        )}
+        )}        
       </div>
+      <div className={styles.buttonHolder}>
+      <Button text='Back' route='/gamemenu'></Button>
+      </div>
+      
     </div>
   );
 };
