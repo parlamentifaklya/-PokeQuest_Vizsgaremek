@@ -1,8 +1,11 @@
 import React from 'react'
+import styles from './Feylings.module.css'
 
 const Feylings = () => {
   return (
-    <div>Feylings</div>
+    <div className={styles.feylingsBackground}>
+        
+    </div>
   )
 }
 

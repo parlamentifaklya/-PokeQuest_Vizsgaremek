@@ -54,7 +54,10 @@ const GameMenu = () => {
           <Button text="Start!!" route='/' />
           <Button text="Equip" route='/' />
           <Button text="Inventory" route='/' />
+
+          <Link to={"/feylings"}>
           <Button text="Feylings" route='/' />
+          </Link>
         </div>
 
         <div className={styles.rightsideContainer}>

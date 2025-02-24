@@ -8,6 +8,7 @@ import Register from './components/Register';
 import GameMenu from './components/GamePages/GameMenu';
 import { AudioProvider } from './context/AudioContext';
 import ItemChest from './components/GamePages/Chests/ItemChest';
+import Feylings from './components/GamePages/Feylings/Feylings';
 
 const App: React.FC = () => {
   return (
@@ -21,6 +22,7 @@ const App: React.FC = () => {
           <Route path="/settings" Component={Settings}></Route>
           <Route path="/gamemenu" Component={GameMenu}></Route>
           <Route path='/itemchest' Component={ItemChest}/>
+          <Route path='/feylings' Component={Feylings}/>
         </Routes>
       </BrowserRouter>
     </AudioProvider>

@@ -1,3 +1,4 @@
+import { Feyling } from "../types/Feyling";
 import { Item } from "../types/Item";
 //login
 export const loginData = async (endpoint: string, payload: { email: string; password: string }) => {
@@ -102,3 +103,38 @@ export const GetAllItems = async (): Promise<Item[]> => {
   }
 };
 
+export const GetAllFeylings = async (): Promise<Feyling[]> => {
+  const BASE_URL = "http://localhost:5130/api/";  // Your API base URL, where items are fetched
+
+  try {
+    const response = await fetch(`${BASE_URL}GetAllFeylings`, {  // Correct endpoint for fetching items
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error: ${response.statusText}`);
+    }
+
+    const data = await response.json();  // Parse the response into JSON
+
+    // Correct image URLs by checking for relative paths
+    const itemsWithCorrectImages = data.map((feyling: Feyling) => {
+      const imageUrl = feyling.img.startsWith("http") 
+        ? feyling.img  // If it's already a full URL, use it
+        : `http://localhost:5130/api/${feyling.img}`;  // Prepend only once
+
+      return {
+        ...feyling,
+        img: imageUrl,  // Update the img URL
+      };
+    });
+
+    return itemsWithCorrectImages;  // Return updated list of items
+  } catch (error) {
+    console.error("Error fetching feylings:", error);  // Log errors if any
+    throw error;  // Rethrow error if necessary
+  }
+};
