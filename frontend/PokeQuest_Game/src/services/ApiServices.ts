@@ -107,7 +107,7 @@ export const GetAllFeylings = async (): Promise<Feyling[]> => {
   const BASE_URL = "http://localhost:5130/api/";  // Your API base URL, where items are fetched
 
   try {
-    const response = await fetch(`${BASE_URL}GetAllFeylings`, {  // Correct endpoint for fetching items
+    const response = await fetch(`${BASE_URL}Feylings/GetAllFeylings`, {  // Correct endpoint for fetching items
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

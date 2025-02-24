@@ -1,0 +1,59 @@
+.header {
+    display: flex;
+    width: 100vw;
+    height: 9vh;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgb(233, 194, 122);
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.lvlHolder, .middlePart, .gemHolder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.lvlHolder, .gemHolder {
+    width: 10vw;
+}
+
+.middlePart {
+    background-color: rgba(187, 99, 17, 0.87);
+    flex-grow: 1;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    padding: 8px;
+}
+
+.middlePart img {
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
+    float: left;
+}
+
+.textDesign {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: bold;
+    color: yellow;
+    text-shadow: -2px -2px 0 black, 2px -2px 0 black, -2px 2px 0 black, 2px 2px 0 black;
+}
+
+.gemHolder img {
+    position: absolute;
+    right: 7.5vw;
+    width: 5vw;
+    height: 9vh;
+}
+
+.gemtextStyle {
+    margin-right: 2vw;
+    font-size: 2rem;
+    font-weight: bold;
+    color: rgb(236, 59, 192);
+    text-shadow: -2px -2px 0 black, 2px -2px 0 black, -2px 2px 0 black, 2px 2px 0 black;
+}
