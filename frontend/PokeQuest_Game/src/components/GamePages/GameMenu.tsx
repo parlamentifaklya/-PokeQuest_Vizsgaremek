@@ -12,7 +12,7 @@ const GameMenu = () => {
         <div className={styles.buttonHolder}>
           <Button text="Start!!" route='/' />
           <Button text="Equip" route='/' />
-          <Button text="Inventory" route='/' />
+          <Button text="Inventory" route='/inventory' />
 
           <Link to={"/feylings"}>
             <Button text="Feylings" route='/' />

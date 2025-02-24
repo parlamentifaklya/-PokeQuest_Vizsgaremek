@@ -9,6 +9,7 @@ import GameMenu from './components/GamePages/GameMenu';
 import { AudioProvider } from './context/AudioContext';
 import ItemChest from './components/GamePages/Chests/ItemChest';
 import Feylings from './components/GamePages/Feylings/Feylings';
+import Inventory from './components/GamePages/Inventory/Inventory';
 
 const App: React.FC = () => {
   return (
@@ -23,6 +24,7 @@ const App: React.FC = () => {
           <Route path="/gamemenu" Component={GameMenu}></Route>
           <Route path='/itemchest' Component={ItemChest}/>
           <Route path='/feylings' Component={Feylings}/>
+          <Route path='/inventory' Component={Inventory}></Route>
         </Routes>
       </BrowserRouter>
     </AudioProvider>
