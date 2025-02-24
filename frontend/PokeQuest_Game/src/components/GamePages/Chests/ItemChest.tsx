@@ -34,6 +34,7 @@ const ItemChest: React.FC = () => {
   const [loading, setLoading] = useState(true); // New state to track loading
 
   const itemWidth = 130; // Width of each item (this can be adjusted dynamically if needed)
+  const marginRight = 10; // Margin between items
 
   // Fetch items from the API and set the state
   const fetchItems = async () => {
@@ -60,7 +61,7 @@ const ItemChest: React.FC = () => {
   useEffect(() => {
     if (itemsContainerRef.current && items.length > 0) {
       // Using itemWidth to manually calculate max scroll
-      const maxScroll = items.length * itemWidth;
+      const maxScroll = items.length * (itemWidth + marginRight);
       itemsContainerRef.current.style.width = `${maxScroll}px`; // Set the container width
     }
   }, [items]);
@@ -69,39 +70,39 @@ const ItemChest: React.FC = () => {
   const openCase = () => {
     if (isSpinning || openCaseDialog || loading) return; // Prevent re-triggering while spinning or dialog open and ensure items are loaded
     setIsSpinning(true);
-
+  
     // Ensure items are populated before continuing
     if (items.length === 0) {
       console.error("Items are not populated yet.");
       setIsSpinning(false);
       return;
     }
-
+  
     // Exclude the first 5 and last 3 items for selection
     const eligibleItems = items.slice(5, items.length - 3);
     const randIndex = Math.floor(Math.random() * eligibleItems.length);
     const selectedItem = eligibleItems[randIndex];
     setSelectedItem(selectedItem);
-
+  
     // Scroll to the selected item
     if (itemsContainerRef.current) {
       const containerWidth = 404.8; // Container width
-      const itemWidth = 120; // Item width
-
+      const itemWidthWithMargin = itemWidth + marginRight; // Item width + margin between items
+  
       // Find the selected item's index in the full list
       const selectedIndex = items.indexOf(selectedItem);
-
+  
       // Calculate the target position to scroll so the selected item is in the center
-      const targetPosition = selectedIndex * itemWidth - (containerWidth - itemWidth) / 2;
-
+      const targetPosition = selectedIndex * itemWidthWithMargin - (containerWidth - itemWidth) / 2;
+  
       // Ensure the position doesn't exceed the maximum scrollable area
-      const maxScroll = items.length * itemWidth - containerWidth;
+      const maxScroll = items.length * itemWidthWithMargin - containerWidth;
       const snappedPosition = Math.min(Math.max(targetPosition, 0), maxScroll);
-
+  
       // Apply smooth scrolling to the selected item
       itemsContainerRef.current.style.transition = `transform 2s ease-out`; // Smooth transition
       itemsContainerRef.current.style.transform = `translateX(-${snappedPosition}px)`; // Scroll to the target position
-
+  
       // Wait for the scroll animation to finish, then show the selected item in the dialog
       setTimeout(() => {
         setReward(`You have received a <strong>${selectedItem.name}</strong>!`); // Show the reward for the item
@@ -110,6 +111,7 @@ const ItemChest: React.FC = () => {
       }, 2000); // Adjust timing to match the scroll duration
     }
   };
+  
 
   // Handle dialog close
   const handleDialogClose = () => {
@@ -125,7 +127,7 @@ const ItemChest: React.FC = () => {
           {items.map((item, index) => (
             <div
               key={item.id}
-              className={`item ${getItemColor(item.rarity)} ${selectedItem && item.id === selectedItem.id ? "winning" : ""}`}
+              className={`item ${getItemColor(item.rarity)} ${openCaseDialog && selectedItem && item.id === selectedItem.id ? "winning" : ""}`}
               style={{
                 backgroundColor:
                   item.rarity === 0
@@ -139,7 +141,7 @@ const ItemChest: React.FC = () => {
                     : "#FFD700", // Yellow
                 width: `${itemWidth}px`, // Ensure each item has consistent width
                 height: "150px", // Increased height to give more space for text
-                marginRight: "10px", // Spacing between items
+                marginRight: `${marginRight}px`, // Spacing between items
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "flex-start",
@@ -186,11 +188,11 @@ const ItemChest: React.FC = () => {
       >
         Open Case
       </button>
-
+  
       {/* Dialog to show the reward */}
       {openCaseDialog && (
         <div id="dialog" className="dialog">
-          <div id="dialog-msg" dangerouslySetInnerHTML={{__html: reward}}></div>
+          <div id="dialog-msg" dangerouslySetInnerHTML={{ __html: reward }}></div>
           <Link to="/gamemenu">
             <button className="chest-open-button" onClick={handleDialogClose}>Close</button>
           </Link>
@@ -198,6 +200,6 @@ const ItemChest: React.FC = () => {
       )}
     </div>
   );
-};
+}
 
 export default ItemChest;
