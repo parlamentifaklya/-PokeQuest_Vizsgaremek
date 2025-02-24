@@ -634,3 +634,4 @@ C:\Users\harci\Desktop\-PokeQuest_Vizsgaremek\backend\PokeQuestApi_New\PokeQuest
 C:\Users\harci\Desktop\-PokeQuest_Vizsgaremek\backend\PokeQuestApi_New\PokeQuestApi_New\obj\Debug\net9.0\PokeQuestApi_New.genruntimeconfig.cache
 C:\Users\harci\Desktop\-PokeQuest_Vizsgaremek\backend\PokeQuestApi_New\PokeQuestApi_New\obj\Debug\net9.0\ref\PokeQuestApi_New.dll
 C:\Users\harci\Desktop\-PokeQuest_Vizsgaremek\backend\PokeQuestApi_New\PokeQuestApi_New\bin\Debug\net9.0\Newtonsoft.Json.dll
+C:\Users\szilagyi.dominik\Desktop\-PokeQuest_Vizsgaremek\backend\PokeQuestApi_New\PokeQuestApi_New\bin\Debug\net9.0\Newtonsoft.Json.dll
