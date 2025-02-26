@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\szilagyi.dominik\\Desktop\\aaaa\\-PokeQuest_Vizsgaremek\\backend\\PokeQuestApi_New\\PokeQuestApi_New\\PokeQuestApi_New.csproj": {}
+    "C:\\Users\\szilagyi.dominik\\Desktop\\-PokeQuest_Vizsgaremek\\backend\\PokeQuestApi_New\\PokeQuestApi_New\\PokeQuestApi_New.csproj": {}
   },
   "projects": {
-    "C:\\Users\\szilagyi.dominik\\Desktop\\aaaa\\-PokeQuest_Vizsgaremek\\backend\\PokeQuestApi_New\\PokeQuestApi_New\\PokeQuestApi_New.csproj": {
+    "C:\\Users\\szilagyi.dominik\\Desktop\\-PokeQuest_Vizsgaremek\\backend\\PokeQuestApi_New\\PokeQuestApi_New\\PokeQuestApi_New.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\szilagyi.dominik\\Desktop\\aaaa\\-PokeQuest_Vizsgaremek\\backend\\PokeQuestApi_New\\PokeQuestApi_New\\PokeQuestApi_New.csproj",
+        "projectUniqueName": "C:\\Users\\szilagyi.dominik\\Desktop\\-PokeQuest_Vizsgaremek\\backend\\PokeQuestApi_New\\PokeQuestApi_New\\PokeQuestApi_New.csproj",
         "projectName": "PokeQuestApi_New",
-        "projectPath": "C:\\Users\\szilagyi.dominik\\Desktop\\aaaa\\-PokeQuest_Vizsgaremek\\backend\\PokeQuestApi_New\\PokeQuestApi_New\\PokeQuestApi_New.csproj",
+        "projectPath": "C:\\Users\\szilagyi.dominik\\Desktop\\-PokeQuest_Vizsgaremek\\backend\\PokeQuestApi_New\\PokeQuestApi_New\\PokeQuestApi_New.csproj",
         "packagesPath": "C:\\Users\\szilagyi.dominik\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\szilagyi.dominik\\Desktop\\aaaa\\-PokeQuest_Vizsgaremek\\backend\\PokeQuestApi_New\\PokeQuestApi_New\\obj\\",
+        "outputPath": "C:\\Users\\szilagyi.dominik\\Desktop\\-PokeQuest_Vizsgaremek\\backend\\PokeQuestApi_New\\PokeQuestApi_New\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

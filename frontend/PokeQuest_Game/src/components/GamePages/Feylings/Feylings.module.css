@@ -68,8 +68,8 @@ html, body {
 }
 
 .modalImage {
-  width: 100%;
-  height: auto;
+  width: 10vw;
+  height: 20vh;
   border-radius: 8px;
 }
 

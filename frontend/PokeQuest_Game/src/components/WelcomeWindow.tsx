@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom'; 
-import styles from "./MainMenu.module.css"; 
+import styles from "./WelcomeWindow.module.css"; 
 import Button from '../modules/Button';
 
 const MainMenu: React.FC = () => {

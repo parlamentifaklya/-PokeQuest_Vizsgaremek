@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "RhZzTXNbepU=",
+  "dgSpecHash": "UljTRfahiPs=",
   "success": true,
-  "projectFilePath": "C:\\Users\\szilagyi.dominik\\Desktop\\aaaa\\-PokeQuest_Vizsgaremek\\backend\\PokeQuestApi_New\\PokeQuestApi_New\\PokeQuestApi_New.csproj",
+  "projectFilePath": "C:\\Users\\szilagyi.dominik\\Desktop\\-PokeQuest_Vizsgaremek\\backend\\PokeQuestApi_New\\PokeQuestApi_New\\PokeQuestApi_New.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\szilagyi.dominik\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\szilagyi.dominik\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\9.0.1\\microsoft.aspnetcore.authentication.jwtbearer.9.0.1.nupkg.sha512",

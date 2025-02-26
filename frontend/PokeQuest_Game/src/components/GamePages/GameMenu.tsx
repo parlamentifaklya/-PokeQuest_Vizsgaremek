@@ -29,11 +29,11 @@ const GameMenu = () => {
       </main>
 
       <footer className={styles.chestHolder}>
-        <Link to={"/itemchest"}>
+        <Link to={"/"}>
           <img className={styles.itemchest} src="itemchest.png" alt="itemchest" />
         </Link>
 
-        <Link to={"/"}>
+        <Link to={"/itemchest"}>
           <img className={styles.summon} src="summon.png" alt="summon" />
         </Link>
       </footer>
