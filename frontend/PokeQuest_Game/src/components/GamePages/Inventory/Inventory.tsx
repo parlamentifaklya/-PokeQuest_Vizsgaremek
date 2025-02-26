@@ -4,6 +4,7 @@ import { Feyling } from '../../../types/Feyling';
 import { Item } from '../../../types/Item';
 import styles from './Inventory.module.css';  // Import the styles
 import Header from '../../../modules/Header';
+import Button from '../../../modules/Button';
 
 const Inventory: React.FC = () => {
   const [inventory, setInventory] = useState<UserInventory | null>(null);
@@ -94,6 +95,7 @@ const Inventory: React.FC = () => {
           )}
         </div>
       </div>
+      <Button style={{marginTop:"1vh"}} route="/gamemenu" text="Back"></Button>
     </div>
   );
 };
