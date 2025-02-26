@@ -117,6 +117,7 @@ namespace PokeQuestApi_New.Controllers
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);
+            //user.Inventory = await _context.UserInventories.FindAsync(user.Id);
             if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
             {
                 // Fetch roles assigned to the user
@@ -303,43 +304,6 @@ namespace PokeQuestApi_New.Controllers
             return Ok();
         }
 
-        //// Add this method in the UserController class
-        //[Authorize]
-        //[HttpGet("loggedin")]
-        //public async Task<IActionResult> GetLoggedIn()
-        //{
-        //    // Get the current logged-in user based on the JWT claims
-        //    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        //    if (string.IsNullOrEmpty(userId))
-        //    {
-        //        return Unauthorized(new { Message = "User is not authenticated." });
-        //    }
-
-        //    // Fetch the user from the database
-        //    var user = await _userManager.FindByIdAsync(userId);
-        //    if (user == null)
-        //    {
-        //        return NotFound(new { Message = "User not found." });
-        //    }
-
-        //    // Fetch roles assigned to the user
-        //    var userRoles = await _userManager.GetRolesAsync(user);
-
-        //    // Return user data with roles and level
-        //    var userDto = new
-        //    {
-        //        user.Id,
-        //        user.UserName,
-        //        user.Email,
-        //        user.UserLevel,
-        //        Roles = userRoles // Include roles
-        //    };
-
-        //    return Ok(userDto);
-        //}
-
-
-        // Get list of users (admin only)
         [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers(int page = 1, int pageSize = 10)
