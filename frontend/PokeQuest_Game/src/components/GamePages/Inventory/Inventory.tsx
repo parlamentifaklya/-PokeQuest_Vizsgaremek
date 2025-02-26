@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { UserInventory} from '../../../types/User';
+import { UserInventory } from '../../../types/User';
 import { Feyling } from '../../../types/Feyling';
 import { Item } from '../../../types/Item';
+import styles from './Inventory.module.css';  // Import the styles
+import Header from '../../../modules/Header';
 
 const Inventory: React.FC = () => {
   const [inventory, setInventory] = useState<UserInventory | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Map the keys from localStorage to match the Feyling and Item types
   const transformFeyling = (feylingData: any): Feyling => ({
     id: feylingData.feylingId,
     name: feylingData.feylingName,
@@ -22,7 +23,7 @@ const Inventory: React.FC = () => {
     itemId: feylingData.feylingItem,
     weakAgainstId: feylingData.feylingWeakAgainst,
     strongAgainstId: feylingData.feylingStrongAgainst,
-    sellPrice: feylingData.feylingSellPrice
+    sellPrice: feylingData.feylingSellPrice,
   });
 
   const transformItem = (itemData: any): Item => ({
@@ -31,7 +32,7 @@ const Inventory: React.FC = () => {
     description: itemData.itemDescription,
     img: itemData.itemImg,
     itemAbility: itemData.itemAbility,
-    rarity: itemData.itemRarity
+    rarity: itemData.itemRarity,
   });
 
   useEffect(() => {
@@ -39,15 +40,12 @@ const Inventory: React.FC = () => {
     
     if (storedInventory) {
       const parsedInventory = JSON.parse(storedInventory);
-      console.log(parsedInventory); // Check the structure of the data in localStorage
-
-      // Transform the data to match the types
       const transformedInventory: UserInventory = {
         ownedFeylings: parsedInventory.ownedFeylings.map(transformFeyling),
-        ownedItems: parsedInventory.ownedItems.map(transformItem)
+        ownedItems: parsedInventory.ownedItems.map(transformItem),
       };
 
-      setInventory(transformedInventory);  // Set inventory with the correct types
+      setInventory(transformedInventory);
       setLoading(false);
     } else {
       setError('No inventory found in localStorage.');
@@ -60,35 +58,37 @@ const Inventory: React.FC = () => {
   if (!inventory) return <div>No inventory found.</div>;
 
   return (
-    <div>
-      <h2>User Inventory</h2>
-      
-      {/* Owned Feylings Section */}
-      <div>
+    <div className={styles.siteBackground}>
+      <Header></Header>
+
+      {/* Feylings Section */}
+      <div className={styles.section}>
         <h3>Owned Feylings</h3>
-        <div className="inventory-list">
+        <div className={styles.inventoryList}>
           {inventory.ownedFeylings.length === 0 ? (
             <p>No feylings owned</p>
           ) : (
             inventory.ownedFeylings.map((feyling) => (
-              <div key={feyling.id} className="inventory-item">
-                <img src={`http://localhost:5130/api/${feyling.img}`} alt={feyling.name} />
+              <div key={feyling.id} className={styles.inventoryItem}>
+                <img src={`http://localhost:5130/api/${feyling.img}`} alt={feyling.name} className={styles.itemImage} />
+                <span className='feylingName'>{feyling.name}</span>
               </div>
             ))
           )}
         </div>
       </div>
-  
-      {/* Owned Items Section */}
-      <div>
+
+      {/* Items Section */}
+      <div className={styles.section}>
         <h3>Owned Items</h3>
-        <div className="inventory-list">
+        <div className={styles.inventoryList}>
           {inventory.ownedItems.length === 0 ? (
             <p>No items owned</p>
           ) : (
             inventory.ownedItems.map((item) => (
-              <div key={item.id} className="inventory-item">
-                <img src={`http://localhost:5130/api/${item.img}`} alt={item.name} />
+              <div key={item.id} className={styles.inventoryItem}>
+                <img src={`http://localhost:5130/api/${item.img}`} alt={item.name} className={styles.itemImage} />
+                <span className='itemName'>{item.name}</span>
               </div>
             ))
           )}
@@ -96,5 +96,6 @@ const Inventory: React.FC = () => {
       </div>
     </div>
   );
-}  
+};
+
 export default Inventory;
