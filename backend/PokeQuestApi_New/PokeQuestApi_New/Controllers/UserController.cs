@@ -125,14 +125,11 @@ namespace PokeQuestApi_New.Controllers
                 // Create claims including roles
                 var authClaims = new List<Claim>
                 {
-                new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim("User Level", user.UserLevel.ToString()),
-                new Claim("CoinAmount", user.CoinAmount.ToString()),
+                    new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim("User Level", user.UserLevel.ToString()),
+                    new Claim("CoinAmount", user.CoinAmount.ToString()),
                 };
-
-                var userInventoryJson = JsonConvert.SerializeObject(user.Inventory);
-                authClaims.Add(new Claim("UserInventory", userInventoryJson));
 
                 foreach (var role in userRoles)
                 {
@@ -303,41 +300,6 @@ namespace PokeQuestApi_New.Controllers
             return Ok();
         }
 
-        //// Add this method in the UserController class
-        //[Authorize]
-        //[HttpGet("loggedin")]
-        //public async Task<IActionResult> GetLoggedIn()
-        //{
-        //    // Get the current logged-in user based on the JWT claims
-        //    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        //    if (string.IsNullOrEmpty(userId))
-        //    {
-        //        return Unauthorized(new { Message = "User is not authenticated." });
-        //    }
-
-        //    // Fetch the user from the database
-        //    var user = await _userManager.FindByIdAsync(userId);
-        //    if (user == null)
-        //    {
-        //        return NotFound(new { Message = "User not found." });
-        //    }
-
-        //    // Fetch roles assigned to the user
-        //    var userRoles = await _userManager.GetRolesAsync(user);
-
-        //    // Return user data with roles and level
-        //    var userDto = new
-        //    {
-        //        user.Id,
-        //        user.UserName,
-        //        user.Email,
-        //        user.UserLevel,
-        //        Roles = userRoles // Include roles
-        //    };
-
-        //    return Ok(userDto);
-        //}
-
 
         // Get list of users (admin only)
         [Authorize(Roles = "Admin")]
@@ -367,6 +329,74 @@ namespace PokeQuestApi_New.Controllers
             }
 
             return Ok(userDtos);
+        }
+
+
+        [HttpGet("inventory/{userId}")]
+        public async Task<IActionResult> GetInventory(string userId)
+        {
+            // Find the user by their ID
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound(new { Message = "User not found" });
+            }
+
+            // Fetch the user's inventory from the database
+            var userInventory = await _context.UserInventories
+                                               .Include(ui => ui.OwnedFeylings)  // Include OwnedFeylings
+                                               .ThenInclude(of => of.Feyling)    // Include Feyling details
+                                               .Include(ui => ui.OwnedItems)      // Include OwnedItems
+                                               .ThenInclude(oi => oi.item)       // Include Item details
+                                               .FirstOrDefaultAsync(ui => ui.UserId == userId);
+
+            if (userInventory == null)
+            {
+                return NotFound(new { Message = "Inventory not found for this user" });
+            }
+
+            // Prepare the inventory response model
+            var inventoryResponse = new
+            {
+                UserId = userId,
+                UserLevel = user.UserLevel,
+                CoinAmount = user.CoinAmount,
+                OwnedFeylings = userInventory.OwnedFeylings.Select(of => new
+                {
+                    of.FeylingId,
+                    FeylingName = of.Feyling.Name,
+                    FeylingDescription = of.Feyling.Description,
+                    FeylingImg = of.Feyling.Img,
+                    FeylingType = of.Feyling.Type.Name,  // Assuming "Type" has a "Name" property
+                    FeylingAbility = of.Feyling.Ability.Name,  // Assuming "Ability" has a "Name" property
+                    FeylingIsUnlocked = of.Feyling.IsUnlocked,
+                    FeylingHp = of.Feyling.Hp,
+                    FeylingAtk = of.Feyling.Atk,
+                    FeylingItem = of.Feyling.Item != null ? new
+                    {
+                        of.Feyling.Item.Name,
+                        of.Feyling.Item.Description,
+                        of.Feyling.Item.Img,
+                        of.Feyling.Item.ItemAbility,
+                        of.Feyling.Item.Rarity
+                    } : null,  // Include Item if it exists
+                    FeylingWeakAgainst = of.Feyling.WeakAgainst.Name, // Assuming "WeakAgainst" has a "Name" property
+                    FeylingStrongAgainst = of.Feyling.StrongAgainst.Name, // Assuming "StrongAgainst" has a "Name" property
+                    FeylingSellPrice = of.Feyling.SellPrice
+                }),
+                OwnedItems = userInventory.OwnedItems.Select(oi => new
+                {
+                    oi.ItemId,
+                    ItemName = oi.item.Name,
+                    ItemDescription = oi.item.Description,
+                    ItemImg = oi.item.Img,
+                    ItemAbility = oi.item.ItemAbility,
+                    ItemRarity = oi.item.Rarity,
+                    ItemAmount = oi.Amount
+                })
+            };
+
+            return Ok(inventoryResponse);
         }
 
         // Model for registering a user
