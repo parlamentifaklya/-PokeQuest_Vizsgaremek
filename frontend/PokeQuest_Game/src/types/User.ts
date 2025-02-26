@@ -1,3 +1,6 @@
+import { Feyling } from "./Feyling"
+import { Item } from "./Item"
+
 export type User = {
     userName: string,
     userLevel: number,
@@ -6,5 +9,6 @@ export type User = {
 }
 
 export type UserInventory = {
-
+    ownedFeylings: Feyling[],
+    ownedItems: Item[]
 }

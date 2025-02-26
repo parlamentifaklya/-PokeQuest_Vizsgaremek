@@ -2,6 +2,7 @@ import { Ability } from "../types/Ability";
 import { Feyling } from "../types/Feyling";
 import { Item } from "../types/Item";
 import { Type } from "../types/Type";
+import { UserInventory } from "../types/User";
 //login
 export const loginData = async (endpoint: string, payload: { email: string; password: string }) => {
   const BASE_URL = "http://localhost:5130/api/";
@@ -215,7 +216,7 @@ export const GetAllAbility = async (): Promise<Ability[]> => {
   }
 };
 
-export const GetInventory = async (userId: string) => {
+export const GetInventory = async (userId: string): Promise<UserInventory> => {
   const BASE_URL = "http://localhost:5130/api/";
 
   try {
@@ -231,7 +232,20 @@ export const GetInventory = async (userId: string) => {
     }
 
     const data = await response.json();
-    return data; // Returns inventory data
+
+    // Ensure the response data structure matches what we expect for UserInventory
+    const userInventory: UserInventory = {
+      ownedFeylings: data.ownedFeylings.map((feyling: Feyling) => ({
+        ...feyling,
+        img: feyling.img.startsWith("http") ? feyling.img : `http://localhost:5130/api/${feyling.img}`,
+      })),
+      ownedItems: data.ownedItems.map((item: Item) => ({
+        ...item,
+        img: item.img.startsWith("http") ? item.img : `http://localhost:5130/api/${item.img}`,
+      })),
+    };
+
+    return userInventory; // Return structured UserInventory
   } catch (error) {
     console.error("Error fetching inventory:", error);
     throw error;
