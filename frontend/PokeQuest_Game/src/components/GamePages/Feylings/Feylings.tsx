@@ -124,7 +124,7 @@ const Feylings = () => {
             <p>{getAbility(selectedFeyling.abilityId)?.description}</p>
             <p><strong>Damage:</strong> {getAbility(selectedFeyling.abilityId)?.damage}</p>
             <p><strong>Health Points:</strong> {getAbility(selectedFeyling.abilityId)?.healthPoint}</p>
-            <p><strong>Recharge Time:</strong> {getAbility(selectedFeyling.abilityId)?.rechargeTime}s</p>
+            <p><strong>Recharge Time:</strong> {getAbility(selectedFeyling.abilityId)?.rechargeTime} rounds</p>
 
             <img
               src={getAbility(selectedFeyling.abilityId)?.img || ''}
