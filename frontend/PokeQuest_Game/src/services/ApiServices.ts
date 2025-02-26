@@ -233,15 +233,25 @@ export const GetInventory = async (userId: string): Promise<UserInventory> => {
 
     const data = await response.json();
 
-    // Ensure the response data structure matches what we expect for UserInventory
+    // Process ownedFeylings with correct image handling
     const userInventory: UserInventory = {
       ownedFeylings: data.ownedFeylings.map((feyling: Feyling) => ({
         ...feyling,
-        img: feyling.img.startsWith("http") ? feyling.img : `http://localhost:5130/api/${feyling.img}`,
+        img: feyling.img && feyling.img.startsWith("http") 
+          ? feyling.img  // If it's already a full URL, use it
+          : feyling.img 
+          ? `${BASE_URL}${feyling.img}`  // Prepend base URL if not a full URL
+          : "default-image-url",  // Add a fallback URL if no image is present
       })),
+      
+      // Process ownedItems with correct image handling
       ownedItems: data.ownedItems.map((item: Item) => ({
         ...item,
-        img: item.img.startsWith("http") ? item.img : `http://localhost:5130/api/${item.img}`,
+        img: item.img && item.img.startsWith("http") 
+          ? item.img  // If it's already a full URL, use it
+          : item.img 
+          ? `${BASE_URL}${item.img}`  // Prepend base URL if not a full URL
+          : "default-image-url",  // Add a fallback URL if no image is present
       })),
     };
 
@@ -251,3 +261,4 @@ export const GetInventory = async (userId: string): Promise<UserInventory> => {
     throw error;
   }
 };
+

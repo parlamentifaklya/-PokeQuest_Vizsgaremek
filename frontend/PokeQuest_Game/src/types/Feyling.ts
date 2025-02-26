@@ -10,6 +10,6 @@ export type Feyling = {
     atk: number,
     itemId: number | null,
     weakAgainstId: number,
-    strongAgainstID: number,
+    strongAgainstId: number,
     sellPrice: number
 }

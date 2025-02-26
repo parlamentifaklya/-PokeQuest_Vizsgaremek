@@ -5,7 +5,6 @@ import { Feyling } from '../../../types/Feyling';
 import { Type } from '../../../types/Type';
 import { Ability } from '../../../types/Ability';
 import Header from '../../../modules/Header'; // Import Header
-import { Link } from 'react-router-dom';
 import Button from '../../../modules/Button';
 
 const Feylings = () => {
