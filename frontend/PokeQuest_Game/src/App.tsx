@@ -10,6 +10,7 @@ import { AudioProvider } from './context/AudioContext';
 import ItemChest from './components/GamePages/Chests/ItemChest';
 import Feylings from './components/GamePages/Feylings/Feylings';
 import Inventory from './components/GamePages/Inventory/Inventory';
+import Summon from './components/GamePages/Chests/Summon';
 
 const App: React.FC = () => {
   return (
@@ -25,6 +26,7 @@ const App: React.FC = () => {
           <Route path='/itemchest' Component={ItemChest}/>
           <Route path='/feylings' Component={Feylings}/>
           <Route path='/inventory' Component={Inventory}></Route>
+          <Route path='/summon' Component={Summon}></Route>
         </Routes>
       </BrowserRouter>
     </AudioProvider>

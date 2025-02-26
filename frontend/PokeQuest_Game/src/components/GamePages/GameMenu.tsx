@@ -29,7 +29,7 @@ const GameMenu = () => {
       </main>
 
       <footer className={styles.chestHolder}>
-        <Link to={"/"}>
+        <Link to={"/summon"}>
           <img className={styles.itemchest} src="itemchest.png" alt="itemchest" />
         </Link>
 
