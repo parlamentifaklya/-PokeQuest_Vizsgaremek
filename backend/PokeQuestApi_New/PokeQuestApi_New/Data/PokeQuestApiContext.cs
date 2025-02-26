@@ -98,7 +98,7 @@ namespace PokeQuestApi_New.Data
             // Define relationships for OwnedItem
             modelBuilder.Entity<OwnedItem>()
                 .HasOne(oi => oi.UserInventory) // OwnedItem has one UserInventory
-                .WithMany(ui => ui.UserItems) // UserInventory can have many OwnedItems
+                .WithMany(ui => ui.OwnedItems) // UserInventory can have many OwnedItems
                 .HasForeignKey(oi => oi.UserInventoryId) // Foreign key in OwnedItem
                 .OnDelete(DeleteBehavior.Cascade);
         }

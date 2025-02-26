@@ -1263,6 +1263,28 @@
           }
         }
       }
+    },
+    "/api/User/GetInventory/inventory/{userId}": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1613,7 +1635,7 @@
             },
             "nullable": true
           },
-          "userItems": {
+          "ownedItems": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/OwnedItem"
