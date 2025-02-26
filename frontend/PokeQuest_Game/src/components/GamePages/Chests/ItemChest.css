@@ -12,10 +12,10 @@
   width: 400px;
   height: 200px; /* Increased height to accommodate larger items */
   overflow: hidden;
-  border: 3px solid #0ff;
+  border: 3px solid rgb(248, 232, 5);
   background: linear-gradient(90deg, #111, #222);
   position: relative;
-  box-shadow: 0px 0px 15px #0ff;
+  box-shadow: 0px 0px 15px rgb(248, 232, 5);
 }
 
 .items-container {
@@ -87,16 +87,18 @@
 }
 
 .chest-open-button {
+  font-size: 2rem;
+  font-weight: bold;
+  color: white;
+  -webkit-text-stroke: 2px black;
   margin-top: 20px;
   padding: 10px 20px;
-  font-size: 16px;
   cursor: pointer;
   border: none;
-  background: #0ff;
-  color: black;
+  background: rgb(248, 232, 5);
   font-weight: bold;
   border-radius: 5px;
-  box-shadow: 0px 0px 10px #0ff;
+  box-shadow: 0px 0px 10px rgb(248, 232, 5);
   transition: all 0.3s ease;
 }
 
@@ -106,8 +108,8 @@
 }
 
 .chest-open-button:hover {
-  background: #0cc;
-  box-shadow: 0px 0px 15px #0cc;
+  background: rgb(248, 232, 5);
+  box-shadow: 0px 0px 15px rgb(248, 232, 5);
 }
 
 .dialog {
