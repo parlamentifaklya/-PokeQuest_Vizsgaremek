@@ -3,6 +3,7 @@ import "./ItemChest.css";
 import { Link } from "react-router-dom";
 import { Item } from "../../../types/Item";
 import { GetAllItems } from "../../../services/ApiServices";
+import Button from "../../../modules/Button";
 
 // Randomly select an item color (representing rarity)
 const getItemColor = (rarity: number) => {
@@ -193,9 +194,7 @@ const ItemChest: React.FC = () => {
       {openCaseDialog && (
         <div id="dialog" className="dialog">
           <div id="dialog-msg" dangerouslySetInnerHTML={{ __html: reward }}></div>
-          <Link to="/gamemenu">
-            <button className="chest-open-button" onClick={handleDialogClose}>Close</button>
-          </Link>
+          <Button style={{ width: "fit-content", fontSize:"35px" }} route="/gamemenu" text="Close" onClick={handleDialogClose} />
         </div>
       )}
     </div>
