@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { loginData } from '../services/ApiServices';
+import { loginData, GetInventory } from '../services/ApiServices';
 import { decodeJWT } from '../services/TokenService'; // Import the decodeJWT function
 import styles from './Login.module.css';
 
@@ -32,7 +32,16 @@ const Login: React.FC = () => {
             // Store the decoded user data (e.g., username, level) in localStorage or state
             localStorage.setItem("userData", JSON.stringify(decodedToken.payload));
 
-            console.log('Login successful, navigating to /mainmenu');
+            console.log('Login successful, fetching inventory...');
+
+            // Fetch user inventory after login
+            const userId = decodedToken.payload.sub; // Assuming "sub" holds the user ID
+            const inventoryData = await GetInventory(userId);
+
+            // Store the inventory in localStorage
+            localStorage.setItem("userInventory", JSON.stringify(inventoryData));
+
+            console.log('Inventory fetched successfully:', inventoryData);
             navigate('/mainmenu');
           } else {
             setError('Invalid email or password!');

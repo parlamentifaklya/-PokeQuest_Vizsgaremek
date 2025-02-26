@@ -215,3 +215,25 @@ export const GetAllAbility = async (): Promise<Ability[]> => {
   }
 };
 
+export const GetInventory = async (userId: string) => {
+  const BASE_URL = "http://localhost:5130/api/";
+
+  try {
+    const response = await fetch(`${BASE_URL}User/GetInventory/inventory/${userId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data; // Returns inventory data
+  } catch (error) {
+    console.error("Error fetching inventory:", error);
+    throw error;
+  }
+};

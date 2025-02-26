@@ -12,7 +12,7 @@ const Header = () => {
     if (storedUserData) {
       const parsedData = JSON.parse(storedUserData);
       const userData: User = {
-        userName: parsedData.sub,
+        userName: parsedData.unique_name,
         userLevel: parseInt(parsedData["User Level"], 10),
         userInventory: {},
         coinAmount: parseInt(parsedData["CoinAmount"], 10),

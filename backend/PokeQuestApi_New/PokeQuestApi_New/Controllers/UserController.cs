@@ -117,28 +117,26 @@ namespace PokeQuestApi_New.Controllers
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);
-            //user.Inventory = await _context.UserInventories.FindAsync(user.Id);
+
             if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
             {
-                // Fetch roles assigned to the user
                 var userRoles = await _userManager.GetRolesAsync(user);
 
-                // Create claims including roles
                 var authClaims = new List<Claim>
-                {
-                    new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                    new Claim("User Level", user.UserLevel.ToString()),
-                    new Claim("CoinAmount", user.CoinAmount.ToString()),
-                };
+        {
+            new Claim(JwtRegisteredClaimNames.Sub, user.Id), // Include UserId in the token
+            new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName),
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new Claim("User Level", user.UserLevel.ToString()),
+            new Claim("CoinAmount", user.CoinAmount.ToString()),
+        };
 
                 foreach (var role in userRoles)
                 {
                     authClaims.Add(new Claim(ClaimTypes.Role, role));
                 }
 
-                // Add the multiple audience claims
-                var audiences = _configuration.GetSection("Jwt:Audiences").Get<List<string>>(); // Fetch the list of audiences from the config
+                var audiences = _configuration.GetSection("Jwt:Audiences").Get<List<string>>();
                 foreach (var audience in audiences)
                 {
                     authClaims.Add(new Claim(JwtRegisteredClaimNames.Aud, audience));
@@ -147,11 +145,11 @@ namespace PokeQuestApi_New.Controllers
                 var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
 
                 var token = new JwtSecurityToken(
-                    issuer: _configuration["Jwt:Issuer"],  // Issuer defined in your config
-                    audience: audiences.First(),  // Set one audience for validation (you can set the first or any audience in the list)
-                    expires: DateTime.Now.AddHours(3),  // Set token expiration
+                    issuer: _configuration["Jwt:Issuer"],
+                    audience: audiences.First(),
+                    expires: DateTime.Now.AddHours(3),
                     claims: authClaims,
-                    signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)  // Use signing key
+                    signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
                 );
 
                 return Ok(new
@@ -163,6 +161,7 @@ namespace PokeQuestApi_New.Controllers
 
             return Unauthorized();
         }
+
 
         // Update user information (admin only)
         [Authorize(Roles = "Admin")]
@@ -336,19 +335,17 @@ namespace PokeQuestApi_New.Controllers
         [HttpGet("inventory/{userId}")]
         public async Task<IActionResult> GetInventory(string userId)
         {
-            // Find the user by their ID
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
             {
                 return NotFound(new { Message = "User not found" });
             }
 
-            // Fetch the user's inventory from the database
             var userInventory = await _context.UserInventories
-                                               .Include(ui => ui.OwnedFeylings)  // Include OwnedFeylings
-                                               .ThenInclude(of => of.Feyling)    // Include Feyling details
-                                               .Include(ui => ui.OwnedItems)      // Include OwnedItems
-                                               .ThenInclude(oi => oi.item)       // Include Item details
+                                               .Include(ui => ui.OwnedFeylings)
+                                               .ThenInclude(of => of.Feyling)
+                                               .Include(ui => ui.OwnedItems)
+                                               .ThenInclude(oi => oi.item)
                                                .FirstOrDefaultAsync(ui => ui.UserId == userId);
 
             if (userInventory == null)
@@ -356,49 +353,49 @@ namespace PokeQuestApi_New.Controllers
                 return NotFound(new { Message = "Inventory not found for this user" });
             }
 
-            // Prepare the inventory response model
             var inventoryResponse = new
             {
                 UserId = userId,
                 UserLevel = user.UserLevel,
                 CoinAmount = user.CoinAmount,
-                OwnedFeylings = userInventory.OwnedFeylings.Select(of => new
+                OwnedFeylings = (userInventory.OwnedFeylings ?? new List<OwnedFeyling>()).Select(of => new
                 {
                     of.FeylingId,
-                    FeylingName = of.Feyling.Name,
-                    FeylingDescription = of.Feyling.Description,
-                    FeylingImg = of.Feyling.Img,
-                    FeylingType = of.Feyling.Type.Name,  // Assuming "Type" has a "Name" property
-                    FeylingAbility = of.Feyling.Ability.Name,  // Assuming "Ability" has a "Name" property
-                    FeylingIsUnlocked = of.Feyling.IsUnlocked,
-                    FeylingHp = of.Feyling.Hp,
-                    FeylingAtk = of.Feyling.Atk,
-                    FeylingItem = of.Feyling.Item != null ? new
+                    FeylingName = of.Feyling?.Name ?? "Unknown",
+                    FeylingDescription = of.Feyling?.Description,
+                    FeylingImg = of.Feyling?.Img,
+                    FeylingType = of.Feyling?.Type?.Name ?? "None",
+                    FeylingAbility = of.Feyling?.Ability?.Name ?? "None",
+                    FeylingIsUnlocked = of.Feyling?.IsUnlocked ?? false,
+                    FeylingHp = of.Feyling?.Hp ?? 0,
+                    FeylingAtk = of.Feyling?.Atk ?? 0,
+                    FeylingItem = of.Feyling?.Item != null ? new
                     {
-                        of.Feyling.Item.Name,
-                        of.Feyling.Item.Description,
-                        of.Feyling.Item.Img,
-                        of.Feyling.Item.ItemAbility,
-                        of.Feyling.Item.Rarity
-                    } : null,  // Include Item if it exists
-                    FeylingWeakAgainst = of.Feyling.WeakAgainst.Name, // Assuming "WeakAgainst" has a "Name" property
-                    FeylingStrongAgainst = of.Feyling.StrongAgainst.Name, // Assuming "StrongAgainst" has a "Name" property
-                    FeylingSellPrice = of.Feyling.SellPrice
+                        Name = of.Feyling.Item.Name,
+                        Description = of.Feyling.Item.Description,
+                        Img = of.Feyling.Item.Img,
+                        ItemAbility = of.Feyling.Item.ItemAbility,
+                        Rarity = of.Feyling.Item.Rarity
+                    } : null,
+                    FeylingWeakAgainst = of.Feyling?.WeakAgainst?.Name ?? "None",
+                    FeylingStrongAgainst = of.Feyling?.StrongAgainst?.Name ?? "None",
+                    FeylingSellPrice = of.Feyling?.SellPrice ?? 0
                 }),
-                OwnedItems = userInventory.OwnedItems.Select(oi => new
+                OwnedItems = (userInventory.OwnedItems ?? new List<OwnedItem>()).Select(oi => new
                 {
                     oi.ItemId,
-                    ItemName = oi.item.Name,
-                    ItemDescription = oi.item.Description,
-                    ItemImg = oi.item.Img,
-                    ItemAbility = oi.item.ItemAbility,
-                    ItemRarity = oi.item.Rarity,
+                    ItemName = oi.item?.Name ?? "Unknown",
+                    ItemDescription = oi.item?.Description ?? "No description",
+                    ItemImg = oi.item?.Img,
+                    ItemAbility = oi.item?.ItemAbility,
+                    ItemRarity = oi.item?.Rarity,
                     ItemAmount = oi.Amount
                 })
             };
 
             return Ok(inventoryResponse);
         }
+
 
         // Model for registering a user
         public class RegisterModel
