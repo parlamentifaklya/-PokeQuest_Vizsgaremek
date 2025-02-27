@@ -100,9 +100,21 @@ const Summon: React.FC = () => {
 
   // Handle dialog close and update inventory or coinAmount
   const handleDialogClose = () => {
-    // Retrieve the userInventory and coinAmount from localStorage
+    // Retrieve the userInventory and CoinAmount separately from localStorage
     const storedUserInventory = JSON.parse(localStorage.getItem("userInventory") || "{}");
-    const storedCoinAmount = JSON.parse(localStorage.getItem("CoinAmount") || "0");
+    const storedUserData = JSON.parse(localStorage.getItem("userData") || "{}");
+
+    // Check if userInventory and CoinAmount are available
+    if (!storedUserInventory || !storedUserData || !storedUserData.CoinAmount) {
+      console.error("User inventory or CoinAmount is not available.");
+      setOpenCaseDialog(false);
+      return;
+    }
+
+    const { CoinAmount } = storedUserData;
+
+    // Convert CoinAmount to a number to handle it as a numeric value
+    const coinAmountAsNumber = Number(CoinAmount);
 
     // Check if the selected feyling is already in the inventory
     const feylingAlreadyInInventory = storedUserInventory.ownedFeylings.some(
@@ -110,20 +122,22 @@ const Summon: React.FC = () => {
     );
 
     if (feylingAlreadyInInventory) {
-      // Increase CoinAmount if the feyling is already in the inventory
-      const updatedCoinAmount = storedCoinAmount + (selectedFeyling?.sellPrice || 0); // Increase coin amount by sellPrice
-      localStorage.setItem("CoinAmount", JSON.stringify(updatedCoinAmount)); // Save updated CoinAmount
+      // Increase CoinAmount by the sellPrice (convert to number)
+      const updatedCoinAmount = coinAmountAsNumber + (selectedFeyling?.sellPrice || 0); // Add sellPrice as number
+      storedUserData.CoinAmount = updatedCoinAmount.toString(); // Convert the number back to string before saving
     } else {
       // Add feyling to inventory if it's not already present
-      const updatedUserInventory = { ...storedUserInventory };
-      updatedUserInventory.ownedFeylings.push({
+      storedUserInventory.ownedFeylings.push({
         feylingId: selectedFeyling?.id,
         feylingName: selectedFeyling?.name,
         feylingImg: selectedFeyling?.img,
         sellPrice: selectedFeyling?.sellPrice,
       });
-      localStorage.setItem("userInventory", JSON.stringify(updatedUserInventory)); // Save updated inventory
     }
+
+    // Save updated user inventory and userData back to localStorage
+    localStorage.setItem("userInventory", JSON.stringify(storedUserInventory));
+    localStorage.setItem("userData", JSON.stringify(storedUserData));
 
     // Close the dialog
     setOpenCaseDialog(false);

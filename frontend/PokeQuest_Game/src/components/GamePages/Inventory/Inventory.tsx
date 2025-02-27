@@ -11,11 +11,15 @@ const Inventory: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
+  const baseUrl = 'http://localhost:5130/api/';  // Add the base URL for the images
+
   const transformFeyling = (feylingData: any): Feyling => ({
     id: feylingData.feylingId,
     name: feylingData.feylingName,
     description: feylingData.feylingDescription,
-    img: feylingData.feylingImg,
+    img: feylingData.feylingImg.startsWith('http') 
+      ? feylingData.feylingImg  // If the image already contains a full URL, use it directly
+      : `${baseUrl}${feylingData.feylingImg.replace('\\', '/')}`,  // Otherwise, prepend base URL
     typeId: feylingData.feylingType,
     abilityId: feylingData.feylingAbility,
     isUnlocked: feylingData.feylingIsUnlocked,
@@ -60,7 +64,7 @@ const Inventory: React.FC = () => {
 
   return (
     <div className={styles.siteBackground}>
-      <Header></Header>
+      <Header />
 
       {/* Feylings Section */}
       <div className={styles.section}>
@@ -71,7 +75,8 @@ const Inventory: React.FC = () => {
           ) : (
             inventory.ownedFeylings.map((feyling) => (
               <div key={feyling.id} className={styles.inventoryItem}>
-                <img src={`http://localhost:5130/api/${feyling.img}`} alt={feyling.name} className={styles.itemImage} />
+                {/* Use the transformed image URL */}
+                <img src={feyling.img} alt={feyling.name} className={styles.itemImage} />
                 <span className='feylingName'>{feyling.name}</span>
               </div>
             ))
@@ -88,14 +93,15 @@ const Inventory: React.FC = () => {
           ) : (
             inventory.ownedItems.map((item) => (
               <div key={item.id} className={styles.inventoryItem}>
-                <img src={`http://localhost:5130/api/${item.img}`} alt={item.name} className={styles.itemImage} />
+                {/* Ensure the image URL is complete */}
+                <img src={`${baseUrl}${item.img}`} alt={item.name} className={styles.itemImage} />
                 <span className='itemName'>{item.name}</span>
               </div>
             ))
           )}
         </div>
       </div>
-      <Button style={{marginTop:"1vh"}} route="/gamemenu" text="Back"></Button>
+      <Button style={{ marginTop: "1vh" }} route="/gamemenu" text="Back"></Button>
     </div>
   );
 };
