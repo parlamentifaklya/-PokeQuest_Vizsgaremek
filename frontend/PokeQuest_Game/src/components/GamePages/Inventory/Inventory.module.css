@@ -35,55 +35,59 @@ html, body {
     color: #fff;
   }
   
-  /* Container for the inventory list */
-  .inventoryList {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: center;
-  }
-  
-  /* Styling for individual inventory items */
-  .inventoryItem {
-    width: 10vw;
-    height: fit-content;                          /* Increased height to accommodate names */
-    display: flex;
-    flex-direction: column;                /* Stack the image and name vertically */
-    justify-content: center;
-    align-items: center;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-    transition: transform 0.2s ease;
+/* Container for the inventory list */
+.inventoryList {
+  display: flex;
+  width: 50vw;
+  gap: 10px;
+  justify-content: flex-start;  /* Align items to the left */
+  overflow-x: auto;             /* Enable horizontal scrolling */
+  padding-bottom: 10px;         /* Optional: Add space below the list */
+  white-space: nowrap;          /* Prevent wrapping of the items */
+  -webkit-overflow-scrolling: touch; /* For smooth scrolling on touch devices */
+  max-width: 90%;               /* Limit width to 90% of the parent container */
+  margin: 0 auto;               /* Center the list horizontally */
+}
 
-  }
+/* Styling for individual inventory items */
+.inventoryItem {
+  width: 120px;                 /* Reduce the width of each item */
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  transition: transform 0.2s ease;
+  flex-shrink: 0;               /* Prevent items from shrinking */
+}
+
+/* Optional: Add hover effect */
+.inventoryItem:hover {
+  transform: scale(1.1);
+}
+
+/* Styling for the images of items and feylings */
+.itemImage {
+  width: 80%;                             /* Make image width 80% of the inventory item container */
+  height: auto;                           /* Maintain aspect ratio */
+  object-fit: cover;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* Styling for the names of items and feylings */
+.feylingName, .itemName {
+  margin-top: 10px;                       /* Add space between image and name */
+  font-size: 14px;                        /* Adjust font size to fit better */
+  color: #fff;
+  text-align: center;
   
-  .inventoryItem:hover {
-    transform: scale(1.1);
-  }
-  
-  /* Styling for the images of items and feylings */
-  .itemImage {
-    width: 80%;                             /* Make image width 80% of the inventory item container */
-    height: auto;                           /* Maintain aspect ratio */
-    object-fit: cover;
-    border-radius: 8px;
-    cursor: pointer;
-  }
-  
-  /* Styling for the names of items and feylings */
-  .feylingName, .itemName {
-    margin-top: 10px;                       /* Add space between image and name */
-    font-size: 16px;                        /* Adjust font size */
-    color: #fff;
-    text-align: center;
-    
-    /* Ensure names wrap within the container */
-    word-wrap: break-word;                  /* Break long words */
-    max-width: 80%;                          /* Limit max width */
-    text-overflow: ellipsis;                /* Truncate with ellipsis if necessary */
-    overflow: hidden;                       /* Hide overflow if the text is too long */
-  }
-  
-  /* For long names, the text won't get cut off but will wrap or get truncated */
-  
+  /* Ensure names wrap within the container */
+  word-wrap: break-word;                  /* Break long words */
+  max-width: 80%;                          /* Limit max width */
+  text-overflow: ellipsis;                /* Truncate with ellipsis if necessary */
+  overflow: hidden;                       /* Hide overflow if the text is too long */
+}
