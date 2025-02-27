@@ -33,6 +33,15 @@ const Settings: React.FC = () => {
     navigate(-1); // Navigate back when the close button is clicked
   };
 
+  const handleLogout = () => {
+    // Remove user data from localStorage to log the user out
+    localStorage.removeItem('userData');
+    localStorage.removeItem('userInventory');
+    
+    // Navigate to the welcome window
+    navigate('/login');
+  };
+
   return (
     <div className={styles.settingsBackground}>
       <div className={styles.settingsContainer}>
@@ -59,7 +68,7 @@ const Settings: React.FC = () => {
           </div>
 
           <div className={styles.buttonHolder}>
-            <button className={styles.buttonTemp}>Change Account</button>
+            <button className={styles.buttonTemp} onClick={handleLogout}>Logout</button>
             <button className={styles.buttonTemp}>Change Password</button>
           </div>
         </div>
