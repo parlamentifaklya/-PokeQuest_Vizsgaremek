@@ -402,7 +402,7 @@ namespace PokeQuestApi_New.Controllers
         {
             if (request == null || string.IsNullOrEmpty(request.UserId) || request.ItemId <= 0 || request.Amount <= 0)
             {
-                return BadRequest("Invalid data.");
+                return BadRequest(new { message = "Invalid data." });
             }
 
             // Retrieve the UserInventory from the database by UserId
@@ -412,7 +412,7 @@ namespace PokeQuestApi_New.Controllers
 
             if (userInventory == null)
             {
-                return NotFound("User not found.");
+                return NotFound(new { message = "User not found." });
             }
 
             // Check if the item already exists in the user's inventory
@@ -439,7 +439,8 @@ namespace PokeQuestApi_New.Controllers
             // Save changes to the database
             _context.SaveChanges();
 
-            return Ok("Item added to inventory.");
+            // Return a JSON object with a message
+            return Ok(new { message = "Item added to inventory." });
         }
 
         [HttpPost]

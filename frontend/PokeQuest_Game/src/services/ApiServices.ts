@@ -297,7 +297,7 @@ const addItemToInventory = async (userId: string, itemId: number, amount: number
   try {
     // Ensure userId is a string before sending it
     const userIdString = String(userId);  // Convert userId to string if it's not already
-
+    console.log(userId)
     const response = await fetch('http://localhost:5130/api/User/AddItemToInventory', {
       method: 'POST',
       headers: {
@@ -331,7 +331,7 @@ const addItemToInventory = async (userId: string, itemId: number, amount: number
 export const addItemToInventoryAndUpdateStorage = async (itemId: number, amount: number) => {
   try {
     // Retrieve UserId from localStorage
-    const userId = JSON.parse(localStorage.getItem("userData") || "{}");
+    const userId = JSON.parse(localStorage.getItem("userData") || "{}").sub;
     if (!userId) {
       console.error("UserId is not available.");
       return;
