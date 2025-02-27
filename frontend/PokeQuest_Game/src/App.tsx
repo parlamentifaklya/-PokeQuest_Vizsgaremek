@@ -11,6 +11,7 @@ import ItemChest from './components/GamePages/Chests/ItemChest';
 import Feylings from './components/GamePages/Feylings/Feylings';
 import Inventory from './components/GamePages/Inventory/Inventory';
 import Summon from './components/GamePages/Chests/Summon';
+import Equip from './components/GamePages/Equip/Equip';
 
 const App: React.FC = () => {
   return (
@@ -27,6 +28,7 @@ const App: React.FC = () => {
           <Route path='/feylings' Component={Feylings}/>
           <Route path='/inventory' Component={Inventory}></Route>
           <Route path='/summon' Component={Summon}></Route>
+          <Route path='/equip' Component={Equip}></Route>
         </Routes>
       </BrowserRouter>
     </AudioProvider>
