@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Item } from "../../../types/Item";
 import { GetAllItems } from "../../../services/ApiServices";
 import Button from "../../../modules/Button";
+import { addItemToInventoryAndUpdateStorage } from "../../../services/ApiServices";
 
 // Randomly select an item color (representing rarity)
 const getItemColor = (rarity: number) => {
@@ -67,7 +68,6 @@ const ItemChest: React.FC = () => {
     }
   }, [items]);
 
-  // Open case function
   const openCase = () => {
     if (isSpinning || openCaseDialog || loading) return; // Prevent re-triggering while spinning or dialog open and ensure items are loaded
     setIsSpinning(true);
@@ -109,10 +109,26 @@ const ItemChest: React.FC = () => {
         setReward(`You have received a <strong>${selectedItem.name}</strong>!`); // Show the reward for the item
         setOpenCaseDialog(true); // Open the dialog after scroll is done
         setIsSpinning(false); // End spinning
+  
+        // Retrieve userInventoryId from localStorage
+        const storedInventory = localStorage.getItem("userInventory");
+        if (!storedInventory) {
+          console.error("User inventory not found in localStorage");
+          return;
+        }
+  
+        // Parse the stored inventory, assuming it's saved as a JSON object with `id` as a field
+        const userInventory = JSON.parse(storedInventory);
+        const userInventoryId = userInventory.id; // Use the correct field name for your userInventory ID
+  
+        const itemId = selectedItem.id;  // ID of the item the user received
+        const amount = 1;  // Add 1 of the selected item
+  
+        // Add the item to the inventory and update localStorage
+        addItemToInventoryAndUpdateStorage(itemId, amount);
       }, 2000); // Adjust timing to match the scroll duration
     }
   };
-  
 
   // Handle dialog close
   const handleDialogClose = () => {

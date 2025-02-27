@@ -262,3 +262,91 @@ export const GetInventory = async (userId: string): Promise<UserInventory> => {
   }
 };
 
+export const addFeylingToInventory = async (userInventoryId: number, feylingId: number) => {
+  const BASE_URL = "http://localhost:5130/api/";
+
+  const requestPayload = {
+    userInventoryId: userInventoryId,
+    feylingId: feylingId,
+  };
+
+  try {
+    const response = await fetch(`${BASE_URL}User/AddFeylingToInventory`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(requestPayload),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("Error details:", errorData);
+      throw new Error(`Error: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("API Error (AddFeylingToInventory):", error);
+    throw error;
+  }
+};
+
+const addItemToInventory = async (userId: string, itemId: number, amount: number) => {
+  try {
+    // Ensure userId is a string before sending it
+    const userIdString = String(userId);  // Convert userId to string if it's not already
+
+    const response = await fetch('http://localhost:5130/api/User/AddItemToInventory', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        UserId: userIdString, // Ensure it's a string
+        ItemId: itemId,
+        Amount: amount,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("API Error Details: ", errorData); // Log the full error details
+      throw new Error(`API Error (AddItemToInventory): ${errorData.title || 'Unknown error'}`);
+    }
+
+    return await response.json(); // Return the response from the API if successful
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Caught Error:", error.message);
+      throw new Error(`Error in addItemToInventory: ${error.message}`);
+    } else {
+      console.error("An unexpected error occurred:", error);
+      throw new Error('An unexpected error occurred while adding item to inventory');
+    }
+  }
+};
+
+export const addItemToInventoryAndUpdateStorage = async (itemId: number, amount: number) => {
+  try {
+    // Retrieve UserId from localStorage
+    const userId = JSON.parse(localStorage.getItem("userData") || "{}");
+    if (!userId) {
+      console.error("UserId is not available.");
+      return;
+    }
+
+    // Call the API to add the item
+    await addItemToInventory(userId, itemId, amount);
+
+    // Get the updated inventory from the server (or update it locally if needed)
+    const updatedInventory = await GetInventory(userId);
+
+    // Save the updated inventory in localStorage
+    localStorage.setItem("userInventory", JSON.stringify(updatedInventory));
+  } catch (error) {
+    console.error("Error adding item to inventory and updating localStorage:", error);
+  }
+};
+

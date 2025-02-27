@@ -397,7 +397,7 @@ namespace PokeQuestApi_New.Controllers
         }
 
 
-        [HttpPost("addItemToInventory")]
+        [HttpPost]
         public IActionResult AddItemToInventory([FromBody] AddItemRequest request)
         {
             if (request == null || string.IsNullOrEmpty(request.UserId) || request.ItemId <= 0 || request.Amount <= 0)
@@ -442,7 +442,7 @@ namespace PokeQuestApi_New.Controllers
             return Ok("Item added to inventory.");
         }
 
-        [HttpPost("addFeylingToInventory")]
+        [HttpPost]
         public IActionResult AddFeylingToInventory([FromBody] AddFeylingRequest request)
         {
             if (request == null || string.IsNullOrEmpty(request.UserId) || request.FeylingId <= 0)

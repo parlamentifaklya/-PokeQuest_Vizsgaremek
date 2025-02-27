@@ -674,6 +674,38 @@
   },
   {
     "ContainingType": "PokeQuestApi_New.Controllers.UserController",
+    "Method": "AddFeylingToInventory",
+    "RelativePath": "api/User/AddFeylingToInventory",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "PokeQuestApi_New.Controllers.UserController\u002BAddFeylingRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "PokeQuestApi_New.Controllers.UserController",
+    "Method": "AddItemToInventory",
+    "RelativePath": "api/User/AddItemToInventory",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "PokeQuestApi_New.Controllers.UserController\u002BAddItemRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "PokeQuestApi_New.Controllers.UserController",
     "Method": "CreateAdmin",
     "RelativePath": "api/User/CreateAdmin",
     "HttpMethod": "POST",
