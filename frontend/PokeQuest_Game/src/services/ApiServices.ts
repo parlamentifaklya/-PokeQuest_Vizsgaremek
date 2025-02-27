@@ -233,29 +233,23 @@ export const GetInventory = async (userId: string): Promise<UserInventory> => {
 
     const data = await response.json();
 
-    // Process ownedFeylings with correct image handling
+    // Process ownedFeylings and ownedItems to ensure images have correct URLs
     const userInventory: UserInventory = {
       ownedFeylings: data.ownedFeylings.map((feyling: Feyling) => ({
         ...feyling,
-        img: feyling.img && feyling.img.startsWith("http") 
-          ? feyling.img  // If it's already a full URL, use it
-          : feyling.img 
-          ? `${BASE_URL}${feyling.img}`  // Prepend base URL if not a full URL
-          : "default-image-url",  // Add a fallback URL if no image is present
+        img: feyling.img && !feyling.img.startsWith("http")
+          ? `${BASE_URL}${feyling.img}`  // Ensure the image has a complete URL
+          : feyling.img,
       })),
-      
-      // Process ownedItems with correct image handling
       ownedItems: data.ownedItems.map((item: Item) => ({
         ...item,
-        img: item.img && item.img.startsWith("http") 
-          ? item.img  // If it's already a full URL, use it
-          : item.img 
-          ? `${BASE_URL}${item.img}`  // Prepend base URL if not a full URL
-          : "default-image-url",  // Add a fallback URL if no image is present
+        img: item.img && !item.img.startsWith("http")
+          ? `${BASE_URL}${item.img}`  // Ensure the image has a complete URL
+          : item.img,
       })),
     };
 
-    return userInventory; // Return structured UserInventory
+    return userInventory;
   } catch (error) {
     console.error("Error fetching inventory:", error);
     throw error;
