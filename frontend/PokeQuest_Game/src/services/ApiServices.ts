@@ -2,7 +2,7 @@ import { Ability } from "../types/Ability";
 import { Feyling } from "../types/Feyling";
 import { Item } from "../types/Item";
 import { Type } from "../types/Type";
-import { UserInventory } from "../types/User";
+import { User, UserInventory } from "../types/User";
 //login
 export const loginData = async (endpoint: string, payload: { email: string; password: string }) => {
   const BASE_URL = "http://localhost:5130/api/";
@@ -256,36 +256,6 @@ export const GetInventory = async (userId: string): Promise<UserInventory> => {
   }
 };
 
-export const addFeylingToInventory = async (userInventoryId: number, feylingId: number) => {
-  const BASE_URL = "http://localhost:5130/api/";
-
-  const requestPayload = {
-    userInventoryId: userInventoryId,
-    feylingId: feylingId,
-  };
-
-  try {
-    const response = await fetch(`${BASE_URL}User/AddFeylingToInventory`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(requestPayload),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error("Error details:", errorData);
-      throw new Error(`Error: ${response.statusText}`);
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("API Error (AddFeylingToInventory):", error);
-    throw error;
-  }
-};
 
 const addItemToInventory = async (userId: string, itemId: number, amount: number) => {
   try {
@@ -344,3 +314,59 @@ export const addItemToInventoryAndUpdateStorage = async (itemId: number, amount:
   }
 };
 
+export const addFeylingToInventory = async (userId: string, feylingId: number): Promise<User> => {
+  const apiBaseUrl = "http://localhost:5130"; 
+  try {
+    // Send the POST request to your API endpoint
+    const response = await fetch(`${apiBaseUrl}/api/User/AddFeylingToInventory`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        UserId: userId,
+        FeylingId: feylingId,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("API Error Details: ", errorData);
+      throw new Error(`API Error (AddFeylingToInventory): ${errorData.title || 'Unknown error'}`);
+    }
+
+    // Return the updated User data from the API if successful
+    return await response.json(); // The response will return the updated User object
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Caught Error:", error.message);
+      throw new Error(`Error in addFeylingToInventory: ${error.message}`);
+    } else {
+      console.error("An unexpected error occurred:", error);
+      throw new Error('An unexpected error occurred while adding Feyling to inventory');
+    }
+  }
+};
+
+export const addFeylingToInventoryAndUpdateStorage = async (feylingId: number) => {
+  try {
+    // Retrieve UserId from localStorage
+    const userId = JSON.parse(localStorage.getItem("userData") || "{}").sub;
+    if (!userId) {
+      console.error("UserId is not available.");
+      return;
+    }
+
+    // Call the API to add the Feyling to the inventory
+    const updatedUser: User = await addFeylingToInventory(userId, feylingId);
+    
+    // After getting the updated User, update the localStorage with the new User data
+    localStorage.setItem("userData", JSON.stringify(updatedUser));
+    
+    // Optionally, update user inventory in localStorage if needed (if you want it to be updated separately)
+    localStorage.setItem("userInventory", JSON.stringify(updatedUser.userInventory));
+
+  } catch (error) {
+    console.error("Error adding Feyling to inventory and updating localStorage:", error);
+  }
+};

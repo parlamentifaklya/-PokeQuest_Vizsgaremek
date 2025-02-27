@@ -448,32 +448,54 @@ namespace PokeQuestApi_New.Controllers
         {
             if (request == null || string.IsNullOrEmpty(request.UserId) || request.FeylingId <= 0)
             {
-                return BadRequest("Invalid data.");
+                return BadRequest(new { status = "error", message = "Invalid data." });
             }
 
-            // Retrieve the UserInventory from the database by UserId
-            var userInventory = _context.UserInventories
-                .Include(u => u.OwnedFeylings)
-                .FirstOrDefault(u => u.UserId == request.UserId);
+            // Retrieve the User from the database by UserId (custom User class that has the Inventory and CoinAmount)
+            var user = _context.Users
+                .Include(u => u.Inventory)   // Include the user's inventory to check if the feyling is present
+                .ThenInclude(i => i.OwnedFeylings) // Include owned feylings to check if the feyling exists
+                .FirstOrDefault(u => u.Id == request.UserId); // Use the Identity User Id (assuming request.UserId corresponds to IdentityUser.Id)
 
-            if (userInventory == null)
+            if (user == null)
             {
-                return NotFound("User not found.");
+                return NotFound(new { status = "error", message = "User not found." });
             }
 
-            // Add the Feyling to the UserInventory
-            var ownedFeyling = new OwnedFeyling
+            // Check if the Feyling already exists in the user's inventory
+            var existingFeyling = user.Inventory.OwnedFeylings
+                .FirstOrDefault(ownedFeyling => ownedFeyling.FeylingId == request.FeylingId);
+
+            if (existingFeyling != null)
             {
-                FeylingId = request.FeylingId, // Foreign key to Feyling
-                UserInventoryId = userInventory.Id // Reference to the UserInventory
-            };
+                // If the Feyling exists, increase the user's CoinAmount based on Feyling's sellPrice
+                var feyling = _context.Feylings.FirstOrDefault(f => f.Id == request.FeylingId);
+                if (feyling != null)
+                {
+                    user.CoinAmount += feyling.SellPrice; // Assuming 'SellPrice' is the value to increase the user's coin amount
+                    _context.SaveChanges();
+                    return Ok(new { status = "success", message = "Feyling is already in the inventory. CoinAmount increased." });
+                }
+                else
+                {
+                    return NotFound(new { status = "error", message = "Feyling not found." });
+                }
+            }
+            else
+            {
+                // If the Feyling does not exist, add it to the UserInventory
+                var ownedFeyling = new OwnedFeyling
+                {
+                    FeylingId = request.FeylingId, // Foreign key to Feyling
+                    UserInventoryId = user.Inventory.Id // Reference to the UserInventory
+                };
 
-            userInventory.OwnedFeylings.Add(ownedFeyling);
+                user.Inventory.OwnedFeylings.Add(ownedFeyling);
 
-            // Save changes to the database
-            _context.SaveChanges();
-
-            return Ok("Feyling added to inventory.");
+                // Save changes to the database
+                _context.SaveChanges();
+                return Ok(new { status = "success", message = "Feyling added to inventory." });
+            }
         }
 
         public class AddFeylingRequest
@@ -481,7 +503,6 @@ namespace PokeQuestApi_New.Controllers
             public string UserId { get; set; }
             public int FeylingId { get; set; }
         }
-
 
         public class AddItemRequest
         {
