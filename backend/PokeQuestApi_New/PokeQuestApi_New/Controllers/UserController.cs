@@ -397,6 +397,99 @@ namespace PokeQuestApi_New.Controllers
         }
 
 
+        [HttpPost("addItemToInventory")]
+        public IActionResult AddItemToInventory([FromBody] AddItemRequest request)
+        {
+            if (request == null || string.IsNullOrEmpty(request.UserId) || request.ItemId <= 0 || request.Amount <= 0)
+            {
+                return BadRequest("Invalid data.");
+            }
+
+            // Retrieve the UserInventory from the database by UserId
+            var userInventory = _context.UserInventories
+                .Include(u => u.OwnedItems)
+                .FirstOrDefault(u => u.UserId == request.UserId);
+
+            if (userInventory == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            // Check if the item already exists in the user's inventory
+            var existingItem = userInventory.OwnedItems.FirstOrDefault(o => o.ItemId == request.ItemId);
+
+            if (existingItem != null)
+            {
+                // If item already exists, increase the amount
+                existingItem.Amount += request.Amount;
+            }
+            else
+            {
+                // Otherwise, create a new OwnedItem
+                var ownedItem = new OwnedItem
+                {
+                    ItemId = request.ItemId,
+                    Amount = request.Amount,
+                    UserInventoryId = userInventory.Id // Reference to the UserInventory
+                };
+
+                userInventory.OwnedItems.Add(ownedItem);
+            }
+
+            // Save changes to the database
+            _context.SaveChanges();
+
+            return Ok("Item added to inventory.");
+        }
+
+        [HttpPost("addFeylingToInventory")]
+        public IActionResult AddFeylingToInventory([FromBody] AddFeylingRequest request)
+        {
+            if (request == null || string.IsNullOrEmpty(request.UserId) || request.FeylingId <= 0)
+            {
+                return BadRequest("Invalid data.");
+            }
+
+            // Retrieve the UserInventory from the database by UserId
+            var userInventory = _context.UserInventories
+                .Include(u => u.OwnedFeylings)
+                .FirstOrDefault(u => u.UserId == request.UserId);
+
+            if (userInventory == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            // Add the Feyling to the UserInventory
+            var ownedFeyling = new OwnedFeyling
+            {
+                FeylingId = request.FeylingId, // Foreign key to Feyling
+                UserInventoryId = userInventory.Id // Reference to the UserInventory
+            };
+
+            userInventory.OwnedFeylings.Add(ownedFeyling);
+
+            // Save changes to the database
+            _context.SaveChanges();
+
+            return Ok("Feyling added to inventory.");
+        }
+
+        public class AddFeylingRequest
+        {
+            public string UserId { get; set; }
+            public int FeylingId { get; set; }
+        }
+
+
+        public class AddItemRequest
+        {
+            public string UserId { get; set; }
+            public int ItemId { get; set; }
+            public int Amount { get; set; }
+        }
+
+
         // Model for registering a user
         public class RegisterModel
         {
