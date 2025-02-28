@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\harci\\Desktop\\-PokeQuest_Vizsgaremek\\backend\\PokeQuestApi_New\\PokeQuestApi_New\\PokeQuestApi_New.csproj": {}
+    "C:\\Users\\szilagyi.dominik\\Desktop\\-PokeQuest_Vizsgaremek\\backend\\PokeQuestApi_New\\PokeQuestApi_New\\PokeQuestApi_New.csproj": {}
   },
   "projects": {
-    "C:\\Users\\harci\\Desktop\\-PokeQuest_Vizsgaremek\\backend\\PokeQuestApi_New\\PokeQuestApi_New\\PokeQuestApi_New.csproj": {
+    "C:\\Users\\szilagyi.dominik\\Desktop\\-PokeQuest_Vizsgaremek\\backend\\PokeQuestApi_New\\PokeQuestApi_New\\PokeQuestApi_New.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\harci\\Desktop\\-PokeQuest_Vizsgaremek\\backend\\PokeQuestApi_New\\PokeQuestApi_New\\PokeQuestApi_New.csproj",
+        "projectUniqueName": "C:\\Users\\szilagyi.dominik\\Desktop\\-PokeQuest_Vizsgaremek\\backend\\PokeQuestApi_New\\PokeQuestApi_New\\PokeQuestApi_New.csproj",
         "projectName": "PokeQuestApi_New",
-        "projectPath": "C:\\Users\\harci\\Desktop\\-PokeQuest_Vizsgaremek\\backend\\PokeQuestApi_New\\PokeQuestApi_New\\PokeQuestApi_New.csproj",
-        "packagesPath": "C:\\Users\\harci\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\harci\\Desktop\\-PokeQuest_Vizsgaremek\\backend\\PokeQuestApi_New\\PokeQuestApi_New\\obj\\",
+        "projectPath": "C:\\Users\\szilagyi.dominik\\Desktop\\-PokeQuest_Vizsgaremek\\backend\\PokeQuestApi_New\\PokeQuestApi_New\\PokeQuestApi_New.csproj",
+        "packagesPath": "C:\\Users\\szilagyi.dominik\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\szilagyi.dominik\\Desktop\\-PokeQuest_Vizsgaremek\\backend\\PokeQuestApi_New\\PokeQuestApi_New\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\harci\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\szilagyi.dominik\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -26,6 +26,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
