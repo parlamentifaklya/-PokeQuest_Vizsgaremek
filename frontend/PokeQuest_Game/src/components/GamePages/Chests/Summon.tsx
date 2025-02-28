@@ -1,6 +1,6 @@
 import "./ItemChest.css";
 import { Feyling } from "../../../types/Feyling";
-import { GetAllFeylings } from "../../../services/ApiServices";
+import { addFeylingToInventory, GetAllFeylings } from "../../../services/ApiServices";
 import Button from "../../../modules/Button";
 import React, { useState, useEffect, useRef } from "react";
 
@@ -99,7 +99,7 @@ const Summon: React.FC = () => {
   };
 
   // Handle dialog close and update inventory or coinAmount
-  const handleDialogClose = () => {
+  const handleDialogClose = async () => {
     // Retrieve the userInventory and CoinAmount separately from localStorage
     const storedUserInventory = JSON.parse(localStorage.getItem("userInventory") || "{}");
     const storedUserData = JSON.parse(localStorage.getItem("userData") || "{}");
@@ -138,6 +138,19 @@ const Summon: React.FC = () => {
     // Save updated user inventory and userData back to localStorage
     localStorage.setItem("userInventory", JSON.stringify(storedUserInventory));
     localStorage.setItem("userData", JSON.stringify(storedUserData));
+
+      // Send the updated data to the backend to persist the changes
+      // Check if selectedFeyling exists and has a valid id before calling the API
+    if (selectedFeyling && selectedFeyling.id !== undefined) {
+      try {
+        await addFeylingToInventory(storedUserData.sub, selectedFeyling.id); // Safe to use selectedFeyling.id now
+        console.log("Successfully updated the backend with the new inventory and coin amount.");
+      } catch (error) {
+        console.error("Failed to update the backend:", error);
+      }
+    } else {
+      console.error("Selected feyling is invalid.");
+    }
 
     // Close the dialog
     setOpenCaseDialog(false);

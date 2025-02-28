@@ -52,17 +52,28 @@ html, body {
 /* Styling for individual inventory items */
 .inventoryItem {
   width: 120px;                 /* Reduce the width of each item */
-  height: fit-content;
+  height: 200px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-  transition: transform 0.2s ease;
-  flex-shrink: 0;               /* Prevent items from shrinking */
+  justify-content: flex-start; /* Aligns content at the top */
+  font-size: 18px; /* Increased font size for better visibility */
+  font-weight: bold;
+  background: #222;
+  color: white;
+  border: 2px solid #444;
+  margin-right: 15px; /* Increased margin for spacing */
+  user-select: none;
+  transition: transform 0.3s ease;
+  position: relative;
+  padding: 15px; /* Increased padding for more space */
+  text-align: center;
+  overflow: visible;
+  word-wrap: break-word;       /* Ensures long words break into the next line */
+  overflow-wrap: break-word;   /* Also ensures breaking words if needed */
+  white-space: normal;         /* Allows text wrapping */
 }
+
 
 /* Optional: Add hover effect */
 .inventoryItem:hover {
@@ -76,6 +87,7 @@ html, body {
   object-fit: cover;
   border-radius: 8px;
   cursor: pointer;
+  margin-bottom: 20px;
 }
 
 /* Styling for the names of items and feylings */
