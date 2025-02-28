@@ -13,6 +13,8 @@ const Inventory: React.FC = () => {
 
   const baseUrl = 'http://localhost:5130/api/';  // Add the base URL for the images
 
+  
+
   const transformFeyling = (feylingData: any): Feyling => ({
     id: feylingData.feylingId,
     name: feylingData.feylingName,
@@ -39,6 +41,8 @@ const Inventory: React.FC = () => {
     itemAbility: itemData.itemAbility,
     rarity: itemData.itemRarity,
   });
+
+  
 
   useEffect(() => {
     const storedInventory = localStorage.getItem('userInventory');

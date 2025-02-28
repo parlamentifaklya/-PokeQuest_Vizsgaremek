@@ -29,11 +29,11 @@ const getImageUrl = (path: string | undefined): string => {
 };
 
 const Equip = () => {
-  const [feylings, setFeylings] = useState<Feyling[]>([]);
-  const [items, setItems] = useState<Item[]>([]);
-  const [selectedFeyling, setSelectedFeyling] = useState<Feyling | null>(null);
-  const [selectedItem, setSelectedItem] = useState<Item | null>(null);
-  const [userInventory, setUserInventory] = useState<UserInventory | null>(null);
+  const [feylings, setFeylings] = useState<Feyling[]>([]); 
+  const [items, setItems] = useState<Item[]>([]); 
+  const [selectedFeyling, setSelectedFeyling] = useState<Feyling | null>(null); 
+  const [selectedItem, setSelectedItem] = useState<Item | null>(null); 
+  const [userInventory, setUserInventory] = useState<UserInventory | null>(null); 
   const [showSuccess, setShowSuccess] = useState(false);  // State for showing success overlay
   const userId = JSON.parse(localStorage.getItem('userData') || '{}').sub; // Get userId from localStorage
   
@@ -77,12 +77,16 @@ const Equip = () => {
       return;
     }
 
+    // Log the selected Feyling and Item to the console
+    console.log('Selected Feyling:', selectedFeyling);
+    console.log('Selected Item:', selectedItem);
+
     // Simulate equipping item to feyling by updating state
     const updatedFeylings = feylings.map(feyling => {
       if (feyling.feylingId === selectedFeyling.feylingId) {  // Use feylingId to compare
         return {
           ...feyling,
-          itemId: selectedItem.id, // Assign the selected item to the feyling
+          feylingItem: selectedItem.itemId, // Update the feylingItem with selected itemId
         };
       }
       return feyling;
@@ -102,73 +106,76 @@ const Equip = () => {
   return (
     <div className={styles.equipContainer}>
       <Header />
+      
       {/* Display the title only if no Feyling is selected */}
       {!selectedFeyling && <h2 className={styles.title}>Equip Item to Feyling</h2>}
-
-      {/* Display Feylings only if no Feyling is selected */}
-      {!selectedFeyling && (
-        <div
-          className={styles.feylingsHolder}
-          ref={feylingRef}
-        >
-          {feylings.map((feyling) => (
-            <div key={feyling.feylingId} className={styles.feylingCard}>
-              <img
-                src={getImageUrl(feyling.feylingImg)}
-                alt={feyling.feylingName}
-                className={styles.feylingImage}
-                onClick={() => handleFeylingSelect(feyling)}
-              />
-              <p className={styles.feylingName}>{feyling.feylingName}</p>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Display Selected Feyling and Its Items */}
-      {selectedFeyling && (
-        <div className={styles.selectedFeylingContainer}>
-          <div className={styles.selectedFeylingName}>
-            {selectedFeyling.feylingName}
-          </div>
+      
+      <div className={styles.mainContent}>
+        {/* Display Feylings only if no Feyling is selected */}
+        {!selectedFeyling && (
           <div
-            className={styles.itemsContainer}
-            ref={itemRef}
+            className={styles.feylingsHolder}
+            ref={feylingRef}
           >
-            {items.map((item) => (
-              <div
-                key={item.itemId}
-                className={styles.itemCard}
-                onClick={() => handleItemSelect(item)}
-              >
+            {feylings.map((feyling) => (
+              <div key={feyling.feylingId} className={styles.feylingCard}>
                 <img
-                  src={getImageUrl(item.itemImg)}
-                  alt={item.itemName}
-                  className={styles.itemImage}
+                  src={getImageUrl(feyling.feylingImg)}
+                  alt={feyling.feylingName}
+                  className={styles.feylingImage}
+                  onClick={() => handleFeylingSelect(feyling)}
                 />
-                <p className={styles.itemRarity}>
-                  {getRarityLabel(item.itemRarity)} {/* Updated to item.itemRarity */}
-                </p>
+                <p className={styles.feylingName}>{feyling.feylingName}</p>
               </div>
             ))}
           </div>
+        )}
 
-          {/* Equip Button */}
-          <div className={styles.buttonContainer}>
-            {selectedItem && (
-              <button className={styles.button} onClick={handleEquip}>
-                Equip {selectedItem.itemName}
-              </button>
-            )}
+        {/* Display Selected Feyling and Its Items */}
+        {selectedFeyling && (
+          <div className={styles.selectedFeylingContainer}>
+            <div className={styles.selectedFeylingName}>
+              {selectedFeyling.feylingName}
+            </div>
+            <div
+              className={styles.itemsContainer}
+              ref={itemRef}
+            >
+              {items.map((item) => (
+                <div
+                  key={item.itemId}
+                  className={styles.itemCard}
+                  onClick={() => handleItemSelect(item)}
+                >
+                  <img
+                    src={getImageUrl(item.itemImg)}
+                    alt={item.itemName}
+                    className={styles.itemImage}
+                  />
+                  <p className={styles.itemRarity}>
+                    {getRarityLabel(item.itemRarity)} {/* Updated to item.itemRarity */}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            {/* Equip Button */}
+            <div className={styles.buttonContainer}>
+              {selectedItem && (
+                <button className={styles.button} onClick={handleEquip}>
+                  Equip {selectedItem.itemName}
+                </button>
+              )}
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Success Overlay */}
       {showSuccess && (
         <div className={`${styles.successOverlay} show`}>
           <div className={styles.successMessage}>
-            Item equipped successfully!
+            Item successfully equipped!
           </div>
         </div>
       )}
