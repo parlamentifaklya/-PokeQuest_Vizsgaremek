@@ -853,6 +853,22 @@
   },
   {
     "ContainingType": "PokeQuestApi_New.Controllers.UserController",
+    "Method": "UpdateCoinAmount",
+    "RelativePath": "api/User/UpdateCoinAmount",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "PokeQuestApi_New.Controllers.UserController\u002BCoinUpdateRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "PokeQuestApi_New.Controllers.UserController",
     "Method": "UpdateUser",
     "RelativePath": "api/User/UpdateUser/{id}",
     "HttpMethod": "PUT",

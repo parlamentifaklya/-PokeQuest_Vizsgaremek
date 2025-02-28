@@ -1,8 +1,9 @@
 import "./ItemChest.css";
 import { Feyling } from "../../../types/Feyling";
-import { addFeylingToInventory, GetAllFeylings } from "../../../services/ApiServices";
+import { addFeylingToInventory, GetAllFeylings, updateCoinAmount } from "../../../services/ApiServices"; // Import API services
 import Button from "../../../modules/Button";
 import React, { useState, useEffect, useRef } from "react";
+import Header from "../../../modules/Header";
 
 // Shuffle function to randomize the feylings array
 const shuffleFeylings = (feylings: Feyling[]) => {
@@ -53,8 +54,38 @@ const Summon: React.FC = () => {
   }, [feylings]);
 
   // Open case function
-  const openCase = () => {
+  const openCase = async () => {
     if (isSpinning || openCaseDialog || loading) return; // Prevent re-triggering while spinning or dialog open and ensure feylings are loaded
+    
+    // Retrieve the user data from localStorage
+    const storedUserData = JSON.parse(localStorage.getItem("userData") || "{}");
+
+    // Check if the user has enough coins to open the chest
+    if (storedUserData.CoinAmount < 100) {
+      // Show a popup in the top-right corner if the user doesn't have enough coins
+      showPopup("Not enough coins to open the chest! You need at least 100 coins.");
+      return;
+    }
+
+    // Make the API call to deduct the coins from the backend
+    try {
+      const response = await updateCoinAmount(storedUserData.sub, 100); // Deduct 100 coins from the backend
+
+      if (response?.newCoinAmount) {
+        // Successfully deducted coins, update localStorage with the new coin amount
+        storedUserData.CoinAmount = response.newCoinAmount.toString();
+        localStorage.setItem("userData", JSON.stringify(storedUserData)); // Update the localStorage with the new coin amount
+      } else {
+        // If the response does not include new coin amount, show error
+        showPopup("Failed to update coin amount on the backend.");
+        return;
+      }
+    } catch (error) {
+      console.error("Error deducting coins from the backend:", error);
+      showPopup("Error deducting coins from the backend.");
+      return;
+    }
+
     setIsSpinning(true);
 
     // Ensure feylings are populated before continuing
@@ -139,8 +170,8 @@ const Summon: React.FC = () => {
     localStorage.setItem("userInventory", JSON.stringify(storedUserInventory));
     localStorage.setItem("userData", JSON.stringify(storedUserData));
 
-      // Send the updated data to the backend to persist the changes
-      // Check if selectedFeyling exists and has a valid id before calling the API
+    // Send the updated data to the backend to persist the changes
+    // Check if selectedFeyling exists and has a valid id before calling the API
     if (selectedFeyling && selectedFeyling.id !== undefined) {
       try {
         await addFeylingToInventory(storedUserData.sub, selectedFeyling.id); // Safe to use selectedFeyling.id now
@@ -156,8 +187,22 @@ const Summon: React.FC = () => {
     setOpenCaseDialog(false);
   };
 
+  // Function to show a popup notification
+  const showPopup = (message: string) => {
+    const popup = document.createElement('div');
+    popup.className = 'popup-message';
+    popup.innerText = message;
+    document.body.appendChild(popup);
+
+    // Remove the popup after 3 seconds
+    setTimeout(() => {
+      popup.remove();
+    }, 3000);
+  };
+
   return (
     <div className="case-opening">
+      <Header/>
       <div className="window">
         {/* Fixed indicator in the middle */}
         <div className="indicator"></div>
@@ -215,14 +260,14 @@ const Summon: React.FC = () => {
         disabled={isSpinning || openCaseDialog || loading}
         className="chest-open-button"
       >
-        Open Case
+        Open Chest (100 coins)
       </button>
-
-      {/* Dialog to show the reward */}
       {openCaseDialog && (
-        <div id="dialog" className="dialog">
-          <div id="dialog-msg" dangerouslySetInnerHTML={{ __html: reward }}></div>
-          <Button style={{ width: "fit-content", fontSize:"35px" }} route="/gamemenu" text="Close" onClick={handleDialogClose} />
+        <div className="dialog-overlay">
+          <div className="dialog">
+            <p dangerouslySetInnerHTML={{ __html: reward }} />
+            <Button route="/gamemenu" text="Close" onClick={handleDialogClose}/>
+          </div>
         </div>
       )}
     </div>

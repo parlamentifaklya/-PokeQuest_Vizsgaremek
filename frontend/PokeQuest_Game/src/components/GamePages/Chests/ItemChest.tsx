@@ -2,9 +2,10 @@ import React, { useState, useRef, useEffect } from "react";
 import "./ItemChest.css";
 import { Link } from "react-router-dom";
 import { Item } from "../../../types/Item";
-import { GetAllItems } from "../../../services/ApiServices";
+import { GetAllItems, updateCoinAmount } from "../../../services/ApiServices";
 import Button from "../../../modules/Button";
 import { addItemToInventoryAndUpdateStorage } from "../../../services/ApiServices";
+import Header from "../../../modules/Header";
 
 // Randomly select an item color (representing rarity)
 const getItemColor = (rarity: number) => {
@@ -42,7 +43,6 @@ const ItemChest: React.FC = () => {
   const fetchItems = async () => {
     try {
       const fetchedItems = await GetAllItems();
-      
       // Shuffle the items after fetching
       shuffleItems(fetchedItems);
 
@@ -68,66 +68,109 @@ const ItemChest: React.FC = () => {
     }
   }, [items]);
 
-  const openCase = () => {
+  const openCase = async () => {
     if (isSpinning || openCaseDialog || loading) return; // Prevent re-triggering while spinning or dialog open and ensure items are loaded
+
+    // Retrieve the user data from localStorage
+    const storedUserData = JSON.parse(localStorage.getItem("userData") || "{}");
+
+    // Check if the user has enough coins to open the chest (50 coins)
+    if (storedUserData.CoinAmount < 50) {
+      // Show a popup in the top-right corner if the user doesn't have enough coins
+      showPopup("Not enough coins to open the chest! You need at least 50 coins.");
+      return;
+    }
+
+    // Make the API call to deduct 50 coins from the backend
+    try {
+      const response = await updateCoinAmount(storedUserData.sub, 50); // Deduct 50 coins from the backend
+
+      if (response?.newCoinAmount) {
+        // Successfully deducted coins, update localStorage with the new coin amount
+        storedUserData.CoinAmount = response.newCoinAmount.toString();
+        localStorage.setItem("userData", JSON.stringify(storedUserData)); // Update the localStorage with the new coin amount
+      } else {
+        // If the response does not include new coin amount, show error
+        showPopup("Failed to update coin amount on the backend.");
+        return;
+      }
+    } catch (error) {
+      console.error("Error deducting coins from the backend:", error);
+      showPopup("Error deducting coins from the backend.");
+      return;
+    }
+
     setIsSpinning(true);
-  
+
     // Ensure items are populated before continuing
     if (items.length === 0) {
       console.error("Items are not populated yet.");
       setIsSpinning(false);
       return;
     }
-  
+
     // Exclude the first 5 and last 3 items for selection
     const eligibleItems = items.slice(5, items.length - 3);
     const randIndex = Math.floor(Math.random() * eligibleItems.length);
     const selectedItem = eligibleItems[randIndex];
     setSelectedItem(selectedItem);
-  
+
     // Scroll to the selected item
     if (itemsContainerRef.current) {
       const containerWidth = 404.8; // Container width
       const itemWidthWithMargin = itemWidth + marginRight; // Item width + margin between items
-  
+
       // Find the selected item's index in the full list
       const selectedIndex = items.indexOf(selectedItem);
-  
+
       // Calculate the target position to scroll so the selected item is in the center
       const targetPosition = selectedIndex * itemWidthWithMargin - (containerWidth - itemWidth) / 2;
-  
+
       // Ensure the position doesn't exceed the maximum scrollable area
       const maxScroll = items.length * itemWidthWithMargin - containerWidth;
       const snappedPosition = Math.min(Math.max(targetPosition, 0), maxScroll);
-  
+
       // Apply smooth scrolling to the selected item
       itemsContainerRef.current.style.transition = `transform 2s ease-out`; // Smooth transition
       itemsContainerRef.current.style.transform = `translateX(-${snappedPosition}px)`; // Scroll to the target position
-  
+
       // Wait for the scroll animation to finish, then show the selected item in the dialog
       setTimeout(() => {
         setReward(`You have received a <strong>${selectedItem.name}</strong>!`); // Show the reward for the item
         setOpenCaseDialog(true); // Open the dialog after scroll is done
         setIsSpinning(false); // End spinning
-  
+
         // Retrieve userInventoryId from localStorage
         const storedInventory = localStorage.getItem("userInventory");
         if (!storedInventory) {
           console.error("User inventory not found in localStorage");
           return;
         }
-  
+
         // Parse the stored inventory, assuming it's saved as a JSON object with `id` as a field
         const userInventory = JSON.parse(storedInventory);
         const userInventoryId = userInventory.id; // Use the correct field name for your userInventory ID
-  
+
         const itemId = selectedItem.id;  // ID of the item the user received
         const amount = 1;  // Add 1 of the selected item
-  
+
         // Add the item to the inventory and update localStorage
         addItemToInventoryAndUpdateStorage(itemId, amount);
       }, 2000); // Adjust timing to match the scroll duration
     }
+  };
+
+  // Function to show a popup notification
+  const showPopup = (message: string) => {
+    const popup = document.createElement("div");
+    popup.className = "popup-message";
+    popup.innerText = message;
+    document.body.appendChild(popup);
+
+    // Remove the popup after 3 seconds
+    setTimeout(() => {
+      popup.remove();
+    }, 3000);
   };
 
   // Handle dialog close
@@ -137,6 +180,7 @@ const ItemChest: React.FC = () => {
 
   return (
     <div className="case-opening">
+      <Header/>
       <div className="window">
         {/* Fixed indicator in the middle */}
         <div className="indicator"></div>
@@ -205,7 +249,7 @@ const ItemChest: React.FC = () => {
       >
         Open Case
       </button>
-  
+
       {/* Dialog to show the reward */}
       {openCaseDialog && (
         <div id="dialog" className="dialog">
@@ -215,6 +259,6 @@ const ItemChest: React.FC = () => {
       )}
     </div>
   );
-}
+};
 
 export default ItemChest;

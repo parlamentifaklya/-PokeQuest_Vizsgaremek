@@ -498,6 +498,46 @@ namespace PokeQuestApi_New.Controllers
             }
         }
 
+        [HttpPost]
+        public async Task<IActionResult> UpdateCoinAmount([FromBody] CoinUpdateRequest request)
+        {
+            if (request == null || string.IsNullOrEmpty(request.UserId) || request.ChestCost <= 0)
+            {
+                return BadRequest("UserId and ChestCost are required.");
+            }
+
+            // Find the user by their Id (IdentityUser uses a string for Id)
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == request.UserId);
+
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            // Check if the user has enough coins for the chest they are opening
+            if (user.CoinAmount < request.ChestCost)
+            {
+                return BadRequest($"Insufficient coins to open the chest. You need at least {request.ChestCost} coins.");
+            }
+
+            // Deduct coins based on chest cost (either 50 or 100 coins)
+            user.CoinAmount -= request.ChestCost;
+
+            // Save changes to the database
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Coin amount updated successfully", newCoinAmount = user.CoinAmount });
+        }
+
+    // Models/CoinUpdateRequest.cs
+        public class CoinUpdateRequest
+        {
+            public string UserId { get; set; }
+            public int? CoinAmount { get; set; } // The current coin amount the user has
+            public int ChestCost { get; set; }   // The cost of opening the chest (50 or 100 coins)
+        }
+
+
         public class AddFeylingRequest
         {
             public string UserId { get; set; }
