@@ -370,3 +370,32 @@ export const addFeylingToInventoryAndUpdateStorage = async (feylingId: number) =
     console.error("Error adding Feyling to inventory and updating localStorage:", error);
   }
 };
+
+// Function to update coin amount on the backend using fetch
+export const updateCoinAmount = async (userId: string, chestCost: number) => {
+  const apiBaseUrl = "http://localhost:5130"; 
+  try {
+    const response = await fetch(`${apiBaseUrl}/api/User/UpdateCoinAmount`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        UserId: userId,
+        ChestCost: chestCost,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to update coin amount');
+    }
+
+    const data = await response.json();
+
+    // Return the response data
+    return data;
+  } catch (error) {
+    console.error('Error updating coin amount:', error);
+    throw new Error('Failed to update coin amount');
+  }
+};
