@@ -247,7 +247,7 @@ const ItemChest: React.FC = () => {
         disabled={isSpinning || openCaseDialog || loading}
         className="chest-open-button"
       >
-        Open Case
+        Open Case (50 gems)
       </button>
 
       {/* Dialog to show the reward */}
