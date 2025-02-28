@@ -60,29 +60,29 @@ const Summon: React.FC = () => {
     // Retrieve the user data from localStorage
     const storedUserData = JSON.parse(localStorage.getItem("userData") || "{}");
 
-    // Check if the user has enough coins to open the chest
+    // Check if the user has enough gems to open the chest
     if (storedUserData.CoinAmount < 100) {
-      // Show a popup in the top-right corner if the user doesn't have enough coins
-      showPopup("Not enough coins to open the chest! You need at least 100 coins.");
+      // Show a popup in the top-right corner if the user doesn't have enough gems
+      showPopup("Not enough gems to open the chest! You need at least 100 gems.");
       return;
     }
 
-    // Make the API call to deduct the coins from the backend
+    // Make the API call to deduct the gems from the backend
     try {
-      const response = await updateCoinAmount(storedUserData.sub, 100); // Deduct 100 coins from the backend
+      const response = await updateCoinAmount(storedUserData.sub, 100); // Deduct 100 gems from the backend
 
       if (response?.newCoinAmount) {
-        // Successfully deducted coins, update localStorage with the new coin amount
+        // Successfully deducted gems, update localStorage with the new coin amount
         storedUserData.CoinAmount = response.newCoinAmount.toString();
         localStorage.setItem("userData", JSON.stringify(storedUserData)); // Update the localStorage with the new coin amount
       } else {
         // If the response does not include new coin amount, show error
-        showPopup("Failed to update coin amount on the backend.");
+        showPopup("Failed to update gem amount on the backend.");
         return;
       }
     } catch (error) {
-      console.error("Error deducting coins from the backend:", error);
-      showPopup("Error deducting coins from the backend.");
+      console.error("Error deducting gems from the backend:", error);
+      showPopup("Error deducting gems from the backend.");
       return;
     }
 
@@ -137,7 +137,7 @@ const Summon: React.FC = () => {
 
     // Check if userInventory and CoinAmount are available
     if (!storedUserInventory || !storedUserData || !storedUserData.CoinAmount) {
-      console.error("User inventory or CoinAmount is not available.");
+      console.error("User inventory or Gem amount is not available.");
       setOpenCaseDialog(false);
       return;
     }
@@ -175,7 +175,7 @@ const Summon: React.FC = () => {
     if (selectedFeyling && selectedFeyling.id !== undefined) {
       try {
         await addFeylingToInventory(storedUserData.sub, selectedFeyling.id); // Safe to use selectedFeyling.id now
-        console.log("Successfully updated the backend with the new inventory and coin amount.");
+        console.log("Successfully updated the backend with the new inventory and gem amount.");
       } catch (error) {
         console.error("Failed to update the backend:", error);
       }
@@ -260,7 +260,7 @@ const Summon: React.FC = () => {
         disabled={isSpinning || openCaseDialog || loading}
         className="chest-open-button"
       >
-        Open Chest (100 coins)
+        Open Chest (100 gems)
       </button>
       {openCaseDialog && (
         <div className="dialog-overlay">
