@@ -5,6 +5,7 @@ import { Item } from "../../../types/Item";
 import { UserInventory } from "../../../types/User";
 import styles from './Equip.module.css';
 import Header from '../../../modules/Header';
+import Button from '../../../modules/Button';
 
 const BASE_URL = "http://localhost:5130/api/"; // Base URL for images
 
@@ -179,7 +180,9 @@ const Equip = () => {
           </div>
         </div>
       )}
+      <Button style={{ marginTop: "1vh" }} route="/gamemenu" text="Back"></Button>
     </div>
+    
   );
 };
 
