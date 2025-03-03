@@ -18,17 +18,17 @@ const App: React.FC = () => {
     <AudioProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/" Component={WelcomeWindow}></Route>
-          <Route path="/login" Component={Login}></Route>
-          <Route path="/mainmenu" Component={MainMenu}></Route>
-          <Route path="/register" Component={Register}></Route>
-          <Route path="/settings" Component={Settings}></Route>
-          <Route path="/gamemenu" Component={GameMenu}></Route>
+          <Route path="/" Component={WelcomeWindow}/>
+          <Route path="/login" Component={Login}/>
+          <Route path="/mainmenu" Component={MainMenu}/>
+          <Route path="/register" Component={Register}/>
+          <Route path="/settings" Component={Settings}/>
+          <Route path="/gamemenu" Component={GameMenu}/>
           <Route path='/itemchest' Component={ItemChest}/>
           <Route path='/feylings' Component={Feylings}/>
-          <Route path='/inventory' Component={Inventory}></Route>
-          <Route path='/summon' Component={Summon}></Route>
-          <Route path='/equip' Component={Equip}></Route>
+          <Route path='/inventory' Component={Inventory}/>
+          <Route path='/summon' Component={Summon}/>
+          <Route path='/equip' Component={Equip}/>
         </Routes>
       </BrowserRouter>
     </AudioProvider>
