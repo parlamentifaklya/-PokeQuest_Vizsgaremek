@@ -12,10 +12,14 @@ import Feylings from './components/GamePages/Feylings/Feylings';
 import Inventory from './components/GamePages/Inventory/Inventory';
 import Summon from './components/GamePages/Chests/Summon';
 import Equip from './components/GamePages/Equip/Equip';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const App: React.FC = () => {
   return (
+    
     <AudioProvider>
+      <ToastContainer />
       <BrowserRouter>
         <Routes>
           <Route path="/" Component={WelcomeWindow}></Route>
@@ -32,6 +36,7 @@ const App: React.FC = () => {
         </Routes>
       </BrowserRouter>
     </AudioProvider>
+    
   );
 };
 

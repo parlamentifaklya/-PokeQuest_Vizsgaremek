@@ -6,18 +6,24 @@ interface ButtonProps {
   route: string;
   onClick?: () => void;
   style?: React.CSSProperties; // Accepts inline styles
+  disabled?: boolean;
 }
 
-const Button: React.FC<ButtonProps> = ({ text, route, onClick, style }) => {
+const Button: React.FC<ButtonProps> = ({ text, route, onClick, style, disabled }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    if (onClick) onClick();
-    navigate(route);
+    if (onClick && !disabled) onClick();  // Prevent onClick if disabled
+    if (!disabled) navigate(route);       // Prevent navigation if disabled
   };
 
   return (
-    <button className={styles.buttonstyle} onClick={handleClick} style={style}>
+    <button 
+      disabled={disabled}  // Apply the disabled attribute
+      className={styles.buttonstyle} 
+      onClick={handleClick} 
+      style={{ ...style, cursor: disabled ? "not-allowed" : "pointer" }}  // Conditionally apply the cursor style
+    >
       {text}
     </button>
   );

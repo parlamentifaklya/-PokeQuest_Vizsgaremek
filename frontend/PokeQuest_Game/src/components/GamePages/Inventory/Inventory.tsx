@@ -15,30 +15,30 @@ const Inventory: React.FC = () => {
   const baseUrl = 'http://localhost:5130/api/'; 
 
   const transformFeyling = (feylingData: any): Feyling => ({
-    id: feylingData.feylingId,
-    name: feylingData.feylingName,
-    description: feylingData.feylingDescription,
-    img: feylingData.feylingImg.startsWith('http') 
+    feylingId: feylingData.feylingId,
+    feylingName: feylingData.feylingName,
+    feylingDescription: feylingData.feylingDescription,
+    feylingImg: feylingData.feylingImg.startsWith('http') 
       ? feylingData.feylingImg
       : `${baseUrl}${feylingData.feylingImg.replace('\\', '/')}`,
-    typeId: feylingData.feylingType,
-    abilityId: feylingData.feylingAbility,
-    isUnlocked: feylingData.feylingIsUnlocked,
-    hp: feylingData.feylingHp,
-    atk: feylingData.feylingAtk,
-    itemId: feylingData.feylingItem,
-    weakAgainstId: feylingData.feylingWeakAgainst,
-    strongAgainstId: feylingData.feylingStrongAgainst,
-    sellPrice: feylingData.feylingSellPrice,
+      feylingType: feylingData.feylingType,
+    feylingAbility: feylingData.feylingAbility,
+    feylingIsUnlocked: feylingData.feylingIsUnlocked,
+    feylingHp: feylingData.feylingHp,
+    feylingAtk: feylingData.feylingAtk,
+    feylingItem: feylingData.feylingItem,
+    feylingWeakAgainst: feylingData.feylingWeakAgainst,
+    feylingStrongAgainst: feylingData.feylingStrongAgainst,
+    feylingSellPrice: feylingData.feylingSellPrice,
   });
 
   const transformItem = (itemData: any): Item => ({
-    id: itemData.itemId,
-    name: itemData.itemName,
-    description: itemData.itemDescription,
-    img: itemData.itemImg,
+    itemId: itemData.itemId,
+    itemName: itemData.itemName,
+    itemDescription: itemData.itemDescription,
+    itemImg: itemData.itemImg,
     itemAbility: itemData.itemAbility,
-    rarity: itemData.itemRarity,
+    itemRarity: itemData.itemRarity,
   });
 
   useEffect(() => {
@@ -93,9 +93,9 @@ const Inventory: React.FC = () => {
                 <p>No feylings owned</p>
               ) : (
                 inventory.ownedFeylings.map((feyling) => (
-                  <div key={feyling.id} className={styles.inventoryItem}>
-                    <img src={feyling.img} alt={feyling.name} className={styles.itemImage} />
-                    <span className="feylingName">{feyling.name}</span>
+                  <div key={feyling.feylingId} className={styles.inventoryItem}>
+                    <img src={feyling.feylingImg} alt={feyling.feylingName} className={styles.itemImage} />
+                    <span className="feylingName">{feyling.feylingName}</span>
                   </div>
                 ))
               )}
@@ -109,9 +109,9 @@ const Inventory: React.FC = () => {
                 <p>No items owned</p>
               ) : (
                 inventory.ownedItems.map((item) => (
-                  <div key={item.id} className={styles.inventoryItem}>
-                    <img src={`${baseUrl}${item.img}`} alt={item.name} className={styles.itemImage} />
-                    <span className="itemName">{item.name}</span>
+                  <div key={item.itemId} className={styles.inventoryItem}>
+                    <img src={`${baseUrl}${item.itemImg}`} alt={item.itemName} className={styles.itemImage} />
+                    <span className="itemName">{item.itemName}</span>
                   </div>
                 ))
               )}

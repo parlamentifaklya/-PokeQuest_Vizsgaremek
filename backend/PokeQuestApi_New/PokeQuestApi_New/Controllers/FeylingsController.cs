@@ -280,6 +280,36 @@ namespace PokeQuestApi_New.Controllers
 
             return Ok(ownedFeylings.Select(of => of.Feyling));
         }
+
+        [HttpPut("equip/{feylingId}/{itemId}")]
+        public async Task<IActionResult> EquipItem(int feylingId, int itemId)
+        {
+            var feyling = await _context.Feylings.FindAsync(feylingId);
+            if (feyling == null)
+            {
+                return NotFound(new { message = "Feyling not found" });
+            }
+
+            var item = await _context.Items.FindAsync(itemId);
+            if (item == null)
+            {
+                return NotFound(new { message = "Item not found" });
+            }
+
+            // Beállítjuk az itemet a Feylinghez
+            feyling.ItemId = itemId;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+                return Ok(new { message = "Item successfully equipped", feyling });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error updating database", error = ex.Message });
+            }
+        }
+
     }
 
     public class CreateFeylingDto

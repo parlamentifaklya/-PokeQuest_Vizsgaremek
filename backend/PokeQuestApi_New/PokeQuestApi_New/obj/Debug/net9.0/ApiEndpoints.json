@@ -262,6 +262,27 @@
   },
   {
     "ContainingType": "PokeQuestApi_New.Controllers.FeylingsController",
+    "Method": "EquipItem",
+    "RelativePath": "api/Feylings/EquipItem/equip/{feylingId}/{itemId}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "feylingId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "itemId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "PokeQuestApi_New.Controllers.FeylingsController",
     "Method": "GetAllFeylings",
     "RelativePath": "api/Feylings/GetAllFeylings",
     "HttpMethod": "GET",
