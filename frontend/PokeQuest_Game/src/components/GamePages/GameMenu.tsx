@@ -13,10 +13,7 @@ const GameMenu = () => {
           <Button text="Start!!" route='/feylingselection' />
           <Button text="Equip" route='/equip' />
           <Button text="Inventory" route='/inventory' />
-
-          <Link to={"/feylings"}>
-            <Button text="Feylings" route='/' />
-          </Link>
+          <Button text="Feylings" route='/feylings' />
         </div>
 
         <div className={styles.rightsideContainer}>
