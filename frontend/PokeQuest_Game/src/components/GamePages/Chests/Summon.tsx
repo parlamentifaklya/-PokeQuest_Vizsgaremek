@@ -4,6 +4,8 @@ import { addFeylingToInventory, GetAllFeylings, updateCoinAmount } from "../../.
 import Button from "../../../modules/Button";
 import React, { useState, useEffect, useRef } from "react";
 import Header from "../../../modules/Header";
+import { ToastContainer, toast } from "react-toastify"; // Import Toastify
+import "react-toastify/dist/ReactToastify.css"; // Import Toastify CSS
 
 // Shuffle function to randomize the feylings array
 const shuffleFeylings = (feylings: Feyling[]) => {
@@ -125,6 +127,14 @@ const Summon: React.FC = () => {
         setReward(`You have received a <strong>${selectedFeyling.name}</strong>!`); // Show the reward for the feyling
         setOpenCaseDialog(true); // Open the dialog after scroll is done
         setIsSpinning(false); // End spinning
+
+        // Show toast notification
+        toast.success(`You have received a ${selectedFeyling.name}!`, {
+          onClose: () => {
+            // Once the toast closes, return to /gamemenu
+            window.location.href = "/gamemenu"; // Redirect to /gamemenu
+          }
+        });
       }, 2000); // Adjust timing to match the scroll duration
     }
   };
@@ -202,7 +212,7 @@ const Summon: React.FC = () => {
 
   return (
     <div className="case-opening">
-      <Header/>
+      <Header />
       <div className="window">
         {/* Fixed indicator in the middle */}
         <div className="indicator"></div>
@@ -266,10 +276,11 @@ const Summon: React.FC = () => {
         <div className="dialog-overlay">
           <div className="dialog">
             <p dangerouslySetInnerHTML={{ __html: reward }} />
-            <Button route="/gamemenu" text="Close" onClick={handleDialogClose}/>
+            <Button route="/gamemenu" text="Close" onClick={handleDialogClose} />
           </div>
         </div>
       )}
+      <ToastContainer position="top-center" /> {/* Position the toast at the top-center */}
     </div>
   );
 };
