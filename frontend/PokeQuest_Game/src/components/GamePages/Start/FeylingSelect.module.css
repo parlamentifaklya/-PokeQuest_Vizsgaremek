@@ -99,7 +99,7 @@
   color: #fff;
   text-align: center;
   word-break: break-word; /* Ensure words break correctly */
-  max-width: 20vw;  /* Set maximum width to avoid overflow */
+  width: 10vw;  /* Set maximum width to avoid overflow */
   overflow: hidden;  /* Hide overflow content */
   hyphens: auto; /* Enable word hyphenation if possible */
 }
