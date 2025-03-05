@@ -36,7 +36,7 @@ const App: React.FC = () => {
           <Route path='/summon' Component={Summon}/>
           <Route path='/equip' Component={Equip}/>
           <Route path='/feylingselect' Component={FeylingSelect}/>
-          <Route path='/game' Component={Game}/>
+          <Route path='/game' element={<Game />}/>
         </Routes>
       </BrowserRouter>
     </AudioProvider>
