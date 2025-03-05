@@ -4,5 +4,6 @@ export type Item = {
     description: string,
     img: string,
     itemAbility: string,
-    rarity: number
+    rarity: number,
+    quantity: number
 }

@@ -1,11 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
 import "./ItemChest.css";
-import { Link } from "react-router-dom";
 import { Item } from "../../../types/Item";
 import { GetAllItems, updateCoinAmount } from "../../../services/ApiServices";
 import Button from "../../../modules/Button";
 import { addItemToInventoryAndUpdateStorage } from "../../../services/ApiServices";
 import Header from "../../../modules/Header";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate } from "react-router-dom"; // Importing the navigate hook
 
 // Randomly select an item color (representing rarity)
 const getItemColor = (rarity: number) => {
@@ -32,20 +34,19 @@ const ItemChest: React.FC = () => {
   const [isSpinning, setIsSpinning] = useState(false);
   const [reward, setReward] = useState("");
   const [openCaseDialog, setOpenCaseDialog] = useState(false);
-  const itemsContainerRef = useRef<HTMLDivElement | null>(null);
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
-  const [loading, setLoading] = useState(true); // New state to track loading
+  const [loading, setLoading] = useState(true);
+  const itemsContainerRef = useRef<HTMLDivElement | null>(null);
+  const navigate = useNavigate(); // Initialize navigate hook
 
-  const itemWidth = 130; // Width of each item (this can be adjusted dynamically if needed)
+  const itemWidth = 130; // Width of each item
   const marginRight = 10; // Margin between items
 
   // Fetch items from the API and set the state
   const fetchItems = async () => {
     try {
       const fetchedItems = await GetAllItems();
-      // Shuffle the items after fetching
       shuffleItems(fetchedItems);
-
       setItems(fetchedItems); // Set the shuffled items
       setLoading(false); // Set loading to false after items are fetched
     } catch (error) {
@@ -54,161 +55,122 @@ const ItemChest: React.FC = () => {
     }
   };
 
-  // Use effect to fetch items once the component is mounted
+  // Fetch items on component mount
   useEffect(() => {
     fetchItems();
   }, []);
 
-  // Update the container width based on the number of items
+  // Update container width based on the number of items
   useEffect(() => {
     if (itemsContainerRef.current && items.length > 0) {
-      // Using itemWidth to manually calculate max scroll
       const maxScroll = items.length * (itemWidth + marginRight);
       itemsContainerRef.current.style.width = `${maxScroll}px`; // Set the container width
     }
   }, [items]);
 
   const openCase = async () => {
-    if (isSpinning || openCaseDialog || loading) return; // Prevent re-triggering while spinning or dialog open and ensure items are loaded
+    if (isSpinning || openCaseDialog || loading) return;
 
-    // Retrieve the user data from localStorage
     const storedUserData = JSON.parse(localStorage.getItem("userData") || "{}");
 
     // Check if the user has enough coins to open the chest (50 coins)
     if (storedUserData.CoinAmount < 50) {
-      // Show a popup in the top-right corner if the user doesn't have enough coins
-      showPopup("Not enough coins to open the chest! You need at least 50 coins.");
+      toast.error("Not enough coins to open the chest! You need at least 50 coins.");
       return;
     }
 
-    // Make the API call to deduct 50 coins from the backend
+    // Deduct 50 coins from the backend
     try {
-      const response = await updateCoinAmount(storedUserData.sub, 50); // Deduct 50 coins from the backend
+      const response = await updateCoinAmount(storedUserData.sub, 50); // Deduct coins from the backend
 
       if (response?.newCoinAmount) {
-        // Successfully deducted coins, update localStorage with the new coin amount
         storedUserData.CoinAmount = response.newCoinAmount.toString();
         localStorage.setItem("userData", JSON.stringify(storedUserData)); // Update the localStorage with the new coin amount
       } else {
-        // If the response does not include new coin amount, show error
-        showPopup("Failed to update coin amount on the backend.");
+        toast.error("Failed to update coin amount on the backend.");
         return;
       }
     } catch (error) {
       console.error("Error deducting coins from the backend:", error);
-      showPopup("Error deducting coins from the backend.");
+      toast.error("Error deducting coins from the backend.");
       return;
     }
 
     setIsSpinning(true);
 
-    // Ensure items are populated before continuing
     if (items.length === 0) {
       console.error("Items are not populated yet.");
       setIsSpinning(false);
       return;
     }
 
-    // Exclude the first 5 and last 3 items for selection
     const eligibleItems = items.slice(5, items.length - 3);
     const randIndex = Math.floor(Math.random() * eligibleItems.length);
     const selectedItem = eligibleItems[randIndex];
     setSelectedItem(selectedItem);
 
-    // Scroll to the selected item
     if (itemsContainerRef.current) {
-      const containerWidth = 404.8; // Container width
-      const itemWidthWithMargin = itemWidth + marginRight; // Item width + margin between items
+      const containerWidth = 404.8;
+      const itemWidthWithMargin = itemWidth + marginRight;
 
-      // Find the selected item's index in the full list
       const selectedIndex = items.indexOf(selectedItem);
-
-      // Calculate the target position to scroll so the selected item is in the center
       const targetPosition = selectedIndex * itemWidthWithMargin - (containerWidth - itemWidth) / 2;
-
-      // Ensure the position doesn't exceed the maximum scrollable area
       const maxScroll = items.length * itemWidthWithMargin - containerWidth;
       const snappedPosition = Math.min(Math.max(targetPosition, 0), maxScroll);
 
-      // Apply smooth scrolling to the selected item
-      itemsContainerRef.current.style.transition = `transform 2s ease-out`; // Smooth transition
-      itemsContainerRef.current.style.transform = `translateX(-${snappedPosition}px)`; // Scroll to the target position
+      itemsContainerRef.current.style.transition = `transform 2s ease-out`;
+      itemsContainerRef.current.style.transform = `translateX(-${snappedPosition}px)`;
 
-      // Wait for the scroll animation to finish, then show the selected item in the dialog
       setTimeout(() => {
-        setReward(`You have received a <strong>${selectedItem.name}</strong>!`); // Show the reward for the item
-        setOpenCaseDialog(true); // Open the dialog after scroll is done
-        setIsSpinning(false); // End spinning
+        setReward(`You have received a <strong>${selectedItem.name}</strong>!`);
+        setOpenCaseDialog(true);
+        setIsSpinning(false);
 
-        // Retrieve userInventoryId from localStorage
-        const storedInventory = localStorage.getItem("userInventory");
-        if (!storedInventory) {
-          console.error("User inventory not found in localStorage");
-          return;
-        }
+        // Display the toast message with auto close and progress bar
+        toast.success(`You received a ${selectedItem.name}!`, {
+          autoClose: 3000, // Auto close after 3 seconds
+          hideProgressBar: false, // Show the progress bar
+          onClose: () => {
+            // Once the toast closes, redirect to /gamemenu
+            navigate("/gamemenu"); // Use navigate for SPA redirection
+          },
+        });
 
-        // Parse the stored inventory, assuming it's saved as a JSON object with `id` as a field
-        const userInventory = JSON.parse(storedInventory);
-        const userInventoryId = userInventory.id; // Use the correct field name for your userInventory ID
-
+        // Add the item to the inventory and update localStorage
         const itemId = selectedItem.id;  // ID of the item the user received
         const amount = 1;  // Add 1 of the selected item
 
         // Add the item to the inventory and update localStorage
         addItemToInventoryAndUpdateStorage(itemId, amount);
-      }, 2000); // Adjust timing to match the scroll duration
+      }, 2000);
     }
   };
 
-  // Function to show a popup notification
-  const showPopup = (message: string) => {
-    const popup = document.createElement("div");
-    popup.className = "popup-message";
-    popup.innerText = message;
-    document.body.appendChild(popup);
-
-    // Remove the popup after 3 seconds
-    setTimeout(() => {
-      popup.remove();
-    }, 3000);
-  };
-
-  // Handle dialog close
   const handleDialogClose = () => {
     setOpenCaseDialog(false);
   };
 
   return (
     <div className="case-opening">
-      <Header/>
+      <Header />
       <div className="window">
-        {/* Fixed indicator in the middle */}
         <div className="indicator"></div>
         <div className="items-container" ref={itemsContainerRef}>
-          {items.map((item, index) => (
+          {items.map((item) => (
             <div
               key={item.id}
               className={`item ${getItemColor(item.rarity)} ${openCaseDialog && selectedItem && item.id === selectedItem.id ? "winning" : ""}`}
               style={{
-                backgroundColor:
-                  item.rarity === 0
-                    ? "#808080" // Grey
-                    : item.rarity === 1
-                    ? "#32CD32" // Green
-                    : item.rarity === 2
-                    ? "#4682B4" // Blue
-                    : item.rarity === 3
-                    ? "#8A2BE2" // Purple
-                    : "#FFD700", // Yellow
-                width: `${itemWidth}px`, // Ensure each item has consistent width
-                height: "150px", // Increased height to give more space for text
-                marginRight: `${marginRight}px`, // Spacing between items
+                backgroundColor: item.rarity === 0 ? "#808080" : item.rarity === 1 ? "#32CD32" : item.rarity === 2 ? "#4682B4" : item.rarity === 3 ? "#8A2BE2" : "#FFD700",
+                width: `${itemWidth}px`,
+                height: "150px",
+                marginRight: `${marginRight}px`,
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "flex-start",
                 textAlign: "center",
                 padding: "10px",
-                overflow: "hidden", // Prevent overflow
+                overflow: "hidden",
               }}
             >
               <img
@@ -216,24 +178,24 @@ const ItemChest: React.FC = () => {
                 alt={item.name}
                 style={{
                   width: "100%",
-                  height: "70%", // Reduce the image height to allow more space for text
+                  height: "70%",
                   objectFit: "contain",
-                  marginBottom: "5px", // Small gap between image and text
+                  marginBottom: "5px",
                 }}
               />
               <div
                 style={{
                   fontSize: "14px",
                   color: "white",
-                  wordWrap: "break-word", // Allow text to wrap
-                  whiteSpace: "normal",  // Allow wrapping
-                  overflow: "visible",    // Make sure all text is visible
+                  wordWrap: "break-word",
+                  whiteSpace: "normal",
+                  overflow: "visible",
                   padding: "0 5px",
-                  height: "auto", // Allow height to expand as needed
-                  flexGrow: 1,    // Ensure text area expands
+                  height: "auto",
+                  flexGrow: 1,
                   display: "flex",
                   justifyContent: "center",
-                  alignItems: "flex-start", // Align text at the top
+                  alignItems: "flex-start",
                 }}
               >
                 {item.name}
@@ -250,11 +212,14 @@ const ItemChest: React.FC = () => {
         Open Case (50 gems)
       </button>
 
+      {/* Toast container */}
+      <ToastContainer position="top-center" autoClose={3000} hideProgressBar={false} newestOnTop rtl={false} pauseOnFocusLoss draggable pauseOnHover />
+
       {/* Dialog to show the reward */}
       {openCaseDialog && (
         <div id="dialog" className="dialog">
           <div id="dialog-msg" dangerouslySetInnerHTML={{ __html: reward }}></div>
-          <Button style={{ width: "fit-content", fontSize:"35px" }} route="/gamemenu" text="Close" onClick={handleDialogClose} />
+          <Button style={{ width: "fit-content", fontSize: "35px" }} route="/gamemenu" text="Close" onClick={handleDialogClose} />
         </div>
       )}
     </div>
