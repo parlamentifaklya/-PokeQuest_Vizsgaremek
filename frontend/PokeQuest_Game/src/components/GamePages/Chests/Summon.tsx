@@ -1,255 +1,196 @@
+import React, { useState, useRef, useEffect } from "react";
 import "./ItemChest.css";
-import { Feyling } from "../../../types/Feyling";
-import { addFeylingToInventory, GetAllFeylings, updateCoinAmount } from "../../../services/ApiServices"; // Import API services
+import { Item } from "../../../types/Item";
+import { GetAllItems, updateCoinAmount } from "../../../services/ApiServices";
 import Button from "../../../modules/Button";
-import React, { useState, useEffect, useRef } from "react";
+import { addItemToInventoryAndUpdateStorage } from "../../../services/ApiServices";
 import Header from "../../../modules/Header";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate } from "react-router-dom"; // Importing the navigate hook
 
-// Shuffle function to randomize the feylings array
-const shuffleFeylings = (feylings: Feyling[]) => {
-  for (let i = feylings.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [feylings[i], feylings[j]] = [feylings[j], feylings[i]]; // Swap elements
+// Randomly select an item color (representing rarity)
+const getItemColor = (rarity: number) => {
+  switch (rarity) {
+    case 0: return "grey";
+    case 1: return "green";
+    case 2: return "blue";
+    case 3: return "purple";
+    case 4: return "yellow";
+    default: return "grey"; // Fallback color
   }
 };
 
-const Summon: React.FC = () => {
-  const [feylings, setFeylings] = useState<Feyling[]>([]);
+// Shuffle function to randomize the items array
+const shuffleItems = (items: Item[]) => {
+  for (let i = items.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [items[i], items[j]] = [items[j], items[i]]; // Swap elements
+  }
+};
+
+const ItemChest: React.FC = () => {
+  const [items, setItems] = useState<Item[]>([]);
   const [isSpinning, setIsSpinning] = useState(false);
   const [reward, setReward] = useState("");
   const [openCaseDialog, setOpenCaseDialog] = useState(false);
-  const feylingsContainerRef = useRef<HTMLDivElement | null>(null);
-  const [selectedFeyling, setSelectedFeyling] = useState<Feyling | null>(null);
-  const [loading, setLoading] = useState(true); // New state to track loading
+  const [selectedItem, setSelectedItem] = useState<Item | null>(null);
+  const [loading, setLoading] = useState(true);
+  const itemsContainerRef = useRef<HTMLDivElement | null>(null);
+  const navigate = useNavigate(); // Initialize navigate hook
 
-  const itemWidth = 130; // Width of each feyling (this can be adjusted dynamically if needed)
-  const marginRight = 10; // Margin between feylings
+  const itemWidth = 130; // Width of each item
+  const marginRight = 10; // Margin between items
 
-  // Fetch feylings from the API and set the state
-  const fetchFeylings = async () => {
+  // Fetch items from the API and set the state
+  const fetchItems = async () => {
     try {
-      const fetchedFeylings = await GetAllFeylings();
-      // Shuffle the feylings after fetching
-      shuffleFeylings(fetchedFeylings);
-      setFeylings(fetchedFeylings); // Set the shuffled feylings
-      setLoading(false); // Set loading to false after feylings are fetched
+      const fetchedItems = await GetAllItems();
+      shuffleItems(fetchedItems);
+      setItems(fetchedItems); // Set the shuffled items
+      setLoading(false); // Set loading to false after items are fetched
     } catch (error) {
-      console.error("Error fetching feylings:", error);
+      console.error("Error fetching items:", error);
       setLoading(false); // Set loading to false even if there is an error
     }
   };
 
-  // Use effect to fetch feylings once the component is mounted
+  // Fetch items on component mount
   useEffect(() => {
-    fetchFeylings();
+    fetchItems();
   }, []);
 
-  // Update the container width based on the number of feylings
+  // Update container width based on the number of items
   useEffect(() => {
-    if (feylingsContainerRef.current && feylings.length > 0) {
-      // Using itemWidth to manually calculate max scroll
-      const maxScroll = feylings.length * (itemWidth + marginRight);
-      feylingsContainerRef.current.style.width = `${maxScroll}px`; // Set the container width
+    if (itemsContainerRef.current && items.length > 0) {
+      const maxScroll = items.length * (itemWidth + marginRight);
+      itemsContainerRef.current.style.width = `${maxScroll}px`; // Set the container width
     }
-  }, [feylings]);
+  }, [items]);
 
-  // Open case function
   const openCase = async () => {
-    if (isSpinning || openCaseDialog || loading) return; // Prevent re-triggering while spinning or dialog open and ensure feylings are loaded
-    
-    // Retrieve the user data from localStorage
+    if (isSpinning || openCaseDialog || loading) return;
+
     const storedUserData = JSON.parse(localStorage.getItem("userData") || "{}");
 
-    // Check if the user has enough gems to open the chest
-    if (storedUserData.CoinAmount < 100) {
-      // Show a popup in the top-right corner if the user doesn't have enough gems
-      showPopup("Not enough gems to open the chest! You need at least 100 gems.");
+    // Check if the user has enough coins to open the chest (50 coins)
+    if (storedUserData.CoinAmount < 50) {
+      toast.error("Not enough coins to open the chest! You need at least 50 coins.");
       return;
     }
 
-    // Make the API call to deduct the gems from the backend
+    // Deduct 50 coins from the backend
     try {
-      const response = await updateCoinAmount(storedUserData.sub, 100); // Deduct 100 gems from the backend
+      const response = await updateCoinAmount(storedUserData.sub, 50); // Deduct coins from the backend
 
       if (response?.newCoinAmount) {
-        // Successfully deducted gems, update localStorage with the new coin amount
         storedUserData.CoinAmount = response.newCoinAmount.toString();
         localStorage.setItem("userData", JSON.stringify(storedUserData)); // Update the localStorage with the new coin amount
       } else {
-        // If the response does not include new coin amount, show error
-        showPopup("Failed to update gem amount on the backend.");
+        toast.error("Failed to update coin amount on the backend.");
         return;
       }
     } catch (error) {
-      console.error("Error deducting gems from the backend:", error);
-      showPopup("Error deducting gems from the backend.");
+      console.error("Error deducting coins from the backend:", error);
+      toast.error("Error deducting coins from the backend.");
       return;
     }
 
     setIsSpinning(true);
 
-    // Ensure feylings are populated before continuing
-    if (feylings.length === 0) {
-      console.error("Feylings are not populated yet.");
+    if (items.length === 0) {
+      console.error("Items are not populated yet.");
       setIsSpinning(false);
       return;
     }
 
-    // Exclude the first 5 and last 3 feylings for selection
-    const eligibleFeylings = feylings.slice(5, feylings.length - 3);
-    const randIndex = Math.floor(Math.random() * eligibleFeylings.length);
-    const selectedFeyling = eligibleFeylings[randIndex];
-    setSelectedFeyling(selectedFeyling);
+    const eligibleItems = items.slice(5, items.length - 3);
+    const randIndex = Math.floor(Math.random() * eligibleItems.length);
+    const selectedItem = eligibleItems[randIndex];
+    setSelectedItem(selectedItem);
 
-    // Scroll to the selected item
-    if (feylingsContainerRef.current) {
-      const containerWidth = 404.8; // Container width
-      const itemWidthWithMargin = itemWidth + marginRight; // Item width + margin between items
+    if (itemsContainerRef.current) {
+      const containerWidth = 404.8;
+      const itemWidthWithMargin = itemWidth + marginRight;
 
-      // Find the selected item's index in the full list
-      const selectedIndex = feylings.indexOf(selectedFeyling);
-
-      // Calculate the target position to scroll so the selected item is in the center
+      const selectedIndex = items.indexOf(selectedItem);
       const targetPosition = selectedIndex * itemWidthWithMargin - (containerWidth - itemWidth) / 2;
-
-      // Ensure the position doesn't exceed the maximum scrollable area
-      const maxScroll = feylings.length * itemWidthWithMargin - containerWidth;
+      const maxScroll = items.length * itemWidthWithMargin - containerWidth;
       const snappedPosition = Math.min(Math.max(targetPosition, 0), maxScroll);
 
-      // Apply smooth scrolling to the selected item
-      feylingsContainerRef.current.style.transition = `transform 2s ease-out`; // Smooth transition
-      feylingsContainerRef.current.style.transform = `translateX(-${snappedPosition}px)`; // Scroll to the target position
+      itemsContainerRef.current.style.transition = `transform 2s ease-out`;
+      itemsContainerRef.current.style.transform = `translateX(-${snappedPosition}px)`;
 
-      // Wait for the scroll animation to finish, then show the selected item in the dialog
       setTimeout(() => {
-        setReward(`You have received a <strong>${selectedFeyling.name}</strong>!`); // Show the reward for the feyling
-        setOpenCaseDialog(true); // Open the dialog after scroll is done
-        setIsSpinning(false); // End spinning
-      }, 2000); // Adjust timing to match the scroll duration
+        setReward(`You have received a <strong>${selectedItem.name}</strong>!`);
+        setOpenCaseDialog(true);
+        setIsSpinning(false);
+
+        // Display the toast message with auto close and progress bar
+        toast.success(`You received a ${selectedItem.name}!`, {
+          autoClose: 3000, // Auto close after 3 seconds
+          onClose: () => {
+            // Once the toast closes, redirect to /gamemenu
+            window.location.href = "/gamemenu"; // Full page reload
+          },
+        });
+      }, 2000);
     }
   };
 
-  // Handle dialog close and update inventory or coinAmount
-  const handleDialogClose = async () => {
-    // Retrieve the userInventory and CoinAmount separately from localStorage
-    const storedUserInventory = JSON.parse(localStorage.getItem("userInventory") || "{}");
-    const storedUserData = JSON.parse(localStorage.getItem("userData") || "{}");
-
-    // Check if userInventory and CoinAmount are available
-    if (!storedUserInventory || !storedUserData || !storedUserData.CoinAmount) {
-      console.error("User inventory or Gem amount is not available.");
-      setOpenCaseDialog(false);
-      return;
-    }
-
-    const { CoinAmount } = storedUserData;
-
-    // Convert CoinAmount to a number to handle it as a numeric value
-    const coinAmountAsNumber = Number(CoinAmount);
-
-    // Check if the selected feyling is already in the inventory
-    const feylingAlreadyInInventory = storedUserInventory.ownedFeylings.some(
-      (feyling: any) => feyling.feylingId === selectedFeyling?.id
-    );
-
-    if (feylingAlreadyInInventory) {
-      // Increase CoinAmount by the sellPrice (convert to number)
-      const updatedCoinAmount = coinAmountAsNumber + (selectedFeyling?.sellPrice || 0); // Add sellPrice as number
-      storedUserData.CoinAmount = updatedCoinAmount.toString(); // Convert the number back to string before saving
-    } else {
-      // Add feyling to inventory if it's not already present
-      storedUserInventory.ownedFeylings.push({
-        feylingId: selectedFeyling?.id,
-        feylingName: selectedFeyling?.name,
-        feylingImg: selectedFeyling?.img,
-        sellPrice: selectedFeyling?.sellPrice,
-      });
-    }
-
-    // Save updated user inventory and userData back to localStorage
-    localStorage.setItem("userInventory", JSON.stringify(storedUserInventory));
-    localStorage.setItem("userData", JSON.stringify(storedUserData));
-
-    // Send the updated data to the backend to persist the changes
-    // Check if selectedFeyling exists and has a valid id before calling the API
-    if (selectedFeyling && selectedFeyling.id !== undefined) {
-      try {
-        await addFeylingToInventory(storedUserData.sub, selectedFeyling.id); // Safe to use selectedFeyling.id now
-        console.log("Successfully updated the backend with the new inventory and gem amount.");
-      } catch (error) {
-        console.error("Failed to update the backend:", error);
-      }
-    } else {
-      console.error("Selected feyling is invalid.");
-    }
-
-    // Close the dialog
+  const handleDialogClose = () => {
     setOpenCaseDialog(false);
-  };
-
-  // Function to show a popup notification
-  const showPopup = (message: string) => {
-    const popup = document.createElement('div');
-    popup.className = 'popup-message';
-    popup.innerText = message;
-    document.body.appendChild(popup);
-
-    // Remove the popup after 3 seconds
-    setTimeout(() => {
-      popup.remove();
-    }, 3000);
   };
 
   return (
     <div className="case-opening">
-      <Header/>
+      <Header />
       <div className="window">
-        {/* Fixed indicator in the middle */}
         <div className="indicator"></div>
-        <div className="items-container" ref={feylingsContainerRef}>
-          {feylings.map((feyling, index) => (
+        <div className="items-container" ref={itemsContainerRef}>
+          {items.map((item) => (
             <div
-              key={feyling.id}
-              className={`item ${openCaseDialog && selectedFeyling && feyling.id === selectedFeyling.id ? "winning" : ""}`}
+              key={item.id}
+              className={`item ${getItemColor(item.rarity)} ${openCaseDialog && selectedItem && item.id === selectedItem.id ? "winning" : ""}`}
               style={{
-                backgroundColor: "black",
-                width: `${itemWidth}px`, // Ensure each item has consistent width
-                height: "150px", // Increased height to give more space for text
-                marginRight: `${marginRight}px`, // Spacing between items
+                backgroundColor: item.rarity === 0 ? "#808080" : item.rarity === 1 ? "#32CD32" : item.rarity === 2 ? "#4682B4" : item.rarity === 3 ? "#8A2BE2" : "#FFD700",
+                width: `${itemWidth}px`,
+                height: "150px",
+                marginRight: `${marginRight}px`,
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "flex-start",
                 textAlign: "center",
                 padding: "10px",
-                overflow: "hidden", // Prevent overflow
+                overflow: "hidden",
               }}
             >
               <img
-                src={feyling.img}
-                alt={feyling.name}
+                src={item.img}
+                alt={item.name}
                 style={{
                   width: "100%",
-                  height: "70%", // Reduce the image height to allow more space for text
+                  height: "70%",
                   objectFit: "contain",
-                  marginBottom: "5px", // Small gap between image and text
+                  marginBottom: "5px",
                 }}
               />
               <div
                 style={{
                   fontSize: "14px",
                   color: "white",
-                  wordWrap: "break-word", // Allow text to wrap
-                  whiteSpace: "normal",  // Allow wrapping
-                  overflow: "visible",    // Make sure all text is visible
+                  wordWrap: "break-word",
+                  whiteSpace: "normal",
+                  overflow: "visible",
                   padding: "0 5px",
-                  height: "auto", // Allow height to expand as needed
-                  flexGrow: 1,    // Ensure text area expands
+                  height: "auto",
+                  flexGrow: 1,
                   display: "flex",
                   justifyContent: "center",
-                  alignItems: "flex-start", // Align text at the top
+                  alignItems: "flex-start",
                 }}
               >
-                {feyling.name}
+                {item.name}
               </div>
             </div>
           ))}
@@ -260,18 +201,21 @@ const Summon: React.FC = () => {
         disabled={isSpinning || openCaseDialog || loading}
         className="chest-open-button"
       >
-        Open Chest (100 gems)
+        Open Case (50 gems)
       </button>
+
+      {/* Toast container */}
+      <ToastContainer position="top-center" autoClose={3000} hideProgressBar={false} newestOnTop rtl={false} pauseOnFocusLoss draggable pauseOnHover />
+
+      {/* Dialog to show the reward */}
       {openCaseDialog && (
-        <div className="dialog-overlay">
-          <div className="dialog">
-            <p dangerouslySetInnerHTML={{ __html: reward }} />
-            <Button route="/gamemenu" text="Close" onClick={handleDialogClose}/>
-          </div>
+        <div id="dialog" className="dialog">
+          <div id="dialog-msg" dangerouslySetInnerHTML={{ __html: reward }}></div>
+          <Button style={{ width: "fit-content", fontSize: "35px" }} route="/gamemenu" text="Close" onClick={handleDialogClose} />
         </div>
       )}
     </div>
   );
 };
 
-export default Summon;
+export default ItemChest;

@@ -21,15 +21,15 @@ const Inventory: React.FC = () => {
     img: feylingData.feylingImg.startsWith('http') 
       ? feylingData.feylingImg
       : `${baseUrl}${feylingData.feylingImg.replace('\\', '/')}`,
-      typeId: feylingData.feylingType,
-      abilityId: feylingData.feylingAbility,
-      isUnlocked: feylingData.feylingIsUnlocked,
-      hp: feylingData.feylingHp,
-      atk: feylingData.feylingAtk,
-      itemId: feylingData.feylingItem,
-      weakAgainstId: feylingData.feylingWeakAgainst,
-      strongAgainstId: feylingData.feylingStrongAgainst,
-      sellPrice: feylingData.feylingSellPrice,
+    typeId: feylingData.feylingType,
+    abilityId: feylingData.feylingAbility,
+    isUnlocked: feylingData.feylingIsUnlocked,
+    hp: feylingData.feylingHp,
+    atk: feylingData.feylingAtk,
+    itemId: feylingData.feylingItem,
+    weakAgainstId: feylingData.feylingWeakAgainst,
+    strongAgainstId: feylingData.feylingStrongAgainst,
+    sellPrice: feylingData.feylingSellPrice,
   });
 
   const transformItem = (itemData: any): Item => ({
@@ -39,6 +39,7 @@ const Inventory: React.FC = () => {
     img: itemData.itemImg,
     itemAbility: itemData.itemAbility,
     rarity: itemData.itemRarity,
+    quantity: itemData.itemAmount || 0,  // Extract the itemAmount here
   });
 
   useEffect(() => {
@@ -111,7 +112,7 @@ const Inventory: React.FC = () => {
                 inventory.ownedItems.map((item) => (
                   <div key={item.id} className={styles.inventoryItem}>
                     <img src={`${baseUrl}${item.img}`} alt={item.name} className={styles.itemImage} />
-                    <span className="itemName">{item.name}</span>
+                    <span className="itemName">{item.name} ({item.quantity})</span> {/* Display quantity */}
                   </div>
                 ))
               )}
