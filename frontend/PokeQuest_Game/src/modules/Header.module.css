@@ -44,7 +44,7 @@
     font-size: 2rem;
     font-weight: bold;
     color: yellow;
-    text-shadow: -2px -2px 0 black, 2px -2px 0 black, -2px 2px 0 black, 2px 2px 0 black;
+    -webkit-text-stroke: 2px black;
 }
 
 .gemHolder img {
@@ -55,11 +55,11 @@
 }
 
 .gemtextStyle {
-    margin-right: 2vw;
     font-size: 2rem;
     font-weight: bold;
     color: rgb(236, 59, 192);
-    text-shadow: -2px -2px 0 black, 2px -2px 0 black, -2px 2px 0 black, 2px 2px 0 black;
+    -webkit-text-stroke: 2px black;
+    margin: 0;
 }
 
 /* This will create space below the fixed header */
