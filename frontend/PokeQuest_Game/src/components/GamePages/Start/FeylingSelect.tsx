@@ -45,7 +45,7 @@ const FeylingSelect = () => {
                 onClick={() => handleFeylingSelect(feyling)}
               >
                 <img
-                  src={BASE_URL + feyling.feylingImg}
+                  src={feyling.feylingImg.startsWith('http') ? feyling.feylingImg : BASE_URL+feyling.feylingImg}
                   alt={feyling.feylingName}
                   className={styles.feylingImage}
                 />
