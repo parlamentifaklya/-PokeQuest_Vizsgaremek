@@ -16,31 +16,32 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import FeylingSelect from './components/GamePages/Start/FeylingSelect';
 import Game from './components/GamePages/Start/Game/Game';
+import { FeylingProvider } from './context/FeylingContext';
 
 const App: React.FC = () => {
   return (
-    
-    <AudioProvider>
-      <ToastContainer />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" Component={WelcomeWindow}/>
-          <Route path="/login" Component={Login}/>
-          <Route path="/mainmenu" Component={MainMenu}/>
-          <Route path="/register" Component={Register}/>
-          <Route path="/settings" Component={Settings}/>
-          <Route path="/gamemenu" Component={GameMenu}/>
-          <Route path='/itemchest' Component={ItemChest}/>
-          <Route path='/feylings' Component={Feylings}/>
-          <Route path='/inventory' Component={Inventory}/>
-          <Route path='/summon' Component={Summon}/>
-          <Route path='/equip' Component={Equip}/>
-          <Route path='/feylingselect' Component={FeylingSelect}/>
-          <Route path='/game' element={<Game />}/>
-        </Routes>
-      </BrowserRouter>
-    </AudioProvider>
-    
+    <FeylingProvider>
+      <AudioProvider>
+        <ToastContainer />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<WelcomeWindow/>}/>
+            <Route path="/login" element={<Login/>}/>
+            <Route path="/mainmenu" element={<MainMenu/>}/>
+            <Route path="/register" element={<Register/>}/>
+            <Route path="/settings" element={<Settings/>}/>
+            <Route path="/gamemenu" element={<GameMenu/>}/>
+            <Route path='/itemchest' element={<ItemChest/>}/>
+            <Route path='/feylings' element={<Feylings/>}/>
+            <Route path='/inventory' element={<Inventory/>}/>
+            <Route path='/summon' element={<Summon/>}/>
+            <Route path='/equip' element={<Equip/>}/>
+            <Route path='/feylingselect' element={<FeylingSelect/>}/>
+            <Route path='/game' element={<Game />}/>
+          </Routes>
+        </BrowserRouter>
+      </AudioProvider>
+    </FeylingProvider>
   );
 };
 
