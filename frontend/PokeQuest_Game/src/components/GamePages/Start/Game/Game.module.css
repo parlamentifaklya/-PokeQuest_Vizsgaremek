@@ -1,0 +1,35 @@
+.gameWrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 20px;
+}
+
+.feylingContainer {
+    width: 20%;
+    text-align: center;
+}
+
+.enemyContainer {
+    width: 40%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.gameContainer {
+    width: 1000px;
+    height: 600px;
+    display: flex;
+    justify-content: center;
+    /* background: url("bg.png");
+    background-size: 100% 100%; */
+    align-items: center;
+    border: 2px solid white;
+}
+
+.enemyFeyling {
+    text-align: center;
+    margin-top: 20px;
+}
