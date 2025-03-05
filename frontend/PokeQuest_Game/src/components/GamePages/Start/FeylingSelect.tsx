@@ -1,31 +1,34 @@
 import React, { useState, useEffect } from 'react';
-import { FeylingsFromLocalStorage } from '../../../types/FeylingLocalStorage';
+import { useNavigate } from 'react-router-dom';
 import styles from './FeylingSelect.module.css';
 import Header from '../../../modules/Header';
 import Button from '../../../modules/Button';
 
 const FeylingSelect = () => {
-  const [ownedFeylings, setOwnedFeylings] = useState<FeylingsFromLocalStorage[]>([]);
-  const [selectedFeyling, setSelectedFeyling] = useState<FeylingsFromLocalStorage | null>(null);
+  const [ownedFeylings, setOwnedFeylings] = useState([]);
+  const [selectedFeyling, setSelectedFeyling] = useState(null);
+  const [warning, setWarning] = useState('');
+  const navigate = useNavigate();
   const BASE_URL = "http://localhost:5130/api/";
 
   useEffect(() => {
-    // Retrieve the feylings data from localStorage when the component mounts
     const storedInventory = localStorage.getItem('userInventory');
     const inventory = storedInventory ? JSON.parse(storedInventory) : {};
     setOwnedFeylings(inventory.ownedFeylings || []);
   }, []);
 
-  const handleFeylingSelect = (feyling: FeylingsFromLocalStorage) => {
+  const handleFeylingSelect = (feyling) => {
     setSelectedFeyling(feyling);
-    // Trigger the game to start with the selected feyling
-    startGameWithFeyling(feyling);
+    setWarning('');
   };
 
-  const startGameWithFeyling = (feyling: FeylingsFromLocalStorage) => {
-    // Implement the logic to start the game with the selected feyling
-    //console.log(`Starting the game with: ${feyling.feylingName}`);
-    // You can replace the above console log with your game start logic
+  const startGame = () => {
+    if (!selectedFeyling) {
+      setWarning('Please select a Feyling before starting the game.');
+      return;
+    }
+    localStorage.setItem('selectedFeyling', JSON.stringify(selectedFeyling));
+    navigate('/game');
   };
 
   return (
@@ -55,8 +58,10 @@ const FeylingSelect = () => {
           )}
         </div>
       </div>
-      <Button style={{ marginTop: "1vh" }} route="/gamemenu" text="Back"></Button>
 
+      {warning && <p className={styles.warning}>{warning}</p>}
+      <button className={styles.startButton} onClick={startGame}>Start Game</button>
+      <Button style={{ marginTop: "1vh" }} route="/gamemenu" text="Back"></Button>
     </div>
   );
 };

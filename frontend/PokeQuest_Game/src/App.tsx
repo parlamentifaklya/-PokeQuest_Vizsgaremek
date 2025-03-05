@@ -15,6 +15,7 @@ import Equip from './components/GamePages/Equip/Equip';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import FeylingSelect from './components/GamePages/Start/FeylingSelect';
+import Game from './components/GamePages/Start/Game/Game';
 
 const App: React.FC = () => {
   return (
@@ -35,6 +36,7 @@ const App: React.FC = () => {
           <Route path='/summon' Component={Summon}/>
           <Route path='/equip' Component={Equip}/>
           <Route path='/feylingselect' Component={FeylingSelect}/>
+          <Route path='/game' Component={Game}/>
         </Routes>
       </BrowserRouter>
     </AudioProvider>
