@@ -1,8 +1,8 @@
 export type Item = {
-    itemId: number,
-    itemName: string,
-    itemDescription: string,
-    itemImg: string,
+    id: number,
+    name: string,
+    description: string,
+    img: string,
     itemAbility: string,
-    itemRarity: number
+    rarity: number
 }

@@ -20,6 +20,8 @@ const Feylings = () => {
       try {
         const data = await GetAllFeylings();
         setFeylings(data);
+        //console.log("data:",data);
+        
       } catch (error) {
         console.error("Failed to fetch Feylings:", error);
       } finally {
@@ -90,7 +92,7 @@ const Feylings = () => {
 
       {/* Feyling Overlay */}
       {selectedFeyling && !showAbilityModal && (
-        <div className={styles.overlay} onClick={() => setSelectedFeyling(null)}>
+        <div key={selectedFeyling.id} className={styles.overlay} onClick={() => setSelectedFeyling(null)}>
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
             <button className={styles.closeButton} onClick={() => setSelectedFeyling(null)}>X</button>
             <img src={selectedFeyling.img} alt={selectedFeyling.name} className={styles.modalImage} />
