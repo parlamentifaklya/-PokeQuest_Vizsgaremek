@@ -14,13 +14,19 @@ const Header = () => {
       const userData: User = {
         userName: parsedData.unique_name,
         userLevel: parseInt(parsedData["User Level"], 10),
-        userInventory: {},
         coinAmount: parseInt(parsedData["CoinAmount"], 10),
       };
 
       setUser(userData);
     }
   }, []);
+
+  // Function to format coin amount
+  const formatCoinAmount = (amount: number) => {
+    if (amount >= 1_000_000) return (amount / 1_000_000).toFixed(1) + 'M';
+    if (amount >= 10_000) return (amount / 1_000).toFixed(1) + 'k';
+    return amount.toString();
+  };
 
   return (
     <header className={styles.header}>
@@ -38,7 +44,7 @@ const Header = () => {
 
       <div className={styles.gemHolder}>
         <img src="gem.png" alt="gem" />
-        <h2 className={styles.gemtextStyle}>{user ? user.coinAmount : 'Loading...'}</h2>
+        <h2 className={styles.gemtextStyle}>{user ? formatCoinAmount(user.coinAmount) : 'Loading...'}</h2>
       </div>
     </header>
   );

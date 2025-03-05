@@ -4,7 +4,7 @@ import { Item } from "./Item"
 export type User = {
     userName: string,
     userLevel: number,
-    userInventory: UserInventory,
+    userInventory?: UserInventory,
     coinAmount: number
 }
 
