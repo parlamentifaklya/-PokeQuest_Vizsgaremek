@@ -1,103 +1,106 @@
 /* Container for the whole feyling selection */
 .container {
-    text-align: center;
-    padding: 20px;
-    color: white;
-    max-width: 80%;  /* Limit the width of the container */
-    margin: 0 auto;  /* Center the container horizontally */
-    height: 100vh;  /* Full viewport height */
-    align-items: center;
-    justify-content: center;
-    margin-top: 30vh;
-  }
-  
-  /* Section container for feylings */
-  .section {
-    margin-top: 20px;
-    background-color: rgba(0, 0, 0, 0.5); /* Transparent black background */
-    border-radius: 10px;
-    padding: 20px;
-    max-height: 80vh; /* Limit height of the section to 80% of the viewport */
-    overflow-y: hidden; /* Vertical scroll if the content overflows */
-    align-items: center;
-    justify-content: center;
-    margin: auto;
-  }
-  
-  /* Title styling */
-  .title {
-    margin-bottom: 15px;
-    font-size: 24px;
-    color: #fff;
-  }
-  
-  /* Container for the list of feylings (scrollable list) */
-  .feylingList {
-    display: flex;
-    gap: 10px;
-    justify-content: flex-start;
-    flex-wrap: wrap;
-    overflow-y: auto; /* Vertical scrolling */
-    max-height: 70vh; /* Limits the height of the list */
-    padding-bottom: 10px;
-    margin-top: 10px;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  /* Styling for each feyling card */
-  .feylingItem {
-    width: 80px;   /* Smaller width for feyling cards */
-    height: 130px; /* Smaller height for feyling cards */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    font-size: 14px; /* Smaller text */
-    font-weight: bold;
-    background: #222;
-    color: white;
-    border: 2px solid #444;
-    margin-right: 15px;
-    margin-bottom: 10px;
-    user-select: none;
-    position: relative;
-    padding: 10px;
-    text-align: center;
-    transition: all 0.3s ease;
-    cursor: pointer;
-  }
-  
-  /* Highlight selected feyling */
-  .selected {
-    background-color: #888;
-    border: 2px solid #fff;
-  }
-  
-  /* Hover effect for feyling cards */
-  .feylingItem:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  }
-  
-  /* Styling for the images of feylings */
-  .feylingImage {
-    width: 60px;   /* Smaller image size */
-    height: 60px;  /* Smaller image size */
-    object-fit: cover;
-    border-radius: 8px;
-    cursor: pointer;
-    margin-bottom: 10px;
-  }
-  
-  /* Styling for feyling names */
-  .feylingName {
-    margin-top: 10px;
-    font-size: 12px; /* Smaller font size */
-    color: #fff;
-    text-align: center;
-    word-wrap: break-word;
-    max-width: 80%;
-    text-overflow: ellipsis;
-    overflow: hidden;
-  }
-  
+  text-align: center;
+  padding: 20px;
+  color: white;
+  max-width: 60%;  /* Reduce width to make it smaller */
+  margin: 0 auto;  /* Center the container horizontally */
+  height: auto;  /* Let the container height adjust based on content */
+  min-height: 50vh; /* Minimum height to avoid being too small */
+  align-items: center;
+  justify-content: center;
+  margin-top: 10vh; /* Adjust the margin-top to center the container better */
+}
+
+/* Section container for feylings */
+.section {
+  margin-top: 20px;
+  background-color: rgba(0, 0, 0, 0.5); /* Transparent black background */
+  border-radius: 10px;
+  padding: 20px;
+  max-height: 70vh; /* Limit height of the section to 70% of the viewport */
+  overflow-x: auto; /* Horizontal scrolling */
+  overflow-y: hidden; /* No vertical scrolling */
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+  padding-bottom: 10px; /* Space at the bottom */
+  width: 50%;
+}
+
+/* Title styling */
+.title {
+  margin-bottom: 15px;
+  font-size: 24px;
+  color: #fff;
+}
+
+/* Container for the list of feylings (horizontal scroll) */
+.feylingList {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-start;
+  flex-wrap: nowrap;  /* Prevent wrapping of items */
+  overflow-x: auto; /* Horizontal scrolling */
+  padding-bottom: 10px;
+  margin-top: 10px;
+  align-items: center;
+}
+
+/* Styling for each feyling card */
+.feylingItem {
+  width: 100px;  /* Slightly larger width for the cards */
+  height: 160px; /* Slightly larger height for the cards */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  font-size: 14px; /* Smaller text */
+  font-weight: bold;
+  background: #222;
+  color: white;
+  border: 2px solid #444;
+  margin-right: 15px;
+  margin-bottom: 10px;
+  user-select: none;
+  position: relative;
+  padding: 10px;
+  text-align: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  min-width: 80px; /* Set a minimum width for each item */
+}
+
+/* Highlight selected feyling */
+.selected {
+  background-color: #888;
+  border: 2px solid #fff;
+}
+
+/* Hover effect for feyling cards */
+.feylingItem:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Styling for the images of feylings */
+.feylingImage {
+  width: 80px;   /* Slightly larger image size */
+  height: 80px;  /* Slightly larger image size */
+  object-fit: cover;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+/* Styling for feyling names */
+.feylingName {
+  margin-top: 10px;
+  font-size: 12px; /* Smaller font size */
+  color: #fff;
+  text-align: center;
+  word-break: break-word; /* Ensure words break correctly */
+  max-width: 20vw;  /* Set maximum width to avoid overflow */
+  overflow: hidden;  /* Hide overflow content */
+  hyphens: auto; /* Enable word hyphenation if possible */
+}
+
