@@ -26,3 +26,17 @@
     transform: scale(1);
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
+
+
+@media screen and (max-width: 1150px) {
+    .buttonstyle{
+        font-size: 3vw;
+    }
+}
+
+@media screen and (max-width: 500px) {
+    .buttonstyle{
+        font-size: 8vw;
+        width: 100%;
+    }
+}
