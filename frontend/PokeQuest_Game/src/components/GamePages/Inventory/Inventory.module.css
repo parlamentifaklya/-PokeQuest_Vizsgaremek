@@ -42,6 +42,7 @@ html, body {
   gap: 10px;
   justify-content: flex-start;  /* Align items to the left */
   overflow-x: auto;             /* Enable horizontal scrolling */
+  overflow-y: hidden;
   padding-bottom: 10px;         /* Optional: Add space below the list */
   white-space: nowrap;          /* Prevent wrapping of the items */
   -webkit-overflow-scrolling: touch; /* For smooth scrolling on touch devices */
