@@ -14,7 +14,6 @@ body, html {
   overflow: hidden;
 }
   
-  
 .mainMenu {
   position: relative;
   width: 100vw;
@@ -24,7 +23,6 @@ body, html {
   align-items: center;
   justify-content: center;
 }
-  
   
 .titleContainer {
   display: flex;
@@ -36,45 +34,47 @@ body, html {
 }
   
 .title {
-  font-size: 4rem;
+  font-size: 4vw; /* Adjusted for flexibility */
   font-weight: bold;
   color: #FFD700;
   text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.7);
   background: rgba(0, 0, 0, 0.5);
-  padding: 10px 20px;
-  border-radius: 15px;
+  padding: 1vh 2vw;
+  border-radius: 1vw;
 }
   
 .flareonIcon {
-  width: 80%; 
+  width: 40vw; /* Adjusted size for responsiveness */
   height: auto; 
 }
   
-  
 .menuButtons {
-  padding: 10px;
-  width: 100%;
+  padding: 2vh;
+  width: 80%;
   background-color: rgba(0, 0, 0, 0.5);
-  margin-top: 300px;
+  margin-top: 20vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 2vh;
   justify-content: center;
 }
   
-  
 .menuButton {
-  width: 500px;
-  font-size: 4rem;
+  width: 60%; /* Responsive width */
+  font-size: 3vw; /* Responsive font size */
   font-weight: bold;
   color: white;
   text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.7);
   background: rgba(0, 0, 0, 0.5);
-  padding: 10px 20px;
-  border-radius: 15px;
+  padding: 2vh 4vw; /* Adjusted padding */
+  border-radius: 1.5vw;
   margin-top: auto;
   margin-bottom: auto;
+  text-align: center; 
+  white-space: nowrap; 
+  overflow: hidden; 
+  text-overflow: ellipsis; 
 }
   
 .menuButton:hover {
@@ -82,4 +82,37 @@ body, html {
   transform: scale(1.05);
   cursor: pointer;
 }
+
+@media screen and (max-width: 1150px) {
+
+
+
+  .menuButton {
+    width: 50%;
+  }
+
+  .title {
+    font-size: 3.5vw;
+    padding: 2vh 3vw;
+  }
   
+  .flareonIcon {
+    width: 50vw;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .menuButton {
+    font-size: 6vw;
+  }
+
+
+  .title {
+    font-size: 5vw;
+    padding: 2vh 3vw;
+  }
+
+  .flareonIcon {
+    width: 80vw;
+  }
+}

@@ -163,6 +163,52 @@
 }
 
 .itemchestButton {
-    all: unset; /* Removes default button styles */
+    all: unset; 
     cursor: pointer;
 }
+
+
+@media screen and (max-width: 1150px) {
+    .buttonHolder {
+        gap: 2vh;
+        padding: 2vw;
+        margin-top: 9vh;
+    }
+
+    .buttonHolder button {
+        font-size: 3vh;
+        padding: 8px 12px;
+    }
+
+    .versionContainer {
+        right: 13vw;
+        top: -8vw;
+        width: 12vw;
+        height: 4vw;
+        padding: 8px;
+    }
+
+    .versionText {
+        font-size: 1rem;
+    }
+
+    .rightsideContainer img {
+        width: 25vw;
+        height: 25vw;
+        right: -8vw;
+    }
+
+    .itemchest{
+        width: 10vw;
+    }
+    
+    .summon{
+        width: 13vw;
+    }
+
+    
+}
+
+
+  
+  
