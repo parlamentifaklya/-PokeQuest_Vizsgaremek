@@ -1,53 +1,36 @@
 .gameWrapper {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: 600px;
-    position: relative;
-    overflow: hidden; /* Prevent canvas overflow */
-  }
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 600px;
+  position: relative;
+  overflow: hidden; /* Prevent canvas overflow */
+}
   
-  .feylingContainer,
-  .enemyContainer {
-    width: 25%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    color: white;
-  }
+.feylingContainer,
+.enemyContainer {
+  width: 25%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
   
-  .feylingImage {
-    width: 100px;
-    height: 100px;
-    object-fit: cover;
-    border-radius: 50%;
-  }
+.feylingImage {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 50%;
+}
   
-  .playerFeyling,
-  .enemyFeyling {
-    text-align: center;
-  }
+.playerFeyling,
+.enemyFeyling {
+  text-align: center;
+}
   
-  .playerFeyling img,
-  .enemyFeyling img {
-    margin-bottom: 10px;
-  }
-  
-  button {
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 20px;
-    padding: 10px;
-    background-color: #f39c12;
-    border: none;
-    color: white;
-    cursor: pointer;
-  }
-  
-  button:hover {
-    background-color: #e67e22;
-  }
+.playerFeyling img,
+.enemyFeyling img {
+  margin-bottom: 10px;
+}
   

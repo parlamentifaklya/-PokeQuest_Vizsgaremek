@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import Phaser from 'phaser';
 import { useFeyling } from '../../../../context/FeylingContext'; // Import context
 import styles from './Game.module.css';
-import { FeylingsFromLocalStorage } from '../../../../types/FeylingLocalStorage'; // Import the type
 import { GetAllFeylings } from '../../../../services/ApiServices';
 import { Feyling } from '../../../../types/Feyling';
 
@@ -121,9 +120,7 @@ const Game: React.FC = () => {
   }
 
   return (
-    <div className={styles.gameWrapper} ref={gameRef}>
-      {/* The player and enemy UI elements are now removed. All rendering is handled inside Phaser */}
-    </div>
+    <div className={styles.gameWrapper} ref={gameRef}/>
   );
 };
 

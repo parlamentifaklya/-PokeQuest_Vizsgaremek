@@ -1,4 +1,4 @@
-.buttonstyle{
+.buttonstyle {
     border: 3px solid black;
     font-size: 3rem;
     font-weight: bold;
@@ -11,4 +11,18 @@
     margin-bottom: auto;
     width: 20vw;
     cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.buttonstyle:hover {
+    background: rgb(255, 167, 34);
+    color: white;
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    -webkit-text-stroke: 1px black;
+}
+
+.buttonstyle:active {
+    transform: scale(1);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
