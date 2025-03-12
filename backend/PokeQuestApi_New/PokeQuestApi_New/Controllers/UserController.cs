@@ -529,7 +529,41 @@ namespace PokeQuestApi_New.Controllers
             return Ok(new { message = "Coin amount updated successfully", newCoinAmount = user.CoinAmount });
         }
 
-    // Models/CoinUpdateRequest.cs
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> UpdateUserOnVictory(int id, [FromBody] UpdateUserLevelAndCoins updateRequest)
+        {
+            // Find the user by id
+            var user = await _context.Users.FindAsync(id);
+
+            if (user == null)
+            {
+                return NotFound(new { message = "User not found" });
+            }
+
+            // Update only the fields provided in the request
+            if (updateRequest.UserLevel.HasValue)
+            {
+                user.UserLevel = updateRequest.UserLevel.Value;
+            }
+
+            if (updateRequest.CoinAmountDelta.HasValue)
+            {
+                user.CoinAmount += updateRequest.CoinAmountDelta.Value;  // Increment or decrement the CoinAmount
+            }
+
+            // Save changes in the database
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "User updated successfully", user });
+        }
+
+        public class UpdateUserLevelAndCoins
+        {
+            public int? UserLevel { get; set; }  // Nullable to indicate it might not be provided
+            public int? CoinAmountDelta { get; set; }  // Delta value for coin amount (increment/decrement)
+        }
+
         public class CoinUpdateRequest
         {
             public string UserId { get; set; }

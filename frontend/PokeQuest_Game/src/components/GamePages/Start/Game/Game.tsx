@@ -5,11 +5,14 @@ import styles from './Game.module.css';
 import { GetAllAbility, GetAllFeylings } from '../../../../services/ApiServices';
 import { Feyling } from '../../../../types/Feyling';
 import { Ability } from '../../../../types/Ability';
+import { useNavigate } from 'react-router-dom';
+import { updateUserOnVictory } from '../../../../services/ApiServices'; // Import the updateUserOnVictory function
 
 const Game: React.FC = () => {
   const gameRef = useRef<HTMLDivElement | null>(null);
   const gameInstance = useRef<Phaser.Game | null>(null);
   const { selectedFeyling } = useFeyling();
+  const navigate = useNavigate();  // For navigation
   const [turn, setTurn] = useState<'Player' | 'Enemy'>('Player');
   const [playerHP, setPlayerHP] = useState<number>(selectedFeyling?.feylingHp ?? 100);
   const [enemyHP, setEnemyHP] = useState<number>(100);
@@ -196,18 +199,24 @@ const Game: React.FC = () => {
       playerSprite.setInteractive().on('pointerdown', handleAttack);
     }
 
-    function update() {
+    function update(this: Phaser.Scene) {
       playerHealthText.setText(`HP: ${playerHP}`);
       enemyHealthText.setText(`HP: ${enemyHP}`);
       playerTurnPointsText.setText(`TP: ${playerTurnPoints}`);
       enemyTurnPointsText.setText(`TP: ${enemyTurnPoints}`);
+
+      // Check for victory or defeat
+      if (enemyHP <= 0) {
+        handleVictory(this);
+      } else if (playerHP <= 0) {
+        handleDefeat(this);
+      }
 
       // The cooldown texts are now updated based on the current state, but not every frame.
       updateAbilityCooldowns();
     }
 
     function updateAbilityCooldowns() {
-      // Only update cooldown texts when the next turn button is clicked.
       if (playerAbilityCooldown > 0) {
         playerAbilityCooldownText.setText(`Cooldown: ${playerAbilityCooldown}`);
       } else {
@@ -250,7 +259,6 @@ const Game: React.FC = () => {
         setEnemyTurnPoints((prev) => prev + 3);
         setTurn('Enemy');
 
-        // Decrease cooldowns for both player and enemy on the next turn.
         if (playerAbilityCooldown > 0) setPlayerAbilityCooldown((prev) => prev - 1);
         if (enemyAbilityCooldown > 0) setEnemyAbilityCooldown((prev) => prev - 1);
 
@@ -267,6 +275,78 @@ const Game: React.FC = () => {
       } else {
         setTurn('Player');
       }
+    }
+
+    async function handleVictory(scene: Phaser.Scene) {
+      // Get user data from localStorage
+      const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+      
+      // Ensure userId is available and valid
+      const userId = userData.sub;  // Get user ID from localStorage
+    
+      // Log the userId to ensure it's correctly retrieved
+      if (!userId) {
+        console.error('User ID is missing or invalid');
+        return; // Exit early if the userId is not available
+      }
+    
+      // Log the user data for debugging purposes
+      console.log('User Data:', userData);
+      
+      // Update user data on backend
+      await updateUserOnVictory(
+        userId,
+        parseInt(userData['User Level']), // Increase the level by 1
+        200 // Add 200 coins
+      );
+    
+      // Update localStorage
+      userData['CoinAmount'] = (parseInt(userData['CoinAmount'] || '0') + 200).toString();
+      userData['User Level'] = (parseInt(userData['User Level'] || '1') + 1).toString();
+      localStorage.setItem('userData', JSON.stringify(userData));
+    
+      // Show victory text
+      const victoryText = scene.add.text(500, 300, 'You Win!', { fontSize: '32px', color: '#00ff00' }).setOrigin(0.5);
+      victoryText.setAlpha(1);
+      scene.tweens.add({
+        targets: victoryText,
+        alpha: 0,
+        duration: 1000,
+        ease: 'Linear',
+        onComplete: () => {
+          victoryText.destroy();
+          navigate('/gamemenu');
+        },
+      });
+    
+      // Delay and fade out the victory text, then navigate
+      scene.time.delayedCall(2000, () => {
+        victoryText.setAlpha(0);
+        navigate('/gamemenu');
+      });
+    }
+    
+    
+    function handleDefeat(scene: Phaser.Scene) {
+      // Show defeat text
+      const defeatText = scene.add.text(500, 300, 'You Lose!', { fontSize: '32px', color: '#ff0000' }).setOrigin(0.5);
+      defeatText.setAlpha(1);
+      scene.tweens.add({
+        targets: defeatText,
+        alpha: 0,
+        duration: 1000,
+        ease: 'Linear',
+        onComplete: () => {
+          defeatText.destroy();
+          navigate('/gamemenu');
+        },
+      });
+    
+      // Delay and fade out the defeat text, then navigate
+      scene.time.delayedCall(2000, () => {
+        defeatText.setAlpha(0);
+        navigate('/gamemenu');
+      });
     }
 
     function showTooltip(scene: Phaser.Scene, item: Ability | Feyling, sprite: Phaser.GameObjects.Image) {

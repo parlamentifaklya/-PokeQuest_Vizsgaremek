@@ -1410,6 +1410,48 @@
           }
         }
       }
+    },
+    "/api/User/UpdateUserOnVictory/{id}": {
+      "patch": {
+        "tags": [
+          "User"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserLevelAndCoins"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserLevelAndCoins"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserLevelAndCoins"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1718,6 +1760,22 @@
           },
           "img": {
             "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateUserLevelAndCoins": {
+        "type": "object",
+        "properties": {
+          "userLevel": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "coinAmountDelta": {
+            "type": "integer",
+            "format": "int32",
             "nullable": true
           }
         },

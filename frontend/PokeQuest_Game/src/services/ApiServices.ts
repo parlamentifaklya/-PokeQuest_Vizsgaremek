@@ -399,3 +399,33 @@ export const updateCoinAmount = async (userId: string, chestCost: number) => {
     throw new Error('Failed to update coin amount');
   }
 };
+
+export async function updateUserOnVictory(userId: string, newLevel: number, newCoins: number) {
+  const requestBody = {
+    userId: userId,
+    level: newLevel,
+    coins: newCoins,
+  };
+
+  try {
+    const response = await fetch(`http://localhost:5130/api/User/UpdateUserOnVictory/${userId}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestBody),
+    });
+    console.log(requestBody)
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Error updating user:', errorText);  // Log the error body for better visibility
+      return;
+    }
+
+    const updatedUser = await response.json();
+    console.log('User updated successfully:', updatedUser);
+  } catch (error) {
+    console.error('Network error:', error);
+  }
+}
