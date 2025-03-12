@@ -15,7 +15,11 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PokeQuestApi_New")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
+<<<<<<< HEAD
 [assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+21db8ff6dad5a7297aed70d4e1bd6a2ec065c14e")]
+=======
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+32057d592bb464dee1d1dbac34d0ea35cd14e8ab")]
+>>>>>>> 284eb8bb5e546da1667bb50c3802226c79e929cb
 [assembly: System.Reflection.AssemblyProductAttribute("PokeQuestApi_New")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PokeQuestApi_New")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

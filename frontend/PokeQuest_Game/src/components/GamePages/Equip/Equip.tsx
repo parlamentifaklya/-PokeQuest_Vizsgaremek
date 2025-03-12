@@ -124,4 +124,5 @@ const Equip = () => {
   );
 };
 
+
 export default Equip;

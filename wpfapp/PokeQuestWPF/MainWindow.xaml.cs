@@ -12,9 +12,10 @@ namespace PokeQuestWPF
         {
             InitializeComponent();
             _feylingService = new FeylingService();
+            LoadFeylings();
         }
 
-        private async void LoadFeylings_Click(object sender, RoutedEventArgs e)
+        private async void LoadFeylings()
         {
             try
             {
@@ -113,5 +114,12 @@ namespace PokeQuestWPF
 
             return "Battle ended with no winner."; // Shouldn't reach here under normal circumstances
         }
+
+        private void InfoButton_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Choose 1-1 Feylings from each column to see their fight, who wins, and how many rounds it takes to win.",
+                            "Battle Info", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
     }
 }
