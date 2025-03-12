@@ -13,11 +13,18 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="3*"/>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="3*"/>
         </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="7*"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
             <!-- First ListBox -->
-        <ListBox Name="FeylingListBox1" Width="350" Height="400" Margin="20,10,0,10" SelectionChanged="FeylingListBox_SelectionChanged" Grid.Column="0" HorizontalAlignment="Left">
+        <ListBox Grid.Row="1" Name="FeylingListBox1"   SelectionChanged="FeylingListBox_SelectionChanged" Grid.Column="0" >
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
@@ -29,7 +36,7 @@
         </ListBox>
 
         <!-- Second ListBox -->
-        <ListBox Name="FeylingListBox2" Width="350" Height="400" Margin="0,10,20,10" HorizontalAlignment="Right" SelectionChanged="FeylingListBox_SelectionChanged" Grid.Column="1">
+        <ListBox Grid.Row="1" Grid.Column="2" Name="FeylingListBox2"  SelectionChanged="FeylingListBox_SelectionChanged">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
@@ -40,15 +47,14 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <!-- Load Feylings Button -->
-        <Button Content="Load Feylings" Click="LoadFeylings_Click"
-            Width="120" Height="30"
-            VerticalAlignment="Top" HorizontalAlignment="Center" Margin="10"/>
 
-        <!-- Battle Button -->
-        <Button Name="BattleButton" Content="Battle" Click="Battle_Click"
-        Width="120" Height="30"
-        VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="10" IsEnabled="False"/>
+        <ListBox Grid.Column="1" >
+            <Button HorizontalAlignment="Right" Click="InfoButton_Click">
+                <Image Height="30"  Source="Assets/info_icon.png" />
+            </Button>
+            <Button Name="BattleButton" Content="Battle" Click="Battle_Click" IsEnabled="False"/>
 
+            
+        </ListBox>
     </Grid>
 </Window>
