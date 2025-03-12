@@ -404,7 +404,7 @@ export async function updateUserOnVictory(userId: string, newLevel: number, newC
   const requestBody = {
     userId: userId,
     level: newLevel,
-    coins: newCoins,
+    CoinAmountDelta: newCoins,
   };
 
   try {

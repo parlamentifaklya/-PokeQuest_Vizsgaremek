@@ -32,6 +32,8 @@ const Game: React.FC = () => {
   const FEYLING_IMAGE_SIZE = 200; // Set the fixed size for all images (adjust this as needed)
   const ABILITY_IMAGE_SIZE = 75;
 
+  const [victoryHandled, setVictoryHandled] = useState<boolean>(false);
+
   // Fetch abilities
   useEffect(() => {
     const fetchAbilities = async () => {
@@ -206,7 +208,8 @@ const Game: React.FC = () => {
       enemyTurnPointsText.setText(`TP: ${enemyTurnPoints}`);
 
       // Check for victory or defeat
-      if (enemyHP <= 0) {
+      if (enemyHP <= 0 && !victoryHandled) {
+        setVictoryHandled(true);
         handleVictory(this);
       } else if (playerHP <= 0) {
         handleDefeat(this);
@@ -296,7 +299,7 @@ const Game: React.FC = () => {
       // Update user data on backend
       await updateUserOnVictory(
         userId,
-        parseInt(userData['User Level']), // Increase the level by 1
+        1, // Increase the level by 1
         200 // Add 200 coins
       );
     

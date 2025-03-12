@@ -530,7 +530,7 @@ namespace PokeQuestApi_New.Controllers
         }
 
         [HttpPatch("{id}")]
-        public async Task<IActionResult> UpdateUserOnVictory(int id, [FromBody] UpdateUserLevelAndCoins updateRequest)
+        public async Task<IActionResult> UpdateUserOnVictory(string id, [FromBody] UpdateUserLevelAndCoins updateRequest)
         {
             // Find the user by id
             var user = await _context.Users.FindAsync(id);
