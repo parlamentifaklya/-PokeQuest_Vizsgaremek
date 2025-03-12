@@ -21,10 +21,9 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="*"></RowDefinition>
             <RowDefinition Height="7*"></RowDefinition>
-            <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
             <!-- First ListBox -->
-        <ListBox Grid.Row="1" Name="FeylingListBox1"   SelectionChanged="FeylingListBox_SelectionChanged" Grid.Column="0" >
+        <ListBox Grid.Row="1" Grid.Column="0" Name="FeylingListBox1"   SelectionChanged="FeylingListBox_SelectionChanged">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
@@ -48,13 +47,25 @@
         </ListBox>
 
 
-        <ListBox Grid.Column="1" >
-            <Button HorizontalAlignment="Right" Click="InfoButton_Click">
-                <Image Height="30"  Source="Assets/info_icon.png" />
-            </Button>
-            <Button Name="BattleButton" Content="Battle" Click="Battle_Click" IsEnabled="False"/>
+        <Grid Grid.Column="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
 
-            
-        </ListBox>
+            <Grid.RowDefinitions>
+                <RowDefinition></RowDefinition>
+                <RowDefinition></RowDefinition>
+                <RowDefinition></RowDefinition>
+            </Grid.RowDefinitions>
+
+            <Button Grid.Column="1" Grid.Row="1" Width="Auto" Height="Auto"  Click="InfoButton_Click">
+                <Image Height="Auto"  Source="Assets/info_icon.png" />
+            </Button>
+            <Button Grid.Column="0" Grid.Row="1" Width="Auto" Height="Auto" Name="BattleButton" Content="Battle" Click="Battle_Click" IsEnabled="False"/>
+        </Grid>
+
+
+        <TextBlock Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Text="VS" FontSize="80" FontFamily="Arial" ></TextBlock>
     </Grid>
 </Window>
