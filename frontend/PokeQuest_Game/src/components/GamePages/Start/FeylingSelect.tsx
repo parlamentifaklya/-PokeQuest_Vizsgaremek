@@ -4,6 +4,7 @@ import { useFeyling } from '../../../context/FeylingContext';
 import { FeylingsFromLocalStorage } from '../../../types/FeylingLocalStorage'; // Import the type
 import styles from './FeylingSelect.module.css';
 import Button from '../../../modules/Button';
+import Header from '../../../modules/Header';
 
 const FeylingSelect = () => {
   const [selectedFeyling, setSelectedFeyling] = useState<FeylingsFromLocalStorage | null>(null);
@@ -42,6 +43,7 @@ const FeylingSelect = () => {
 
   return (
     <div className={styles.container}>
+      <Header/>
       <h2 className={styles.title}>Select Your Feyling</h2>
       
       <div className={styles.section}>

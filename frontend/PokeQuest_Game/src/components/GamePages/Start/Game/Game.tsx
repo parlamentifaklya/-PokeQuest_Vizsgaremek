@@ -7,6 +7,8 @@ import { Feyling } from '../../../../types/Feyling';
 import { Ability } from '../../../../types/Ability';
 import { useNavigate } from 'react-router-dom';
 import { updateUserOnVictory } from '../../../../services/ApiServices'; // Import the updateUserOnVictory function
+import Header from '../../../../modules/Header';
+import { div } from 'framer-motion/client';
 
 const Game: React.FC = () => {
   const gameRef = useRef<HTMLDivElement | null>(null);
@@ -96,6 +98,7 @@ const Game: React.FC = () => {
       height: 600,
       parent: gameRef.current,
       scene: {
+        key: 'MainScene',
         preload: preload,
         create: create,
         update: update,
@@ -231,27 +234,52 @@ const Game: React.FC = () => {
     }
 
     function updateAbilityCooldowns() {
+      // Update player cooldown text
       if (playerAbilityCooldown > 0) {
         playerAbilityCooldownText.setText(`Cooldown: ${playerAbilityCooldown}`);
       } else {
         playerAbilityCooldownText.setText('Ready');
       }
-
+    
+      // Update enemy cooldown text
       if (enemyAbilityCooldown > 0) {
         enemyAbilityCooldownText.setText(`Cooldown: ${enemyAbilityCooldown}`);
       } else {
         enemyAbilityCooldownText.setText('Ready');
       }
     }
+    
 
     function handleAttack() {
       if (turn === 'Player' && playerTurnPoints >= 1) {
         let damage = playerFeyling?.atk ?? 10;
-        setEnemyHP((prev) => Math.max(prev - damage, 0));
+        setEnemyHP((prev) => {
+          const newHP = Math.max(prev - damage, 0);
+          
+          // Check for victory here and trigger the victory handler
+          if (newHP <= 0 && !victoryHandledRef.current) {
+            victoryHandledRef.current = true; // Mark victory as handled
+    
+            // Ensure gameInstance.current is not undefined before accessing its scene
+            if (gameInstance.current) {
+              const currentScene = gameInstance.current.scene.getScene('MainScene'); // Change 'MainScene' to the name of your scene
+              if (currentScene) {
+                console.log("Victory triggered. Handling victory...");
+                handleVictory(currentScene);  // Trigger victory
+                // Directly call navigate here without delay for testing
+                console.log("Navigating to /gamemenu...");
+                navigate('/gamemenu');
+              }
+            }
+          }
+        
+          return newHP;
+        });
+        
         setPlayerTurnPoints((prev) => prev - 1);
       }
-    }  
-
+    }
+    
     function handleAbility() {
       if (ability && turn === 'Player' && playerTurnPoints >= 2 && playerAbilityCooldown === 0) {
         const { damage, healthPoint } = ability;
@@ -261,46 +289,45 @@ const Game: React.FC = () => {
         if (healthPoint > 0) {
           setPlayerHP((prev) => Math.min(prev + healthPoint, playerFeyling?.hp || 100));
         }
-        setPlayerAbilityCooldown(ability.rechargeTime || 0); // Set cooldown for the ability
+        setPlayerAbilityCooldown(ability.rechargeTime || 0); // Set cooldown for the player’s ability
         setPlayerTurnPoints((prev) => prev - 2);
       } else {
         console.log("Ability is on cooldown!");
       }
     }
-
+    
     function handleNextTurn() {
       if (turn === 'Player') {
         setPlayerTurnPoints((prev) => prev + 3);
         setTurn('Enemy');
-    
         if (playerAbilityCooldown > 0) setPlayerAbilityCooldown((prev) => prev - 1);
         enemyTurn();
       }
-    
+      
       if (turn === 'Enemy') {
         setEnemyTurnPoints((prev) => prev + 3);
         if (enemyAbilityCooldown > 0) setEnemyAbilityCooldown((prev) => prev - 1);
       }
     }
     
-    // Function for enemy's turn logic
     function enemyTurn() {
       setEnemyTurnPoints((prev) => {
         let newEnemyTurnPoints = prev;
+        if (enemyFeyling && newEnemyTurnPoints >= 2 && enemyAbilityCooldown === 0 && enemyAbility) {
+          const { damage, healthPoint } = enemyAbility; // Use enemy's ability
     
-        if (enemyFeyling && newEnemyTurnPoints >= 2 && enemyAbilityCooldown === 0 && ability) {
-          const { damage, healthPoint } = ability;
           if (damage > 0) {
             setPlayerHP((prev) => Math.max(prev - damage, 0));
           }
-          else if (healthPoint > 0) {
+          if (healthPoint > 0) {
             setEnemyHP((prev) => Math.min(prev + healthPoint, enemyFeyling.hp || 100));
           }
-          setEnemyAbilityCooldown(ability.rechargeTime || 0);
+    
+          setEnemyAbilityCooldown(enemyAbility.rechargeTime || 0); // Set the cooldown for the enemy ability
           newEnemyTurnPoints -= 2;  // Decrement by 2 for using an ability
           console.log('Enemy used ability!');
         }
-        
+    
         while (newEnemyTurnPoints > 0 && enemyFeyling) {
           const damage = enemyFeyling.atk;
           setPlayerHP((prev) => Math.max(prev - damage, 0));
@@ -317,40 +344,42 @@ const Game: React.FC = () => {
     
       console.log('Enemy Turn Points at the start of enemyTurn():', enemyTurnPoints);
     }
+    
 
     async function handleVictory(scene: Phaser.Scene) {
       const userData = JSON.parse(localStorage.getItem('userData') || '{}');
       const userId = userData.sub;
-  
+    
       if (!userId) {
-          console.error('User ID is missing or invalid');
-          return;
+        console.error('User ID is missing or invalid');
+        return;
       }
-  
+    
       await updateUserOnVictory(userId, 1, 200);
-  
+    
       // Update localStorage only once after victory
       userData['CoinAmount'] = (parseInt(userData['CoinAmount'] || '0') + 200).toString();
       userData['User Level'] = (parseInt(userData['User Level'] || '1') + 1).toString();
       localStorage.setItem('userData', JSON.stringify(userData));
-  
+    
       const victoryText = scene.add.text(500, 300, 'You Win!', { fontSize: '32px', color: '#00ff00' }).setOrigin(0.5);
       scene.tweens.add({
-          targets: victoryText,
-          alpha: 0,
-          duration: 1000,
-          ease: 'Linear',
-          onComplete: () => {
-              victoryText.destroy();
-              navigate('/gamemenu');
-          },
-      });
-  
-      scene.time.delayedCall(2000, () => {
-          victoryText.setAlpha(0);
+        targets: victoryText,
+        alpha: 0,
+        duration: 1000,
+        ease: 'Linear',
+        onComplete: () => {
+          victoryText.destroy();
           navigate('/gamemenu');
+        },
+      });
+    
+      scene.time.delayedCall(2000, () => {
+        victoryText.setAlpha(0);
+        navigate('/gamemenu');
       });
     }
+    
     
     function handleDefeat(scene: Phaser.Scene) {
       // Show defeat text
@@ -397,7 +426,10 @@ const Game: React.FC = () => {
   }
 
   return (
-    <div className={styles.gameWrapper} ref={gameRef}></div>
+    <>
+      <Header/>
+      <div className={styles.gameWrapper} ref={gameRef}/>
+    </>
   );
 };
 

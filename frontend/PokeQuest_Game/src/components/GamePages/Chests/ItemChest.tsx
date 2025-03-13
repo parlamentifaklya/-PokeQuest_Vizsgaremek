@@ -224,7 +224,6 @@ const ItemChest: React.FC = () => {
       {openCaseDialog && (
         <div id="dialog" className="dialog">
           <div id="dialog-msg" dangerouslySetInnerHTML={{ __html: reward }}></div>
-          <Button style={{ width: "fit-content", fontSize: "35px" }} route="/gamemenu" text="Close" onClick={handleDialogClose} />
         </div>
       )}
     </div>

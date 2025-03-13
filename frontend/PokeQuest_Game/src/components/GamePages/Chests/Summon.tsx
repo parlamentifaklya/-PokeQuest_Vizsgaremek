@@ -277,7 +277,6 @@ const Summon: React.FC = () => {
         <div className="dialog-overlay">
           <div className="dialog">
             <p dangerouslySetInnerHTML={{ __html: reward }} />
-            <Button route="/gamemenu" text="Close" onClick={handleDialogClose} />
           </div>
         </div>
       )}

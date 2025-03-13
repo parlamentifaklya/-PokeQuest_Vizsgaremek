@@ -5,6 +5,7 @@
   height: 600px;
   position: relative;
   overflow: hidden; /* Prevent canvas overflow */
+  margin-top: 60px;
 }
   
 .feylingContainer,
