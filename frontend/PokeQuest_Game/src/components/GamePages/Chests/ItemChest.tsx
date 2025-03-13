@@ -215,7 +215,7 @@ const ItemChest: React.FC = () => {
         Open Case (50 gems)
       </button>
 
-      <Button route="/gamemenu" text="Back"></Button>
+      <Button route="/gamemenu" text="Back" disabled={isSpinning || openCaseDialog || loading}></Button>
 
       {/* Toast container */}
       <ToastContainer position="top-center" autoClose={3000} hideProgressBar={false} newestOnTop rtl={false} pauseOnFocusLoss draggable pauseOnHover />
