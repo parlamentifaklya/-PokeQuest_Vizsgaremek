@@ -17,6 +17,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import FeylingSelect from './components/GamePages/Start/FeylingSelect';
 import Game from './components/GamePages/Start/Game/Game';
 import { FeylingProvider } from './context/FeylingContext';
+import Tutorial from './Tutorial';
 
 const App: React.FC = () => {
   return (
@@ -37,7 +38,8 @@ const App: React.FC = () => {
             <Route path='/summon' element={<Summon/>}/>
             <Route path='/equip' element={<Equip/>}/>
             <Route path='/feylingselect' element={<FeylingSelect/>}/>
-            <Route path='/game' element={<Game />}/>
+            <Route path='/game' element={<Game/>}/>
+            <Route path='/tutorial' element={<Tutorial/>}/>
           </Routes>
         </BrowserRouter>
       </AudioProvider>

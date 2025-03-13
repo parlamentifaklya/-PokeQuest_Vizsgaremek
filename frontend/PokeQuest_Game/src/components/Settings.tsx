@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './Settings.module.css';
 import { useAudioContext } from '../context/AudioContext';
+import Button from '../modules/Button';
 
 const Settings: React.FC = () => {
   const { volume, setVolume } = useAudioContext(); // Access volume and setter from context
@@ -68,8 +69,33 @@ const Settings: React.FC = () => {
           </div>
 
           <div className={styles.buttonHolder}>
-            <button className={styles.buttonTemp} onClick={handleLogout}>Logout</button>
-            <button className={styles.buttonTemp}>Change Password</button>
+            <Button text='Logout' onClick={handleLogout}
+              style={{
+                backgroundColor: 'yellow',
+                fontSize: '30px',
+                width: '50%',
+                color: 'white',
+                WebkitTextStroke: '2px black', // For text stroke
+                borderRadius: '10%',
+                padding: '5px',
+                marginTop: '5vh',
+                height: 'fit-content',
+              }}
+            />
+            {/*<button className={styles.buttonTemp} onClick={handleLogout}>Logout</button>*/}
+            <Button route="/tutorial" text="Tutorial" 
+              style={{
+                backgroundColor: 'yellow',
+                fontSize: '30px',
+                width: '50%',
+                color: 'white',
+                WebkitTextStroke: '2px black', // For text stroke
+                borderRadius: '10%',
+                padding: '5px',
+                marginTop: '5vh',
+                height: 'fit-content',
+              }} 
+            />
           </div>
         </div>
       </div>

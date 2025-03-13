@@ -1,9 +1,9 @@
 import { useNavigate } from "react-router-dom";
-import styles from "./Button.module.css"
+import styles from "./Button.module.css";
 
 interface ButtonProps {
   text: string;
-  route: string;
+  route?: string;  // Make the route prop optional
   onClick?: () => void;
   style?: React.CSSProperties; // Accepts inline styles
   disabled?: boolean;
@@ -14,7 +14,7 @@ const Button: React.FC<ButtonProps> = ({ text, route, onClick, style, disabled }
 
   const handleClick = () => {
     if (onClick && !disabled) onClick();  // Prevent onClick if disabled
-    if (!disabled) navigate(route);       // Prevent navigation if disabled
+    if (!disabled && route) navigate(route);  // Only navigate if route is provided
   };
 
   return (
@@ -27,6 +27,6 @@ const Button: React.FC<ButtonProps> = ({ text, route, onClick, style, disabled }
       {text}
     </button>
   );
-}
+};
 
 export default Button;
