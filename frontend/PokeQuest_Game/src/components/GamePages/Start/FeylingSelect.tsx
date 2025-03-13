@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useFeyling } from '../../../context/FeylingContext';
 import { FeylingsFromLocalStorage } from '../../../types/FeylingLocalStorage'; // Import the type
@@ -6,6 +6,14 @@ import styles from './FeylingSelect.module.css';
 import Button from '../../../modules/Button';
 
 const FeylingSelect = () => {
+  const hasReloaded = useRef(false); // Using useRef to track reload state
+
+  useEffect(() => {
+    if (!hasReloaded.current) {
+      window.location.reload(); // Reload the page once
+    }
+  }, [hasReloaded]); // Empty dependency array to trigger on the first render only
+  hasReloaded.current = true;
   const [selectedFeyling, setSelectedFeyling] = useState<FeylingsFromLocalStorage | null>(null);
   const [warning, setWarning] = useState('');
   const { ownedFeylings, setSelectedFeyling: setContextFeyling } = useFeyling();
