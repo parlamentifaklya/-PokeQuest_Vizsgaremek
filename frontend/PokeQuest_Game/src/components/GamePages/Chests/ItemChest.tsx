@@ -8,6 +8,7 @@ import Header from "../../../modules/Header";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from "react-router-dom"; // Importing the navigate hook
+import { text } from "framer-motion/client";
 
 // Randomly select an item color (representing rarity)
 const getItemColor = (rarity: number) => {
@@ -151,8 +152,10 @@ const ItemChest: React.FC = () => {
   };
 
   return (
+    
     <div className="case-opening">
       <Header />
+      
       <div className="window">
         <div className="indicator"></div>
         <div className="items-container" ref={itemsContainerRef}>
@@ -204,13 +207,15 @@ const ItemChest: React.FC = () => {
           ))}
         </div>
       </div>
-      <button
+      <button style={{marginBottom: "2vh"}}
         onClick={openCase}
         disabled={isSpinning || openCaseDialog || loading}
         className="chest-open-button"
       >
         Open Case (50 gems)
       </button>
+
+      <Button route="/gamemenu" text="Back"></Button>
 
       {/* Toast container */}
       <ToastContainer position="top-center" autoClose={3000} hideProgressBar={false} newestOnTop rtl={false} pauseOnFocusLoss draggable pauseOnHover />

@@ -265,13 +265,14 @@ const Summon: React.FC = () => {
           ))}
         </div>
       </div>
-      <button
+      <button style={{marginBottom: "2vh"}}
         onClick={openCase}
         disabled={isSpinning || openCaseDialog || loading}
         className="chest-open-button"
       >
         Open Chest (100 gems)
       </button>
+      <Button route="/gamemenu" text="Back"></Button>
       {openCaseDialog && (
         <div className="dialog-overlay">
           <div className="dialog">
