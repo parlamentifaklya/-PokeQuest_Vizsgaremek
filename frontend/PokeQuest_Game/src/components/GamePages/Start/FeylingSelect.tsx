@@ -6,19 +6,23 @@ import styles from './FeylingSelect.module.css';
 import Button from '../../../modules/Button';
 
 const FeylingSelect = () => {
-  const hasReloaded = useRef(false); // Using useRef to track reload state
-
-  useEffect(() => {
-    if (!hasReloaded.current) {
-      window.location.reload(); // Reload the page once
-    }
-  }, [hasReloaded]); // Empty dependency array to trigger on the first render only
-  hasReloaded.current = true;
   const [selectedFeyling, setSelectedFeyling] = useState<FeylingsFromLocalStorage | null>(null);
   const [warning, setWarning] = useState('');
   const { ownedFeylings, setSelectedFeyling: setContextFeyling } = useFeyling();
   const navigate = useNavigate();
   const BASE_URL = "http://localhost:5130/api/";
+
+  localStorage.setItem('hasReloaded', 'false');
+
+  useEffect(() => {
+    // Check if we have previously reloaded the page by checking sessionStorage
+    const hasReloaded = localStorage.getItem('hasReloaded');
+
+    if (!hasReloaded) {
+      localStorage.setItem('hasReloaded', 'true'); // Set reload flag in sessionStorage
+      window.location.reload(); // Trigger reload
+    }
+  }, []);
 
   const handleFeylingSelect = (feyling: FeylingsFromLocalStorage) => {
     setSelectedFeyling(feyling);
