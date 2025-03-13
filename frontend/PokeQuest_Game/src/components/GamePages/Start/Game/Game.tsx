@@ -71,6 +71,15 @@ const Game: React.FC = () => {
     fetchFeylings();
   }, [selectedFeyling?.feylingId]);
 
+  // Using `useEffect` to detect when enemy turn points hit 0 and switch turn
+  useEffect(() => {
+    if (enemyTurnPoints <= 0 && turn === 'Enemy') {
+      console.log('Enemy turn is over. Switch to Player!');
+      setTurn('Player');
+      setEnemyTurnPoints((prev) => prev + 3)
+    }
+  }, [enemyTurnPoints, turn]);
+
   const getAbility = (abilityId: number | undefined): Ability | null => {
     return abilities.find((ability) => ability.id === abilityId) || null;
   };
@@ -237,18 +246,19 @@ const Game: React.FC = () => {
 
     function handleAttack() {
       if (turn === 'Player' && playerTurnPoints >= 1) {
-        let damage = Math.floor(Math.random() * (playerFeyling?.atk || 10)) + 5;
+        let damage = playerFeyling?.atk ?? 10;
         setEnemyHP((prev) => Math.max(prev - damage, 0));
         setPlayerTurnPoints((prev) => prev - 1);
       }
-    }
+    }  
 
     function handleAbility() {
       if (ability && turn === 'Player' && playerTurnPoints >= 2 && playerAbilityCooldown === 0) {
         const { damage, healthPoint } = ability;
         if (damage > 0) {
           setEnemyHP((prev) => Math.max(prev - damage, 0));
-        } else if (healthPoint > 0) {
+        }
+        if (healthPoint > 0) {
           setPlayerHP((prev) => Math.min(prev + healthPoint, playerFeyling?.hp || 100));
         }
         setPlayerAbilityCooldown(ability.rechargeTime || 0); // Set cooldown for the ability
@@ -261,30 +271,54 @@ const Game: React.FC = () => {
     function handleNextTurn() {
       if (turn === 'Player') {
         setPlayerTurnPoints((prev) => prev + 3);
-        setEnemyTurnPoints((prev) => prev + 3);
         setTurn('Enemy');
-
+    
         if (playerAbilityCooldown > 0) setPlayerAbilityCooldown((prev) => prev - 1);
+        enemyTurn();
+      }
+    
+      if (turn === 'Enemy') {
+        setEnemyTurnPoints((prev) => prev + 3);
         if (enemyAbilityCooldown > 0) setEnemyAbilityCooldown((prev) => prev - 1);
-
-        setTimeout(enemyTurn, 1000);
       }
     }
-
+    
+    // Function for enemy's turn logic
     function enemyTurn() {
-      if (enemyTurnPoints >= 1 && enemyFeyling) {
-        const damage = Math.floor(Math.random() * (enemyFeyling?.atk || 10)) + 5;
-        setPlayerHP((prev) => Math.max(prev - damage, 0));
-        setEnemyTurnPoints((prev) => prev - 1);
-        setTurn('Player');
-      } else {
-        setTurn('Player');
-      }
+      setEnemyTurnPoints((prev) => {
+        let newEnemyTurnPoints = prev;
+    
+        if (enemyFeyling && newEnemyTurnPoints >= 2 && enemyAbilityCooldown === 0 && ability) {
+          const { damage, healthPoint } = ability;
+          if (damage > 0) {
+            setPlayerHP((prev) => Math.max(prev - damage, 0));
+          }
+          else if (healthPoint > 0) {
+            setEnemyHP((prev) => Math.min(prev + healthPoint, enemyFeyling.hp || 100));
+          }
+          setEnemyAbilityCooldown(ability.rechargeTime || 0);
+          newEnemyTurnPoints -= 2;  // Decrement by 2 for using an ability
+          console.log('Enemy used ability!');
+        }
+        
+        while (newEnemyTurnPoints > 0 && enemyFeyling) {
+          const damage = enemyFeyling.atk;
+          setPlayerHP((prev) => Math.max(prev - damage, 0));
+          newEnemyTurnPoints -= 1;  // Decrement by 1 for attacking
+          console.log('Enemy attacked!');
+          if (newEnemyTurnPoints <= 0) {
+            break;
+          }
+        }
+    
+        console.log('Updated Enemy Turn Points after attack/ability:', newEnemyTurnPoints);
+        return newEnemyTurnPoints;  // Return the updated value to React
+      });
+    
+      console.log('Enemy Turn Points at the start of enemyTurn():', enemyTurnPoints);
     }
 
     async function handleVictory(scene: Phaser.Scene) {
-     
-  
       const userData = JSON.parse(localStorage.getItem('userData') || '{}');
       const userId = userData.sub;
   
@@ -316,7 +350,8 @@ const Game: React.FC = () => {
           victoryText.setAlpha(0);
           navigate('/gamemenu');
       });
-    } 
+    }
+    
     function handleDefeat(scene: Phaser.Scene) {
       // Show defeat text
       const defeatText = scene.add.text(500, 300, 'You Lose!', { fontSize: '32px', color: '#ff0000' }).setOrigin(0.5);
