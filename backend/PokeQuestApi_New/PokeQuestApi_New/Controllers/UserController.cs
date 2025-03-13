@@ -529,37 +529,57 @@ namespace PokeQuestApi_New.Controllers
             return Ok(new { message = "Coin amount updated successfully", newCoinAmount = user.CoinAmount });
         }
 
-        [HttpPatch("{id}")]
-        public async Task<IActionResult> UpdateUserOnVictory(string id, [FromBody] UpdateUserLevelAndCoins updateRequest)
+        [HttpPatch]
+        public async Task<IActionResult> UpdateUserOnVictory([FromBody] UpdateUserLevelAndCoins updateRequest)
         {
-            // Find the user by id
-            var user = await _context.Users.FindAsync(id);
+            // Log the incoming request data
+            Console.WriteLine("-------------");
+            Console.WriteLine($"Received update request: UserLevel = {updateRequest.UserLevel}, UserId = {updateRequest.UserId}");
 
+            var user = await _context.Users.FindAsync(updateRequest.UserId);
             if (user == null)
             {
-                return NotFound(new { message = "User not found" });
+                return NotFound("User not found.");
             }
 
-            // Update only the fields provided in the request
+            // Check if updateRequest.UserLevel has value before updating
             if (updateRequest.UserLevel.HasValue)
             {
-                user.UserLevel = updateRequest.UserLevel.Value;
+                user.UserLevel += updateRequest.UserLevel.Value;
+                Console.WriteLine("-------------");
+                Console.WriteLine($"User Level Updated to: {user.UserLevel}");
             }
-
-            if (updateRequest.CoinAmountDelta.HasValue)
+            else
             {
-                user.CoinAmount += updateRequest.CoinAmountDelta.Value;  // Increment or decrement the CoinAmount
+                Console.WriteLine("UserLevel is null in the request.");
             }
 
-            // Save changes in the database
-            _context.Users.Update(user);
+            if (updateRequest.CoinAmountDelta.HasValue) 
+            {
+                user.CoinAmount += updateRequest.CoinAmountDelta.Value;
+                Console.WriteLine("-------------");
+                Console.WriteLine($"Coin Amount Updated to: {user.CoinAmount}");
+            }
+            else
+            {
+                Console.WriteLine("CoinAmount is null in the request.");
+            }
+
+            // Save changes to the database
             await _context.SaveChangesAsync();
 
-            return Ok(new { message = "User updated successfully", user });
+            // Return the updated user data
+            return Ok(new
+            {
+                userLevel = user.UserLevel,
+                coinAmount = user.CoinAmount
+            });
         }
+
 
         public class UpdateUserLevelAndCoins
         {
+            public string UserId { get; set; }
             public int? UserLevel { get; set; }  // Nullable to indicate it might not be provided
             public int? CoinAmountDelta { get; set; }  // Delta value for coin amount (increment/decrement)
         }

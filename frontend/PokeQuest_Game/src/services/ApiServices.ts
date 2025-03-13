@@ -400,32 +400,22 @@ export const updateCoinAmount = async (userId: string, chestCost: number) => {
   }
 };
 
-export async function updateUserOnVictory(userId: string, newLevel: number, newCoins: number) {
-  const requestBody = {
-    userId: userId,
-    level: newLevel,
-    CoinAmountDelta: newCoins,
-  };
-
-  try {
-    const response = await fetch(`http://localhost:5130/api/User/UpdateUserOnVictory/${userId}`, {
+export const updateUserOnVictory = async (userId: string, newLevel: number, newCoin: number) => {
+  const response = await fetch('http://localhost:5130/api/User/UpdateUserOnVictory', {
       method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(requestBody),
-    });
-    console.log(requestBody)
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+          userId: userId,
+          UserLevel: newLevel,  // Ensure the level is passed here
+          CoinAmount: newCoin
+      }),
+  });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Error updating user:', errorText);  // Log the error body for better visibility
-      return;
-    }
-
-    const updatedUser = await response.json();
-    console.log('User updated successfully:', updatedUser);
-  } catch (error) {
-    console.error('Network error:', error);
+  if (response.ok) {
+      const updatedUser = await response.json();
+      console.log('User updated successfully', updatedUser);
+  } else {
+      console.error('Failed to update user');
   }
-}
+};
+

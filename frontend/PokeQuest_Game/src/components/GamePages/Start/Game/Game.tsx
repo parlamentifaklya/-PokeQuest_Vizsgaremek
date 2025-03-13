@@ -32,7 +32,7 @@ const Game: React.FC = () => {
   const FEYLING_IMAGE_SIZE = 200; // Set the fixed size for all images (adjust this as needed)
   const ABILITY_IMAGE_SIZE = 75;
 
-  const [victoryHandled, setVictoryHandled] = useState<boolean>(false);
+  const victoryHandledRef = useRef<boolean>(false);
 
   // Fetch abilities
   useEffect(() => {
@@ -208,11 +208,13 @@ const Game: React.FC = () => {
       enemyTurnPointsText.setText(`TP: ${enemyTurnPoints}`);
 
       // Check for victory or defeat
-      if (enemyHP <= 0 && !victoryHandled) {
-        setVictoryHandled(true);
+      if (enemyHP <= 0 && !victoryHandledRef.current) {
+        victoryHandledRef.current = true; // Mark victory as handled
         handleVictory(this);
+        return;
       } else if (playerHP <= 0) {
         handleDefeat(this);
+        return;
       }
 
       // The cooldown texts are now updated based on the current state, but not every frame.
@@ -281,55 +283,40 @@ const Game: React.FC = () => {
     }
 
     async function handleVictory(scene: Phaser.Scene) {
-      // Get user data from localStorage
+     
+  
       const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-      
-      // Ensure userId is available and valid
-      const userId = userData.sub;  // Get user ID from localStorage
-    
-      // Log the userId to ensure it's correctly retrieved
+      const userId = userData.sub;
+  
       if (!userId) {
-        console.error('User ID is missing or invalid');
-        return; // Exit early if the userId is not available
+          console.error('User ID is missing or invalid');
+          return;
       }
-    
-      // Log the user data for debugging purposes
-      console.log('User Data:', userData);
-      
-      // Update user data on backend
-      await updateUserOnVictory(
-        userId,
-        1, // Increase the level by 1
-        200 // Add 200 coins
-      );
-    
-      // Update localStorage
+  
+      await updateUserOnVictory(userId, 1, 200);
+  
+      // Update localStorage only once after victory
       userData['CoinAmount'] = (parseInt(userData['CoinAmount'] || '0') + 200).toString();
       userData['User Level'] = (parseInt(userData['User Level'] || '1') + 1).toString();
       localStorage.setItem('userData', JSON.stringify(userData));
-    
-      // Show victory text
+  
       const victoryText = scene.add.text(500, 300, 'You Win!', { fontSize: '32px', color: '#00ff00' }).setOrigin(0.5);
-      victoryText.setAlpha(1);
       scene.tweens.add({
-        targets: victoryText,
-        alpha: 0,
-        duration: 1000,
-        ease: 'Linear',
-        onComplete: () => {
-          victoryText.destroy();
-          navigate('/gamemenu');
-        },
+          targets: victoryText,
+          alpha: 0,
+          duration: 1000,
+          ease: 'Linear',
+          onComplete: () => {
+              victoryText.destroy();
+              navigate('/gamemenu');
+          },
       });
-    
-      // Delay and fade out the victory text, then navigate
+  
       scene.time.delayedCall(2000, () => {
-        victoryText.setAlpha(0);
-        navigate('/gamemenu');
+          victoryText.setAlpha(0);
+          navigate('/gamemenu');
       });
-    }
-    
-    
+    } 
     function handleDefeat(scene: Phaser.Scene) {
       // Show defeat text
       const defeatText = scene.add.text(500, 300, 'You Lose!', { fontSize: '32px', color: '#ff0000' }).setOrigin(0.5);

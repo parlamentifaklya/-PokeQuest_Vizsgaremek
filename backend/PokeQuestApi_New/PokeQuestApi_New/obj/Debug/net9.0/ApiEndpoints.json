@@ -912,16 +912,11 @@
   {
     "ContainingType": "PokeQuestApi_New.Controllers.UserController",
     "Method": "UpdateUserOnVictory",
-    "RelativePath": "api/User/UpdateUserOnVictory/{id}",
+    "RelativePath": "api/User/UpdateUserOnVictory",
     "HttpMethod": "PATCH",
     "IsController": true,
     "Order": 0,
     "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.String",
-        "IsRequired": true
-      },
       {
         "Name": "updateRequest",
         "Type": "PokeQuestApi_New.Controllers.UserController\u002BUpdateUserLevelAndCoins",

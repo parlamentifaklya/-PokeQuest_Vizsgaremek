@@ -1411,20 +1411,10 @@
         }
       }
     },
-    "/api/User/UpdateUserOnVictory/{id}": {
+    "/api/User/UpdateUserOnVictory": {
       "patch": {
         "tags": [
           "User"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
         ],
         "requestBody": {
           "content": {
@@ -1767,6 +1757,10 @@
       "UpdateUserLevelAndCoins": {
         "type": "object",
         "properties": {
+          "userId": {
+            "type": "string",
+            "nullable": true
+          },
           "userLevel": {
             "type": "integer",
             "format": "int32",
