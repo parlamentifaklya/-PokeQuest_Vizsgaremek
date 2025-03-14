@@ -248,7 +248,6 @@ const Game: React.FC = () => {
         enemyAbilityCooldownText.setText('Ready');
       }
     }
-    
 
     function handleAttack() {
       if (turn === 'Player' && playerTurnPoints >= 1) {
@@ -298,14 +297,18 @@ const Game: React.FC = () => {
     
     function handleNextTurn() {
       if (turn === 'Player') {
-        setPlayerTurnPoints((prev) => prev + 3);
-        setTurn('Enemy');
+        setPlayerTurnPoints((prev) => prev + 3);  // Reset player turn points
+        setTurn('Enemy');  // Switch to Enemy turn
+        
+        // Update player ability cooldown
         if (playerAbilityCooldown > 0) setPlayerAbilityCooldown((prev) => prev - 1);
+    
+        // Ensure enemy takes their turn only once
         enemyTurn();
       }
       
       if (turn === 'Enemy') {
-        setEnemyTurnPoints((prev) => prev + 3);
+        setEnemyTurnPoints((prev) => prev + 3);  // Reset enemy turn points
         if (enemyAbilityCooldown > 0) setEnemyAbilityCooldown((prev) => prev - 1);
       }
     }
@@ -355,6 +358,7 @@ const Game: React.FC = () => {
         return;
       }
     
+      // Handle victory logic
       await updateUserOnVictory(userId, 1, 200);
     
       // Update localStorage only once after victory
@@ -362,21 +366,21 @@ const Game: React.FC = () => {
       userData['User Level'] = (parseInt(userData['User Level'] || '1') + 1).toString();
       localStorage.setItem('userData', JSON.stringify(userData));
     
+      // Show victory text
       const victoryText = scene.add.text(500, 300, 'You Win!', { fontSize: '32px', color: '#00ff00' }).setOrigin(0.5);
-      scene.tweens.add({
-        targets: victoryText,
-        alpha: 0,
-        duration: 1000,
-        ease: 'Linear',
-        onComplete: () => {
-          victoryText.destroy();
-          navigate('/gamemenu');
-        },
-      });
     
-      scene.time.delayedCall(2000, () => {
-        victoryText.setAlpha(0);
-        navigate('/gamemenu');
+      // Add a delay before fading the text out and navigating
+      scene.time.delayedCall(1000, () => {
+        scene.tweens.add({
+          targets: victoryText,
+          alpha: 0,
+          duration: 1000,
+          ease: 'Linear',
+          onComplete: () => {
+            victoryText.destroy();
+            navigate('/gamemenu');
+          },
+        });
       });
     }
     

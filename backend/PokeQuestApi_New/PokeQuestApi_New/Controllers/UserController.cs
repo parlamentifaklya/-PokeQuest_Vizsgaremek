@@ -67,20 +67,64 @@ namespace PokeQuestApi_New.Controllers
                 await _context.UserInventories.AddAsync(userInventory);
                 await _context.SaveChangesAsync();
 
-                // Ensure that default Feyling and Item records exist in the database
-                var defaultFeylingIds = new List<int> { 3, 4, 5 };
-                var defaultItemIds = new List<int> { 45, 46, 47 };
+                // Generate random starter Feylings and Items (ensuring no duplicates)
+                var random = new Random();
+                var feylingIds = Enumerable.Range(3, 30).ToList(); // Feyling IDs from 3 to 32 (inclusive)
+                var itemIds = Enumerable.Range(45, 22).ToList(); // Item IDs from 45 to 66 (inclusive)
 
-                var feylingExists = await _context.Feylings.AnyAsync(f => defaultFeylingIds.Contains(f.Id));
-                var itemExists = await _context.Items.AnyAsync(i => defaultItemIds.Contains(i.Id));
+                var selectedFeylings = new List<int>();
+                var selectedItems = new List<int>();
 
-                if (!feylingExists || !itemExists)
+                // Randomly pick 3 unique feyling IDs
+                try
                 {
-                    return BadRequest(new { Message = "Some Feyling or Item records are missing." });
+                    for (int i = 0; i < 3; i++)
+                    {
+                        int randomIndex = random.Next(feylingIds.Count);
+                        selectedFeylings.Add(feylingIds[randomIndex]);
+                        feylingIds.RemoveAt(randomIndex); // Remove the selected feyling ID to avoid duplicates
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest(new { Message = "Error while selecting Feylings.", Details = ex.Message });
                 }
 
-                // Assign the default Feylings to the user's inventory
-                foreach (var feylingId in defaultFeylingIds)
+                // Randomly pick 3 unique item IDs
+                try
+                {
+                    for (int i = 0; i < 3; i++)
+                    {
+                        int randomIndex = random.Next(itemIds.Count);
+                        selectedItems.Add(itemIds[randomIndex]);
+                        itemIds.RemoveAt(randomIndex); // Remove the selected item ID to avoid duplicates
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest(new { Message = "Error while selecting Items.", Details = ex.Message });
+                }
+
+                // Check if the selected feylings and items exist in the database
+                var missingFeylings = await _context.Feylings
+                    .Where(f => selectedFeylings.Contains(f.Id))
+                    .ToListAsync();
+                var missingItems = await _context.Items
+                    .Where(i => selectedItems.Contains(i.Id))
+                    .ToListAsync();
+
+                if (missingFeylings.Count != selectedFeylings.Count)
+                {
+                    return BadRequest(new { Message = "Some selected Feylings are missing in the database." });
+                }
+
+                if (missingItems.Count != selectedItems.Count)
+                {
+                    return BadRequest(new { Message = "Some selected Items are missing in the database." });
+                }
+
+                // Assign the selected Feylings to the user's inventory
+                foreach (var feylingId in selectedFeylings)
                 {
                     var ownedFeyling = new OwnedFeyling
                     {
@@ -91,8 +135,8 @@ namespace PokeQuestApi_New.Controllers
                 }
                 await _context.SaveChangesAsync();
 
-                // Assign the default Items to the user's inventory
-                foreach (var itemId in defaultItemIds)
+                // Assign the selected Items to the user's inventory
+                foreach (var itemId in selectedItems)
                 {
                     var ownedItem = new OwnedItem
                     {
@@ -108,8 +152,7 @@ namespace PokeQuestApi_New.Controllers
                 return Ok(new { Message = "User registered successfully!" });
             }
 
-            // Return error if the user could not be created
-            return BadRequest(result.Errors);
+            return BadRequest(new { Message = "User registration failed." });
         }
 
         // Login method to authenticate user and generate JWT token
@@ -123,13 +166,13 @@ namespace PokeQuestApi_New.Controllers
                 var userRoles = await _userManager.GetRolesAsync(user);
 
                 var authClaims = new List<Claim>
-        {
-            new Claim(JwtRegisteredClaimNames.Sub, user.Id), // Include UserId in the token
-            new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new Claim("User Level", user.UserLevel.ToString()),
-            new Claim("CoinAmount", user.CoinAmount.ToString()),
-        };
+                {
+                    new Claim(JwtRegisteredClaimNames.Sub, user.Id), // Include UserId in the token
+                    new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim("User Level", user.UserLevel.ToString()),
+                    new Claim("CoinAmount", user.CoinAmount.ToString()),
+                };
 
                 foreach (var role in userRoles)
                 {
