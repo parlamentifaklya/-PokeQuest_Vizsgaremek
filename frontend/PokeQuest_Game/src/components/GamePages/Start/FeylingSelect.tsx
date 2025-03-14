@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useFeyling } from '../../../context/FeylingContext';
 import { FeylingsFromLocalStorage } from '../../../types/FeylingLocalStorage'; // Import the type
@@ -11,19 +11,22 @@ const FeylingSelect = () => {
   const [warning, setWarning] = useState('');
   const { ownedFeylings, setSelectedFeyling: setContextFeyling } = useFeyling();
   const navigate = useNavigate();
+
   const BASE_URL = "http://localhost:5130/api/";
 
-  localStorage.setItem('hasReloaded', 'false');
-
   useEffect(() => {
-    // Check if we have previously reloaded the page by checking sessionStorage
-    const hasReloaded = localStorage.getItem('hasReloaded');
+    // Check if it's the first visit (using localStorage for multiple users)
+    const hasVisited = localStorage.getItem('hasVisited');
 
-    if (!hasReloaded) {
-      localStorage.setItem('hasReloaded', 'true'); // Set reload flag in sessionStorage
-      window.location.reload(); // Trigger reload
+    if (!hasVisited) {
+      // If not visited, reload the page once
+      console.log('First visit in this session, reloading the page...');
+      localStorage.setItem('hasVisited', 'true');  // Set flag to prevent further reloads
+      window.location.reload();  // Reload the page
+    } else {
+      console.log('Page already visited in this session, no reload needed.');
     }
-  }, []);
+  }, []);  // Runs only once when the component is mounted
 
   const handleFeylingSelect = (feyling: FeylingsFromLocalStorage) => {
     setSelectedFeyling(feyling);
@@ -36,16 +39,15 @@ const FeylingSelect = () => {
       return;
     }
 
-    // Set the selected Feyling to context and navigate
     setContextFeyling(selectedFeyling);
     navigate('/game');
   };
 
   return (
     <div className={styles.container}>
-      <Header/>
+      <Header />
       <h2 className={styles.title}>Select Your Feyling</h2>
-      
+
       <div className={styles.section}>
         <div className={styles.feylingList}>
           {ownedFeylings.length === 0 ? (
@@ -53,7 +55,7 @@ const FeylingSelect = () => {
           ) : (
             ownedFeylings.map((feyling) => (
               <div
-                key={feyling.feylingId}  // Use a unique key for each feyling
+                key={feyling.feylingId}
                 className={`${styles.feylingItem} ${selectedFeyling?.feylingId === feyling.feylingId ? styles.selected : ''}`}
                 onClick={() => handleFeylingSelect(feyling)}
               >
@@ -72,7 +74,7 @@ const FeylingSelect = () => {
       {warning && <p className={styles.warning}>{warning}</p>}
 
       <div className={styles.buttonHolder}>
-        <Button style={{ marginTop: "1vh" }} route="/gamemenu" text="Back" />
+        <Button style={{ marginTop: '1vh' }} route="/gamemenu" text="Back" />
         <Button text="Start Game" route="/game" onClick={startGame} />
       </div>
     </div>

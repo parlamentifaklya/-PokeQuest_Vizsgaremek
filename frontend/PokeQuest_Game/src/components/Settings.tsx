@@ -38,7 +38,7 @@ const Settings: React.FC = () => {
     // Remove user data from localStorage to log the user out
     localStorage.removeItem('userData');
     localStorage.removeItem('userInventory');
-    
+    localStorage.removeItem('hasVisited');
     // Navigate to the welcome window
     navigate('/login');
   };
