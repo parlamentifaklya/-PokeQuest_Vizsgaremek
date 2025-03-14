@@ -22,6 +22,7 @@ const Tutorial = () => {
       <Header></Header>
       {/* Card Holder */}
       <div className={styles.cardHolder}>
+        
         {cardData.map((card) => (
           <div 
             key={card} 
@@ -32,7 +33,9 @@ const Tutorial = () => {
             
             {card}
           </div>
+          
         ))}
+        <Button route='/gamemenu' text='Back'></Button>
       </div>
       
 
