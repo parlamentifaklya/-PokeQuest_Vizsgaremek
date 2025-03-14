@@ -20,6 +20,7 @@ const Tutorial = () => {
     <div className={styles.container}>
       <Header/>
       <div className={styles.cardHolder}>
+        
         {cardData.map((card) => (
           <div 
             key={card} 
@@ -28,7 +29,9 @@ const Tutorial = () => {
           > 
           {card}
           </div>
+          
         ))}
+        <Button route='/gamemenu' text='Back'></Button>
       </div>
       
       {/* Overlay */}
