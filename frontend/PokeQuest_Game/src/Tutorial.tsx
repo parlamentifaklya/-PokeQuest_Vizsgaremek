@@ -18,24 +18,19 @@ const Tutorial = () => {
 
   return (
     <div className={styles.container}>
-      
-      <Header></Header>
-      {/* Card Holder */}
+      <Header/>
       <div className={styles.cardHolder}>
         {cardData.map((card) => (
           <div 
             key={card} 
             className={styles.card} 
-            onClick={() => setSelectedCard(card)}
-            
-          >
-            
-            {card}
+            onClick={() => setSelectedCard(card)} 
+          > 
+          {card}
           </div>
         ))}
       </div>
       
-
       {/* Overlay */}
       {selectedCard && (
         <div className={styles.overlay} onClick={() => setSelectedCard(null)}>
@@ -46,9 +41,7 @@ const Tutorial = () => {
           </div>
         </div>
       )}
-      
     </div>
-    
   );
 };
 
