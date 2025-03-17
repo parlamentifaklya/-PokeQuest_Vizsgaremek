@@ -577,7 +577,7 @@ namespace PokeQuestApi_New.Controllers
         {
             // Log the incoming request data
             Console.WriteLine("-------------");
-            Console.WriteLine($"Received update request: UserLevel = {updateRequest.UserLevel}, UserId = {updateRequest.UserId}, Coins: {updateRequest.CoinAmountDelta}");
+            Console.WriteLine($"Received update request: UserLevel = {updateRequest.UserLevel}, UserId = {updateRequest.UserId}, Coins: {updateRequest.CoinAmountDelta.Value}");
 
             var user = await _context.Users.FindAsync(updateRequest.UserId);
             if (user == null)
