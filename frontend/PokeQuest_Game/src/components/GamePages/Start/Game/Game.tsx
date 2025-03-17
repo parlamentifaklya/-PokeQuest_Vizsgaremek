@@ -8,7 +8,6 @@ import { Ability } from '../../../../types/Ability';
 import { useNavigate } from 'react-router-dom';
 import { updateUserOnVictory } from '../../../../services/ApiServices'; // Import the updateUserOnVictory function
 import Header from '../../../../modules/Header';
-import { div } from 'framer-motion/client';
 
 const Game: React.FC = () => {
   const gameRef = useRef<HTMLDivElement | null>(null);
@@ -18,7 +17,7 @@ const Game: React.FC = () => {
   const [turn, setTurn] = useState<'Player' | 'Enemy'>('Player');
   const [playerHP, setPlayerHP] = useState<number>(selectedFeyling?.feylingHp ?? 100);
   const [enemyHP, setEnemyHP] = useState<number>(100);
-  const [playerTurnPoints, setPlayerTurnPoints] = useState<number>(3);
+  const [playerTurnPoints, setPlayerTurnPoints] = useState<number>(4);
   const [enemyTurnPoints, setEnemyTurnPoints] = useState<number>(3);
   const [enemyFeyling, setEnemyFeyling] = useState<Feyling | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -35,6 +34,9 @@ const Game: React.FC = () => {
   const ABILITY_IMAGE_SIZE = 75;
 
   const victoryHandledRef = useRef<boolean>(false);
+
+  const isCleanupNeeded = useRef<boolean>(false);
+  
 
   // Fetch abilities
   useEffect(() => {
@@ -58,6 +60,8 @@ const Game: React.FC = () => {
           const foundPlayerFeyling = data.find((feyling) => feyling.id === selectedFeyling?.feylingId);
           if (foundPlayerFeyling) {
             setPlayerFeyling(foundPlayerFeyling);
+            setPlayerHP(foundPlayerFeyling.hp)
+            console.log(foundPlayerFeyling)
           }
 
           const randomIndex = Math.floor(Math.random() * data.length);
@@ -221,7 +225,7 @@ const Game: React.FC = () => {
 
       // Check for victory or defeat
       if (enemyHP <= 0 && !victoryHandledRef.current) {
-        victoryHandledRef.current = true; // Mark victory as handled
+        victoryHandledRef.current = true;
         handleVictory(this);
         return;
       } else if (playerHP <= 0) {
@@ -254,31 +258,13 @@ const Game: React.FC = () => {
         let damage = playerFeyling?.atk ?? 10;
         setEnemyHP((prev) => {
           const newHP = Math.max(prev - damage, 0);
-          
-          // Check for victory here and trigger the victory handler
-          if (newHP <= 0 && !victoryHandledRef.current) {
-            victoryHandledRef.current = true; // Mark victory as handled
-    
-            // Ensure gameInstance.current is not undefined before accessing its scene
-            if (gameInstance.current) {
-              const currentScene = gameInstance.current.scene.getScene('MainScene'); // Change 'MainScene' to the name of your scene
-              if (currentScene) {
-                console.log("Victory triggered. Handling victory...");
-                handleVictory(currentScene);  // Trigger victory
-                // Directly call navigate here without delay for testing
-                console.log("Navigating to /gamemenu...");
-                navigate('/gamemenu');
-              }
-            }
-          }
-        
           return newHP;
         });
         
         setPlayerTurnPoints((prev) => prev - 1);
       }
     }
-    
+
     function handleAbility() {
       if (ability && turn === 'Player' && playerTurnPoints >= 2 && playerAbilityCooldown === 0) {
         const { damage, healthPoint } = ability;
@@ -297,7 +283,7 @@ const Game: React.FC = () => {
     
     function handleNextTurn() {
       if (turn === 'Player') {
-        setPlayerTurnPoints((prev) => prev + 3);  // Reset player turn points
+        setPlayerTurnPoints((prev) => prev + 4);  // Reset player turn points
         setTurn('Enemy');  // Switch to Enemy turn
         
         // Update player ability cooldown
@@ -348,43 +334,52 @@ const Game: React.FC = () => {
       console.log('Enemy Turn Points at the start of enemyTurn():', enemyTurnPoints);
     }
     
-
     async function handleVictory(scene: Phaser.Scene) {
+      if (!scene || !scene.sys.isActive()) {
+        console.error('Scene is not active. Cannot display victory text.');
+        return;
+      }
+    
+      console.log('victory called');
+
       const userData = JSON.parse(localStorage.getItem('userData') || '{}');
       const userId = userData.sub;
-    
+
       if (!userId) {
         console.error('User ID is missing or invalid');
         return;
       }
-    
-      // Handle victory logic
-      await updateUserOnVictory(userId, 1, 200);
-    
-      // Update localStorage only once after victory
+
       userData['CoinAmount'] = (parseInt(userData['CoinAmount'] || '0') + 200).toString();
       userData['User Level'] = (parseInt(userData['User Level'] || '1') + 1).toString();
       localStorage.setItem('userData', JSON.stringify(userData));
-    
-      // Show victory text
+
       const victoryText = scene.add.text(500, 300, 'You Win!', { fontSize: '32px', color: '#00ff00' }).setOrigin(0.5);
+      await updateUserOnVictory(userId, 1, 200);
+
+      console.log(victoryText);
+      scene.tweens.add({
+        targets: victoryText,
+        alpha: 0,
+        duration: 1000,
+        ease: 'Linear',
+        onComplete: () => {
+          victoryText.destroy(); // Clean up the text after fade-out
+          isCleanupNeeded.current = true; // Flag for cleanup
+          console.log("Navigating to /gamemenu..."); // Debug log
+          navigate('/gamemenu'); // Navigate to the next screen
+        },
+      });
     
-      // Add a delay before fading the text out and navigating
-      scene.time.delayedCall(1000, () => {
-        scene.tweens.add({
-          targets: victoryText,
-          alpha: 0,
-          duration: 1000,
-          ease: 'Linear',
-          onComplete: () => {
-            victoryText.destroy();
-            navigate('/gamemenu');
-          },
-        });
+      // This delayed call can also be used for cleanup if needed
+      scene.time.delayedCall(2000, () => {
+        victoryText.setAlpha(0);
+        isCleanupNeeded.current = true;
+        console.log("Navigating to /gamemenu..."); // Debug log
+        navigate('/gamemenu');
       });
     }
-    
-    
+
     function handleDefeat(scene: Phaser.Scene) {
       // Show defeat text
       const defeatText = scene.add.text(500, 300, 'You Lose!', { fontSize: '32px', color: '#ff0000' }).setOrigin(0.5);
@@ -396,6 +391,7 @@ const Game: React.FC = () => {
         ease: 'Linear',
         onComplete: () => {
           defeatText.destroy();
+          isCleanupNeeded.current = true;
           navigate('/gamemenu');
         },
       });
@@ -403,6 +399,7 @@ const Game: React.FC = () => {
       // Delay and fade out the defeat text, then navigate
       scene.time.delayedCall(2000, () => {
         defeatText.setAlpha(0);
+        isCleanupNeeded.current = true;
         navigate('/gamemenu');
       });
     }
@@ -419,10 +416,17 @@ const Game: React.FC = () => {
       setTooltipText('');
     }
 
+    if (isCleanupNeeded.current) {
+      gameInstance.current?.destroy(true);
+      gameInstance.current = null;
+      isCleanupNeeded.current = false; // Reset cleanup flag
+    }
+
     return () => {
       gameInstance.current?.destroy(true);
       gameInstance.current = null;
-    };
+      isCleanupNeeded.current = false; // Reset cleanup flag
+    }
   }, [turn, enemyHP, playerHP, playerFeyling, enemyFeyling, playerTurnPoints, enemyTurnPoints, tooltipText, tooltipPosition, playerAbilityCooldown, enemyAbilityCooldown]);
 
   if (loading) {

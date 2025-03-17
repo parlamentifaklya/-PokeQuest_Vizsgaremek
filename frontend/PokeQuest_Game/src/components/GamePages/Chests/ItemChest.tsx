@@ -8,7 +8,6 @@ import Header from "../../../modules/Header";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from "react-router-dom"; // Importing the navigate hook
-import { text } from "framer-motion/client";
 
 // Randomly select an item color (representing rarity)
 const getItemColor = (rarity: number) => {

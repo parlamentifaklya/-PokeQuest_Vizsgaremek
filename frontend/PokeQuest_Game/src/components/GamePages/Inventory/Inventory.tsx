@@ -14,23 +14,28 @@ const Inventory: React.FC = () => {
 
   const baseUrl = 'http://localhost:5130/api/'; 
 
-  const transformFeyling = (feylingData: any): Feyling => ({
-    id: feylingData.id,
-    name: feylingData.feylingName,
-    description: feylingData.feylingDescription,
-    img: feylingData.feylingImg.startsWith('http') 
-      ? feylingData.feylingImg
-      : `${baseUrl}${feylingData.feylingImg.replace('\\', '/')}`,
-    typeId: feylingData.feylingType,
-    abilityId: feylingData.feylingAbility,
-    isUnlocked: feylingData.feylingIsUnlocked,
-    hp: feylingData.feylingHp,
-    atk: feylingData.feylingAtk,
-    itemId: feylingData.feylingItem,
-    weakAgainstId: feylingData.feylingWeakAgainst,
-    strongAgainstId: feylingData.feylingStrongAgainst,
-    sellPrice: feylingData.feylingSellPrice,
-  });
+  const transformFeyling = (feylingData: any): Feyling => {
+    const feylingImg = feylingData.feylingImg || ''; // Default to an empty string if undefined or null
+  
+    return {
+      id: feylingData.id,
+      name: feylingData.feylingName,
+      description: feylingData.feylingDescription,
+      img: feylingImg.startsWith('http') 
+        ? feylingImg
+        : `${baseUrl}${feylingImg.replace('\\', '/')}`,
+      typeId: feylingData.feylingType,
+      abilityId: feylingData.feylingAbility,
+      isUnlocked: feylingData.feylingIsUnlocked,
+      hp: feylingData.feylingHp,
+      atk: feylingData.feylingAtk,
+      itemId: feylingData.feylingItem,
+      weakAgainstId: feylingData.feylingWeakAgainst,
+      strongAgainstId: feylingData.feylingStrongAgainst,
+      sellPrice: feylingData.feylingSellPrice,
+    };
+  };
+  
 
   const transformItem = (itemData: any): Item => ({
     id: itemData.itemId,

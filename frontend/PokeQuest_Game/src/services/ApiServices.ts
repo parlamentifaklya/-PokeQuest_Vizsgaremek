@@ -314,37 +314,28 @@ export const addItemToInventoryAndUpdateStorage = async (itemId: number, amount:
   }
 };
 
-export const addFeylingToInventory = async (userId: string, feylingId: number): Promise<User> => {
-  const apiBaseUrl = "http://localhost:5130"; 
+export const addFeylingToInventory = async (userId: string, feylingId: number) => {
   try {
-    // Send the POST request to your API endpoint
-    const response = await fetch(`${apiBaseUrl}/api/User/AddFeylingToInventory`, {
+    const response = await fetch(`http://localhost:5130/api/User/AddFeylingToInventory`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        UserId: userId,
-        FeylingId: feylingId,
+        userId: userId,
+        feylingId: feylingId,
       }),
     });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error("API Error Details: ", errorData);
-      throw new Error(`API Error (AddFeylingToInventory): ${errorData.title || 'Unknown error'}`);
-    }
-
-    // Return the updated User data from the API if successful
-    return await response.json(); // The response will return the updated User object
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error("Caught Error:", error.message);
-      throw new Error(`Error in addFeylingToInventory: ${error.message}`);
+    if (response.ok) {
+      const result = await response.json();
+      console.log("Backend response:", result);
+      return result;
     } else {
-      console.error("An unexpected error occurred:", error);
-      throw new Error('An unexpected error occurred while adding Feyling to inventory');
+      console.error("Error adding feyling to inventory:", response.status);
     }
+  } catch (error) {
+    console.error("Failed to add feyling to inventory:", error);
   }
 };
 
@@ -407,7 +398,7 @@ export const updateUserOnVictory = async (userId: string, newLevel: number, newC
       body: JSON.stringify({
           userId: userId,
           UserLevel: newLevel,  // Ensure the level is passed here
-          CoinAmount: newCoin
+          CoinAmountDelta: newCoin
       }),
   });
 
