@@ -139,6 +139,8 @@ const Summon: React.FC = () => {
   
           // Show toast notification
           toast.success(`You have received a ${selectedFeyling.name}!`, {
+            autoClose: 2000,
+            hideProgressBar: false,
             onClose: handleToastClose, // Add toast close handler
           });
         }, 2000); // Adjust timing to match the scroll duration

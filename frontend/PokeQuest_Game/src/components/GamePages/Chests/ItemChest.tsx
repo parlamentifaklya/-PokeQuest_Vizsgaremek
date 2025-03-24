@@ -128,7 +128,7 @@ const ItemChest: React.FC = () => {
 
         // Display the toast message with auto close and progress bar
         toast.success(`You received a ${selectedItem.name}!`, {
-          autoClose: 3000, // Auto close after 3 seconds
+          autoClose: 2000, // Auto close after 3 seconds
           hideProgressBar: false, // Show the progress bar
           onClose: () => {
             // Once the toast closes, redirect to /gamemenu
