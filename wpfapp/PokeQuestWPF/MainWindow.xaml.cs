@@ -105,7 +105,7 @@ namespace PokeQuestWPF
             int abilityCooldown1 = 0;  // Cooldown for Feyling 1's ability
             int abilityCooldown2 = 0;  // Cooldown for Feyling 2's ability
 
-            int turn = 1;
+            int turn = 1;  // Initial turn
 
             // Show the initial battle status
             MessageBox.Show($"Battle started! Feyling 1 HP: {feyling1Hp}, Feyling 2 HP: {feyling2Hp}");
@@ -113,10 +113,10 @@ namespace PokeQuestWPF
             // Battle loop - Continue until one Feyling's HP reaches 0 or lower
             while (feyling1Hp > 0 && feyling2Hp > 0)
             {
-                // If it is Feyling 1's turn
+                // Handle Feyling 1's turn (odd turns)
                 if (turn % 2 == 1)
                 {
-                    // Feyling 1 uses its ability first if enough turnpoints are available
+                    // Feyling 1 uses its ability first if enough turnpoints are available and the ability is ready
                     if (turnpoints1 >= 2 && abilityCooldown1 == 0 && ability1 != null)
                     {
                         turnpoints1 -= 2;  // Use 2 turnpoints for the ability
@@ -134,9 +134,9 @@ namespace PokeQuestWPF
                         MessageBox.Show($"Feyling 1 attacks: {feyling1.Atk} damage, HP1: {feyling1Hp}, HP2: {feyling2Hp}");
                     }
                 }
-                else  // It's Feyling 2's turn
+                else  // Handle Feyling 2's turn (even turns)
                 {
-                    // Feyling 2 uses its ability first if enough turnpoints are available
+                    // Feyling 2 uses its ability first if enough turnpoints are available and the ability is ready
                     if (turnpoints2 >= 2 && abilityCooldown2 == 0 && ability2 != null)
                     {
                         turnpoints2 -= 2;  // Use 2 turnpoints for the ability
@@ -171,10 +171,18 @@ namespace PokeQuestWPF
 
                 // Increment turn count for the next round
                 turn++;
+
+                // After a complete turn (when all turnpoints are used), reset the turnpoints for the next Feyling
+                if (turn % 2 == 0)  // Feyling 1's turn is done, now reset Feyling 1's turnpoints
+                {
+                    turnpoints1 = 4;  // Reset Feyling 1's turnpoints to initial value
+                    turnpoints2 = 3;  // Reset Feyling 2's turnpoints to initial value
+                }
             }
 
             return "Battle ended with no winner.";
         }
+
 
 
 
