@@ -8,6 +8,7 @@ import { Ability } from '../../../../types/Ability';
 import { useNavigate } from 'react-router-dom';
 import { updateUserOnVictory } from '../../../../services/ApiServices'; // Import the updateUserOnVictory function
 import Header from '../../../../modules/Header';
+import {toast, ToastContainer} from 'react-toastify';
 
 const Game: React.FC = () => {
   const gameRef = useRef<HTMLDivElement | null>(null);
@@ -36,6 +37,8 @@ const Game: React.FC = () => {
   const [enemyDamageTextColor, setEnemyDamageTextColor] = useState<string>('');
   const [playerDamageTextVisible, setPlayerDamageTextVisible] = useState<boolean>(false);
   const [enemyDamageTextVisible, setEnemyDamageTextVisible] = useState<boolean>(false);
+
+  const toastRef = useRef<boolean>(false);
 
 
   const FEYLING_IMAGE_SIZE = 200; // Set the fixed size for all images (adjust this as needed)
@@ -449,52 +452,72 @@ const Game: React.FC = () => {
       localStorage.setItem('userData', JSON.stringify(userData));
 
       const victoryText = scene.add.text(500, 300, 'You Win!', { fontSize: '32px', color: '#00ff00' }).setOrigin(0.5);
+
+      toast.success('You Win! +1 level +200 gem 🎉', {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+        onClose: () => {
+          console.log("Navigating to /gamemenu...");
+          navigate('/gamemenu'); 
+        }
+      });
+
       await updateUserOnVictory(userId, 1, 200);
 
       console.log(victoryText);
       scene.tweens.add({
         targets: victoryText,
         alpha: 0,
-        duration: 1000,
+        duration: 3000,
         ease: 'Linear',
         onComplete: () => {
           victoryText.destroy(); // Clean up the text after fade-out
           isCleanupNeeded.current = true; // Flag for cleanup
-          console.log("Navigating to /gamemenu..."); // Debug log
-          navigate('/gamemenu'); // Navigate to the next screen
         },
       });
     
       // This delayed call can also be used for cleanup if needed
-      scene.time.delayedCall(2000, () => {
+      scene.time.delayedCall(3000, () => {
         victoryText.setAlpha(0);
         isCleanupNeeded.current = true;
-        console.log("Navigating to /gamemenu..."); // Debug log
-        navigate('/gamemenu');
       });
     }
 
     function handleDefeat(scene: Phaser.Scene) {
-      // Show defeat text
       const defeatText = scene.add.text(500, 300, 'You Lose!', { fontSize: '32px', color: '#ff0000' }).setOrigin(0.5);
+
+      if (toastRef.current) {
+        return;
+      }
+      toastRef.current = true;
+
+      toast.error('You Lose!', {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+        onClose: () => {
+          console.log("Navigating to /gamemenu...");
+          navigate('/gamemenu');
+        }
+      });
+
       defeatText.setAlpha(1);
       scene.tweens.add({
         targets: defeatText,
         alpha: 0,
-        duration: 1000,
+        duration: 3000,
         ease: 'Linear',
         onComplete: () => {
           defeatText.destroy();
           isCleanupNeeded.current = true;
-          navigate('/gamemenu');
         },
       });
     
       // Delay and fade out the defeat text, then navigate
-      scene.time.delayedCall(2000, () => {
+      scene.time.delayedCall(3000, () => {
         defeatText.setAlpha(0);
         isCleanupNeeded.current = true;
-        navigate('/gamemenu');
       });
     }
 
@@ -531,6 +554,7 @@ const Game: React.FC = () => {
     <>
       <Header/>
       <div className={styles.gameWrapper} ref={gameRef}/>
+      <ToastContainer/>
     </>
   );
 };
