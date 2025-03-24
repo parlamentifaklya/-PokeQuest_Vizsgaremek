@@ -2,6 +2,7 @@
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace PokeQuestWPF
 {
@@ -24,9 +25,10 @@ namespace PokeQuestWPF
 
         public async Task<Ability> GetAbilityByIdAsync(int id)
         {
-            var response = await _httpClient.GetAsync($"api/Abilities/GetAbility/{id}");
+            var response = await _httpClient.GetAsync($"api/Ability/GetAbility/{id}");
             if (!response.IsSuccessStatusCode)
             {
+                MessageBox.Show($"Failed to fetch ability with ID {id}.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return null;
             }
 
@@ -37,5 +39,6 @@ namespace PokeQuestWPF
             }
             return ability;
         }
+
     }
 }
