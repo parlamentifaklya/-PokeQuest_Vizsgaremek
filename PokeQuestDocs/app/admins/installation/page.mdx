@@ -1,0 +1,45 @@
+# Telepítés
+
+## Elsődleges lépések
+
+Kettő dolgot kell kötelezően letölteni a program működéséhez:
+
+- [Git](https://git-scm.com/downloads): Ez kell a repository klónozásához.
+- [.NET 9.0](https://download.visualstudio.microsoft.com/download/pr/b0032fde-aac9-4c3e-b78c-4bd605910241/8d2aa21baac4aef9b996671cd8a48fb2/dotnet-sdk-9.0.202-win-x64.exe):
+ Ebben a .NET verzióban lett írva az admin felület ezért kell ez a kifejezett verzió a futtatáshoz.
+
+## Ha meg vannak az Elsődleges lépések
+
+1. Nyiss meg egy parancssort (cmd-t)
+
+2. Klónozd le a repot a következő parancshasználatával
+```
+git clone https://github.com/Ordinary56/Findgroup.gg.git
+```
+3. Nyisd meg a klónozott mappát. Vagy manuálisan fájl kezelőből, vagy parancssorban a következő paranccsal:
+```
+cd <A mappa neve amibe lépni szeretnél>
+```
+
+4. Amikor bent vagy a Findgroup.gg mappában akkor `WPF` mappában lesz a `WPF.sln` fájl.
+
+>[!NOTE]
+>
+> A most következő a parancsot is parancssorban kell kiadni a WPF mappában , vagyis nyiss meg egy parancssort a mappában ha fájlkezelőből nyitottad meg a mappát.
+
+### Elindítás 
+
+1. Migráld az adatbázist .
+```
+dotnet tool install --global dotnet-ef
+dotnet-ef migrations add <Itt add meg a migráció nevét>
+dotnet-ef database update
+```
+2. Fordíts le a programot.
+```
+dotnet build
+```
+3. Futtasd a programot.
+```
+dotnet run WPF.sln
+```
