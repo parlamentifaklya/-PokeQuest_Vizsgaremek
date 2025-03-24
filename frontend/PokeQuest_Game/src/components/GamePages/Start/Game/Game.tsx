@@ -315,50 +315,74 @@ const Game: React.FC = () => {
     function handleAbility() {
       if (ability && turn === 'Player' && playerTurnPoints >= 2 && playerAbilityCooldown === 0) {
         const { damage, healthPoint } = ability;
+    
+        // Update player and enemy HP
         if (healthPoint > 0 && damage > 0) {
-          setPlayerHP((prev) => Math.min(prev + healthPoint, playerFeyling?.hp || 100));
-          setEnemyHP((prev) => Math.max(prev - damage, 0));
-
+          setPlayerHP((prev) => {
+            const newHP = Math.min(prev + healthPoint, playerFeyling?.hp || 100);
+            return newHP;
+          });
+    
+          setEnemyHP((prev) => {
+            const newHP = Math.max(prev - damage, 0);
+            return newHP;
+          });
+    
           setPlayerDamageTextColor('#00ff00');
-          setPlayerDamageText(`+${healthPoint} hp`)
+          setPlayerDamageText(`+${healthPoint} hp`);
           setPlayerDamageTextVisible(true);
-
+    
           setEnemyDamageTextColor('#ff0000');
           setEnemyDamageText(`-${damage} dmg`);
           setEnemyDamageTextVisible(true);
-
+    
           setTimeout(() => {
             setPlayerDamageText('');
             setPlayerDamageTextVisible(false);
           }, 100);
-
+    
           setTimeout(() => {
             setEnemyDamageText('');
             setEnemyDamageTextVisible(false);
           }, 100);
         } else if (healthPoint > 0) {
-          setPlayerHP((prev) => Math.min(prev + healthPoint, playerFeyling?.hp || 100));
+          setPlayerHP((prev) => {
+            const newHP = Math.min(prev + healthPoint, playerFeyling?.hp || 100);
+            return newHP;
+          });
+    
           setPlayerDamageTextColor('#00ff00');
-          setPlayerDamageText(`+${healthPoint} hp`)
+          setPlayerDamageText(`+${healthPoint} hp`);
+    
           setTimeout(() => {
             setPlayerDamageText('');
             setPlayerDamageTextVisible(false);
           }, 100);
         } else if (damage > 0) {
-          setEnemyHP((prev) => Math.max(prev - damage, 0));
+          setEnemyHP((prev) => {
+            const newHP = Math.max(prev - damage, 0);
+            return newHP;
+          });
+    
           setEnemyDamageTextColor('#ff0000');
           setEnemyDamageText(`-${damage} dmg`);
+    
           setTimeout(() => {
             setEnemyDamageText('');
             setEnemyDamageTextVisible(false);
           }, 100);
         }
-        setPlayerAbilityCooldown(ability.rechargeTime || 0); // Set cooldown for the player’s ability
+    
+        // Set cooldown for the player’s ability
+        setPlayerAbilityCooldown(ability.rechargeTime || 0);
+    
+        // Deduct 2 points from the player's turn points
         setPlayerTurnPoints((prev) => prev - 2);
       } else {
         console.log("Ability is on cooldown!");
       }
     }
+    
     
     function handleNextTurn() {
       if (turn === 'Player') {
