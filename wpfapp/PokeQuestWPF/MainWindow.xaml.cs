@@ -8,6 +8,7 @@ namespace PokeQuestWPF
     {
         private readonly FeylingService _feylingService;
 
+
         public MainWindow()
         {
             InitializeComponent();
@@ -62,58 +63,108 @@ namespace PokeQuestWPF
         }
 
         // Battle button logic
-        private void Battle_Click(object sender, RoutedEventArgs e)
+        private async void Battle_Click(object sender, RoutedEventArgs e)
         {
-            // Check if two Feylings are selected
             if (FeylingListBox1.SelectedItem == null || FeylingListBox2.SelectedItem == null)
             {
                 MessageBox.Show("Please select one Feyling from each list to battle.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            // Cast the selected items to Feyling
-            Feyling feyling1 = FeylingListBox1.SelectedItem as Feyling;
-            Feyling feyling2 = FeylingListBox2.SelectedItem as Feyling;
+            Feyling feyling1 = (Feyling)FeylingListBox1.SelectedItem;
+            Feyling feyling2 = (Feyling)FeylingListBox2.SelectedItem;
 
-            // Start battle simulation
-            string result = Battle(feyling1, feyling2);
+            AbilityService abilityService = new AbilityService();
+            Ability ability1 = await abilityService.GetAbilityByIdAsync(feyling1.AbilityId);
+            Ability ability2 = await abilityService.GetAbilityByIdAsync(feyling2.AbilityId);
 
-            // Show the result in a MessageBox
+            // Run battle in the background to avoid freezing UI
+            string result = await Task.Run(() => Battle(feyling1, feyling2, ability1, ability2));
+
             MessageBox.Show(result, "Battle Result", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
-        // Battle logic (simulating turn-based battle)
-        private string Battle(Feyling feyling1, Feyling feyling2)
+
+        private string Battle(Feyling feyling1, Feyling feyling2, Ability ability1, Ability ability2)
         {
-            // Copy the HPs to avoid modifying the original objects
             int feyling1Hp = feyling1.Hp;
             int feyling2Hp = feyling2.Hp;
 
-            int turn = 1;
-            while (feyling1Hp > 0 && feyling2Hp > 0)
-            {
-                if (turn % 2 == 1) // Feyling 1 attacks first
-                {
-                    feyling2Hp -= feyling1.Atk;
-                    if (feyling2Hp <= 0)
-                    {
-                        return $"{feyling1.Name} wins after {turn} turns!";
-                    }
-                }
-                else // Feyling 2 attacks
-                {
-                    feyling1Hp -= feyling2.Atk;
-                    if (feyling1Hp <= 0)
-                    {
-                        return $"{feyling2.Name} wins after {turn} turns!";
-                    }
-                }
+            int turnpoints1 = 4;
+            int turnpoints2 = 3;
 
-                turn++; // Alternate turns
+            int abilityCooldown1 = 0;
+            int abilityCooldown2 = 0;
+
+            int turn = 1;
+
+            // Both Feylings use their abilities first
+            if (ability1 != null && turnpoints1 >= 2)
+            {
+                turnpoints1 -= 2;
+                feyling2Hp -= ability1.Damage;
+                if (ability1.HealthPoint > 0) feyling1Hp += (int)ability1.HealthPoint;
+                abilityCooldown1 = ability1.RechargeTime;
             }
 
-            return "Battle ended with no winner."; // Shouldn't reach here under normal circumstances
+            if (ability2 != null && turnpoints2 >= 2)
+            {
+                turnpoints2 -= 2;
+                feyling1Hp -= ability2.Damage;
+                if (ability2.HealthPoint > 0) feyling2Hp += (int)ability2.HealthPoint;
+                abilityCooldown2 = ability2.RechargeTime;
+            }
+
+            while (feyling1Hp > 0 && feyling2Hp > 0)
+            {
+                if (turn % 2 == 1) // Feyling 1's turn
+                {
+                    if (turnpoints1 > 0)
+                    {
+                        feyling2Hp -= feyling1.Atk;
+                        turnpoints1--;
+                    }
+                }
+                else // Feyling 2's turn
+                {
+                    if (turnpoints2 > 0)
+                    {
+                        feyling1Hp -= feyling2.Atk;
+                        turnpoints2--;
+                    }
+                }
+
+                // Reduce cooldowns
+                if (abilityCooldown1 > 0) abilityCooldown1--;
+                if (abilityCooldown2 > 0) abilityCooldown2--;
+
+                // Check if abilities can be used again
+                if (turnpoints1 >= 2 && abilityCooldown1 == 0 && ability1 != null)
+                {
+                    turnpoints1 -= 2;
+                    feyling2Hp -= ability1.Damage;
+                    if (ability1.HealthPoint > 0) feyling1Hp += (int)ability1.HealthPoint;
+                    abilityCooldown1 = ability1.RechargeTime;
+                }
+
+                if (turnpoints2 >= 2 && abilityCooldown2 == 0 && ability2 != null)
+                {
+                    turnpoints2 -= 2;
+                    feyling1Hp -= ability2.Damage;
+                    if (ability2.HealthPoint > 0) feyling2Hp += (int)ability2.HealthPoint;
+                    abilityCooldown2 = ability2.RechargeTime;
+                }
+
+                // If any Feyling reaches 0 HP, the battle ends
+                if (feyling1Hp <= 0) return $"{feyling2.Name} wins after {turn} turns!";
+                if (feyling2Hp <= 0) return $"{feyling1.Name} wins after {turn} turns!";
+
+                turn++; // Next turn
+            }
+
+            return "Battle ended with no winner.";
         }
+
 
         private void InfoButton_Click(object sender, RoutedEventArgs e)
         {
