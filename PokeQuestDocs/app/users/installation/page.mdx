@@ -11,63 +11,40 @@ Három dolgot kell kötelezően letölteni a program működéséhez:
 
 ## Ha meg vannak az Elsődleges lépések
 
-1. Nyiss meg egy parancssort (cmd-t)
+1. Nyiss meg egy parancssort (cmd-t) esetleg Git Bash-t
 
-2. Klónozd le a repot a következő parancshasználatával
+2. Klónozd le a repot a következő parancs használatával
 ```
-git clone https://github.com/Ordinary56/Findgroup.gg.git
+git clone https://github.com/parlamentifaklya/-PokeQuest_Vizsgaremek.git
 ```
-3. Nyisd meg a klónozott mappát. Vagy manuálisan fájlkezelőből, vagy parancssorban a következő paranccsal:
-```
-cd <A mappa neve amibe lépni szeretnél>
-```
+3. Nyisd meg a klónozott mappát, manuálisan fájlkezelőből.
 
-4. Amikor bent vagy a Findgroup.gg mappában akkor `Web` mappában lesz a frontend és a backend mappa
+4. Amikor bent vagy a -PokeQuest_Vizsgaremek mappában akkor a `backend` mappában, azon belül a `PokeQuestApi_New` mappában nyisd meg a `PokeQuestApi_New.sln` fájlt és futtasd http-n.
 >[!NOTE]
 >
-> A most következő a parancsokat is parancssorban kell kiadni az adott mappában, vagyis nyiss meg egy parancssort a mappában ha fájlkezelőből nyitottad meg a mappát.
+> Várd meg míg az összes NugetPackage-t felismeri a Visual Studio, .Net 9-nél régebbi verzióval nem fog működni.
 
 ### Backend 
 
-A következő parancsokat használd a backend megfelő elíndításához amikor a backend mappában vagy
+- Ne zárd be amíg a programot használod.
+- Az adatbázis miatt nem kell aggódni, mert SQLite-ot használ, ezért letöltéskor lejön az adatbázis is.
 
-1. Migráld az adatbázist .
-```
-dotnet tool install --global dotnet-ef
-dotnet-ef migrations add <Itt add meg a migráció nevét>
-dotnet-ef database update
-```
-2. Fordíts le a programot.
-```
-dotnet build
-```
-3. Futtasd a programot.
-```
-dotnet run
-```
 
 ### Frontend
 
-A következő parancsokat használd a frontend megfelő elíndításához amikor a frontend mappában vagy
+1. Amikor bent vagy a -PokeQuest_Vizsgaremek mappában akkor a `frontend` mappában, azon belül a `PokeQuest_Game` mappát nyisd meg Visual Studio Code-ban.
 
-1. Telepítsd a függőségeket a következő paranccsal:
+
+2. Amikor megnyílt a Visual Studo Code, egy új terminálban töltsd le a függőségeket a következő paranccsal:
 ```
 npm install
-``` 
->[!NOTE]
->
-> Ha nem jönne le az összes függőség akkor ezeket is futtasd le:
-```
-npm install @mui/material @emotion/react @emotion/styled
-npm install clsx
-npm install axios
 ```
 2. Futtasd le a programot a következő paranccsal:
 ```
-npm run dev
+npm start
 ``` 
-3. Ez után nyisd meg a terminálban megjelenő localhost linket
+3. Ez után nyisd meg a terminálban megjelenő localhost linket (CTRL + bal klikk)
 
 ```
-http://localhost:5173
+http://localhost:3000
 ``` 
