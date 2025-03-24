@@ -9,10 +9,17 @@ PokeQuestWPF
 none
 false
 TRACE;DEBUG;NET;NET8_0;NETCOREAPP
+<<<<<<< HEAD
 C:\Users\harci\Desktop\-PokeQuest_Vizsgaremek\wpfapp\PokeQuestWPF\App.xaml
 11407045341
 
 91876494608
+=======
+C:\Users\szilagyi.dominik\Desktop\-PokeQuest_Vizsgaremek\wpfapp\PokeQuestWPF\App.xaml
+11407045341
+
+10-1161260590
+>>>>>>> 7f28fbc87e9643411b82d339de6096ee75f2ec96
 198-352714763
 MainWindow.xaml;
 
