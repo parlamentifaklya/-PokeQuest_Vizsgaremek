@@ -30,6 +30,14 @@ const Game: React.FC = () => {
   const [playerAbilityCooldown, setPlayerAbilityCooldown] = useState<number>(0);  // Store cooldown in state
   const [enemyAbilityCooldown, setEnemyAbilityCooldown] = useState<number>(0);    // Store cooldown in state
 
+  const [playerDamageTextToShow, setPlayerDamageText] = useState<string>('');
+  const [enemyDamageTextToShow, setEnemyDamageText] = useState<string>('');
+  const [playerDamageTextColor, setPlayerDamageTextColor] = useState<string>('');
+  const [enemyDamageTextColor, setEnemyDamageTextColor] = useState<string>('');
+  const [playerDamageTextVisible, setPlayerDamageTextVisible] = useState<boolean>(false);
+  const [enemyDamageTextVisible, setEnemyDamageTextVisible] = useState<boolean>(false);
+
+
   const FEYLING_IMAGE_SIZE = 200; // Set the fixed size for all images (adjust this as needed)
   const ABILITY_IMAGE_SIZE = 75;
 
@@ -125,6 +133,11 @@ const Game: React.FC = () => {
     let playerAbilityCooldownText: Phaser.GameObjects.Text;
     let enemyAbilityCooldownText: Phaser.GameObjects.Text;
 
+    let playerHealText: Phaser.GameObjects.Text;
+    let playerDamageText: Phaser.GameObjects.Text;
+    let enemyHealText: Phaser.GameObjects.Text;
+    let enemyDamageText: Phaser.GameObjects.Text;
+
     function preload(this: Phaser.Scene) {
       this.load.image('background', 'bg.png');
       this.load.image('player', playerFeyling?.img || 'defaultImage.png');
@@ -197,6 +210,9 @@ const Game: React.FC = () => {
       playerTurnPointsText = this.add.text(50, 40, `TP: ${playerTurnPoints}`, { fontSize: '16px', color: '#fff' });
       enemyTurnPointsText = this.add.text(850, 40, `TP: ${enemyTurnPoints}`, { fontSize: '16px', color: '#fff' });
 
+      playerDamageText = this.add.text(50, 60, '', { fontSize: '16px', color: playerDamageTextColor });
+      enemyDamageText = this.add.text(850, 60, '', { fontSize: '16px', color: enemyDamageTextColor });
+
       // Tooltip Text (initially hidden)
       const tooltip = this.add.text(0, 0, tooltipText, { fontSize: '18px', color: '#fff' }).setAlpha(0);
 
@@ -222,6 +238,28 @@ const Game: React.FC = () => {
       enemyHealthText.setText(`HP: ${enemyHP}`);
       playerTurnPointsText.setText(`TP: ${playerTurnPoints}`);
       enemyTurnPointsText.setText(`TP: ${enemyTurnPoints}`);
+      playerDamageText.setText(playerDamageTextToShow);
+      enemyDamageText.setText(enemyDamageTextToShow);
+      setEnemyDamageTextVisible(true);
+      setPlayerDamageTextVisible(true);
+
+      // Update the damage/heal texts to show red for damage and green for healing
+      if (playerDamageTextVisible) {
+        playerDamageText.setText(playerDamageTextToShow);
+      } else {
+        playerDamageText.setText('');
+      }
+    
+      if (enemyDamageTextVisible) {
+        enemyDamageText.setText(enemyDamageTextToShow);
+      } else {
+        enemyDamageText.setText('');
+      }
+    
+      setTimeout(() => {
+        playerDamageText.setText('');
+        enemyDamageText.setText('');
+      }, 100);
 
       // Check for victory or defeat
       if (enemyHP <= 0 && !victoryHandledRef.current) {
@@ -261,6 +299,12 @@ const Game: React.FC = () => {
           return newHP;
         });
         
+        setEnemyDamageText(`-${damage} dmg`);
+        setEnemyDamageTextColor('#ff0000');
+        setTimeout(() => {
+          setEnemyDamageText('');
+          setEnemyDamageTextVisible(false);
+        }, 100);
         setPlayerTurnPoints((prev) => prev - 1);
       }
     }
@@ -268,11 +312,43 @@ const Game: React.FC = () => {
     function handleAbility() {
       if (ability && turn === 'Player' && playerTurnPoints >= 2 && playerAbilityCooldown === 0) {
         const { damage, healthPoint } = ability;
-        if (damage > 0) {
-          setEnemyHP((prev) => Math.max(prev - damage, 0));
-        }
-        if (healthPoint > 0) {
+        if (healthPoint > 0 && damage > 0) {
           setPlayerHP((prev) => Math.min(prev + healthPoint, playerFeyling?.hp || 100));
+          setEnemyHP((prev) => Math.max(prev - damage, 0));
+
+          setPlayerDamageTextColor('#00ff00');
+          setPlayerDamageText(`+${healthPoint} hp`)
+          setPlayerDamageTextVisible(true);
+
+          setEnemyDamageTextColor('#ff0000');
+          setEnemyDamageText(`-${damage} dmg`);
+          setEnemyDamageTextVisible(true);
+
+          setTimeout(() => {
+            setPlayerDamageText('');
+            setPlayerDamageTextVisible(false);
+          }, 100);
+
+          setTimeout(() => {
+            setEnemyDamageText('');
+            setEnemyDamageTextVisible(false);
+          }, 100);
+        } else if (healthPoint > 0) {
+          setPlayerHP((prev) => Math.min(prev + healthPoint, playerFeyling?.hp || 100));
+          setPlayerDamageTextColor('#00ff00');
+          setPlayerDamageText(`+${healthPoint} hp`)
+          setTimeout(() => {
+            setPlayerDamageText('');
+            setPlayerDamageTextVisible(false);
+          }, 100);
+        } else if (damage > 0) {
+          setEnemyHP((prev) => Math.max(prev - damage, 0));
+          setEnemyDamageTextColor('#ff0000');
+          setEnemyDamageText(`-${damage} dmg`);
+          setTimeout(() => {
+            setEnemyDamageText('');
+            setEnemyDamageTextVisible(false);
+          }, 100);
         }
         setPlayerAbilityCooldown(ability.rechargeTime || 0); // Set cooldown for the player’s ability
         setPlayerTurnPoints((prev) => prev - 2);
@@ -307,9 +383,21 @@ const Game: React.FC = () => {
     
           if (damage > 0) {
             setPlayerHP((prev) => Math.max(prev - damage, 0));
+            setPlayerDamageText(`-${damage} dmg`);
+            setPlayerDamageTextColor('#ff0000');
+            setTimeout(() => {
+              setPlayerDamageText('');
+              setPlayerDamageTextVisible(false);
+            }, 100);
           }
           if (healthPoint > 0) {
             setEnemyHP((prev) => Math.min(prev + healthPoint, enemyFeyling.hp || 100));
+            setEnemyDamageText(`+${healthPoint} hp`);
+            setEnemyDamageTextColor('#00ff00');
+            setTimeout(() => {
+              setEnemyDamageText('');
+              setEnemyDamageTextVisible(false);
+            }, 100);
           }
     
           setEnemyAbilityCooldown(enemyAbility.rechargeTime || 0); // Set the cooldown for the enemy ability
@@ -322,6 +410,12 @@ const Game: React.FC = () => {
           setPlayerHP((prev) => Math.max(prev - damage, 0));
           newEnemyTurnPoints -= 1;  // Decrement by 1 for attacking
           console.log('Enemy attacked!');
+          setPlayerDamageText(`-${damage} dmg`);
+          setPlayerDamageTextColor('#ff0000');
+          setTimeout(() => {
+            setPlayerDamageText('');
+            setPlayerDamageTextVisible(false);
+          }, 100);
           if (newEnemyTurnPoints <= 0) {
             break;
           }
