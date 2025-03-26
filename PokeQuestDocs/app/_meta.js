@@ -6,4 +6,5 @@ export default {
   admins:"Adminisztrátoroknak",
   devs: "Fejlesztőknek",
   testdoc: "Tesztdokumentáció",
+  summary: "Összegzés 📜",
 };
