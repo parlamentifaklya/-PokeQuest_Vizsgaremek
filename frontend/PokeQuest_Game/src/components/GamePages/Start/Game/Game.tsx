@@ -339,14 +339,14 @@ class GameLogic {
     this.enemyFeyling = enemyFeyling;
     this.abilities = abilities;
     
-    // Set abilities
-    this.ability = this.getAbility(playerFeyling.abilityId);
-    this.enemyAbility = this.getAbility(enemyFeyling.abilityId);
+    // Set abilities based on the feylings' ability IDs
+    this.ability = this.getAbilityById(playerFeyling.abilityId);
+    this.enemyAbility = this.getAbilityById(enemyFeyling.abilityId);
     
     console.log('Player ability:', this.ability);
     console.log('Enemy ability:', this.enemyAbility);
     
-    // Set initial HP
+    // Set initial HP based on feylings' stats
     this.playerHP = playerFeyling.hp;
     this.enemyHP = enemyFeyling.hp;
     
@@ -360,10 +360,20 @@ class GameLogic {
     this.toastShown = false;
   }
 
-  private getAbility(abilityId: number | undefined): Ability | null {
+  private getAbilityById(abilityId: number | undefined): Ability | null {
     if (!abilityId) return null;
-    const foundAbility = this.abilities.find(ability => ability.id === abilityId);
-    console.log(`Looking for ability ${abilityId}, found:`, foundAbility);
+    
+    // Convert abilityId to number if it's a string
+    const id = typeof abilityId === 'string' ? parseInt(abilityId) : abilityId;
+    
+    // Find the ability with matching ID
+    const foundAbility = this.abilities.find(ability => {
+      // Ensure we're comparing numbers to numbers
+      const abilityIdNum = typeof ability.id === 'string' ? parseInt(ability.id) : ability.id;
+      return abilityIdNum === id;
+    });
+
+    console.log(`Looking for ability ${id} (type: ${typeof id}), found:`, foundAbility);
     return foundAbility || null;
   }
 
