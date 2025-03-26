@@ -3,4 +3,5 @@
 export default{
     tools: "Eszközök 🛠️",
     resources: "Források 🔥",
+    database: "Adatbázis 💾",
 };

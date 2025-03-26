@@ -2,12 +2,12 @@ import { Footer, LastUpdated, Layout, Navbar } from "nextra-theme-docs";
 import { Head, Search } from "nextra/components";
 import { getPageMap } from "nextra/page-map";
 import "nextra-theme-docs/style.css";
-import Logo from "../public/Logo.png";
+import Logo from "../app/assets/icon.png";
 import Image from "next/image";
 import "./globals.css";
 
 export const metadata = {
-  title: "FindGroup.gg",
+  title: "PokeQuest",
 };
 
 const lastUpdated = (
@@ -18,17 +18,16 @@ const navbar = (
   <Navbar
     logo={
       <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-        <Image src={Logo} alt="FindGroup.gg Logo" width={40} height={40} />
-        <b>FindGroup.gg</b>
+        <Image src={Logo} alt="PokeQuest Logo" width={40} height={40} />
+        <b>PokeQuest</b>
       </div>
     }
-    logoLink={"https://github.com/Ordinary56"}
-    projectLink="https://github.com/Ordinary56/FindGroup.gg"
-    chatLink="https://discord.gg/nAey9rqTER"
+    logoLink={"https://github.com/parlamentifaklya"}
+    projectLink="https://github.com/parlamentifaklya/-PokeQuest_Vizsgaremek"
     />
 );
 const footer = (
-  <Footer>{new Date().getFullYear()} © FindGroup.gg.</Footer>
+  <Footer>{new Date().getFullYear()} © PokeQuest</Footer>
 
 );
 
@@ -59,7 +58,7 @@ export default async function RootLayout({
           navbar={navbar}
           themeSwitch={{ light: "🌞 Világos mód", dark: "🌙 Sötét mód", system: "💻 Rendszer" }}
           pageMap={await getPageMap()}
-          docsRepositoryBase="https://github.com/PLACKO135/FindgroupDocs"
+          docsRepositoryBase="https://github.com/parlamentifaklya/-PokeQuest_Vizsgaremek/tree/master/PokeQuestDocs"
           footer={footer}
           search={search}
           editLink={null}
