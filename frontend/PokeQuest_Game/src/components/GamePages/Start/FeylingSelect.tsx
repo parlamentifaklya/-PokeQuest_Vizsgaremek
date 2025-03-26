@@ -1,41 +1,46 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useFeyling } from '../../../context/FeylingContext';
-import { FeylingsFromLocalStorage } from '../../../types/FeylingLocalStorage'; // Import the type
+import { FeylingsFromLocalStorage } from '../../../types/FeylingLocalStorage';
+import { toast } from 'react-toastify';  // Import toast
+import 'react-toastify/dist/ReactToastify.css'; // Import styles
 import styles from './FeylingSelect.module.css';
 import Button from '../../../modules/Button';
 import Header from '../../../modules/Header';
 
 const FeylingSelect = () => {
   const [selectedFeyling, setSelectedFeyling] = useState<FeylingsFromLocalStorage | null>(null);
-  const [warning, setWarning] = useState('');
   const { ownedFeylings, setSelectedFeyling: setContextFeyling } = useFeyling();
   const navigate = useNavigate();
-
+  
   const BASE_URL = "http://localhost:5130/api/";
 
   useEffect(() => {
-    // Check if it's the first visit (using localStorage for multiple users)
     const hasVisited = localStorage.getItem('hasVisited');
-
     if (!hasVisited) {
-      // If not visited, reload the page once
       console.log('First visit in this session, reloading the page...');
-      localStorage.setItem('hasVisited', 'true');  // Set flag to prevent further reloads
-      window.location.reload();  // Reload the page
+      localStorage.setItem('hasVisited', 'true');
+      window.location.reload();
     } else {
       console.log('Page already visited in this session, no reload needed.');
     }
-  }, []);  // Runs only once when the component is mounted
+  }, []);
 
   const handleFeylingSelect = (feyling: FeylingsFromLocalStorage) => {
     setSelectedFeyling(feyling);
-    setWarning('');
   };
 
   const startGame = () => {
     if (!selectedFeyling) {
-      setWarning('Please select a Feyling before starting the game.');
+      toast.error('Please select a Feyling before starting the game.', {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "colored",
+      });
       return;
     }
 
@@ -71,11 +76,9 @@ const FeylingSelect = () => {
         </div>
       </div>
 
-      {warning && <p className={styles.warning}>{warning}</p>}
-
       <div className={styles.buttonHolder}>
         <Button style={{ marginTop: '1vh' }} route="/gamemenu" text="Back" />
-        <Button text="Start Game" route="/game" onClick={startGame} />
+        <Button text="Start Game" onClick={startGame} />
       </div>
     </div>
   );

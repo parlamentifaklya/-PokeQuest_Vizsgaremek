@@ -1,0 +1,186 @@
+## Adatbázis
+
+### Adatbázis kapcsolatok
+<br></br>
+<div style={{
+  display: "flex",
+  gap: "20px",
+  flexWrap: "wrap",
+  justifyContent: "center",
+  alignItems: "center"
+}}>
+
+  <div style={{ width: "80%", textAlign: "center" }}>
+    <img src="/pokequest database.png" alt="Adatbázis" width="100%" style={{ borderRadius: "8px" }} />
+    <p></p>
+  </div>
+
+</div>
+
+
+## Táblák
+
+### Feyling:
+
+<div style={{
+  display: "flex",
+  gap: "20px",
+  flexWrap: "wrap",
+  justifyContent: "center",
+  alignItems: "center"
+}}>
+  
+  <div style={{ width: "45%", textAlign: "center" }}>
+    <img src="/Feyling.png" alt="Feyling Tábla" width="100%" style={{ borderRadius: "8px" }} />
+  </div>
+</div>
+
+- id: Egyedi azonosító az adatok könnyebb kezeléséhez.
+- name: A Feyling neve.
+- image: A Feyling képe.
+- type: A Feyling típusa.
+- ability: A Feylinghez tartozó képesség.
+- unlocked: Ez jelzi azt, hogy a felhasználó már megszerezte-e vagy sem.
+- hp: A Feyling életereje.
+- atk: A Feyling sebzése ütésenként.
+- item: A Feylingre felszerelhető/felszerelt tárgy (null ha nincs felszerelve semmi rá).
+- weaknessType: Ez mutatja meg, hogy melyik típus ellen gyenge a harcban.
+- strengthType: Ez mutatja meg, hogy melyik típus ellen erős a harcban.
+- price: Eladási ár, ha kinyitná mégegyszer a felhasználó a játékban.
+
+### OwnedFeyling:
+
+<div style={{
+  display: "flex",
+  gap: "20px",
+  flexWrap: "wrap",
+  justifyContent: "center",
+  alignItems: "center"
+}}>
+  
+  <div style={{ width: "45%", textAlign: "center" }}>
+    <img src="/OwnedFeyling.png" alt="OwnedFeyling Tábla" width="100%" style={{ borderRadius: "8px" }} />
+  </div>
+</div>
+
+- userid: A felhasználó egyéni azonosítója, ezzel jelölve azt, hogy megvan neki.
+- feylingid: A feyling egyéni azonosítója, amelyik megvan a felhasználónak.
+
+### Type:
+
+<div style={{
+  display: "flex",
+  gap: "20px",
+  flexWrap: "wrap",
+  justifyContent: "center",
+  alignItems: "center"
+}}>
+  
+  <div style={{ width: "45%", textAlign: "center" }}>
+    <img src="/Type.png" alt="Type Tábla" width="100%" style={{ borderRadius: "8px" }} />
+  </div>
+</div>
+
+- id: Egyedi azonosító az adatok könnyebb kezeléséhez.
+- name: A típus neve.
+
+### User:
+
+<div style={{
+  display: "flex",
+  gap: "20px",
+  flexWrap: "wrap",
+  justifyContent: "center",
+  alignItems: "center"
+}}>
+  
+  <div style={{ width: "45%", textAlign: "center" }}>
+    <img src="/User.png" alt="User Tábla" width="100%" style={{ borderRadius: "8px" }} />
+  </div>
+</div>
+
+- id: Egyedi azonosító az adatok könnyebb kezeléséhez.
+- username: A felhasználó neve, amelyet megadott a regisztrációkor.
+- password: A felhasználó jelszava, amelyet megadott a regisztrációkor (titkosítva van).
+- level: A felhasználó szintje a játékban.
+- inventory: A felhasználó leltárja, ebben találhatóak meg a megszerzett Feylingek és a tárgyak.
+- coinAmount: Fizetőeszközök száma, ezzel tud új karaktereket szerezni a felhasználó.
+
+### Ability:
+
+<div style={{
+  display: "flex",
+  gap: "20px",
+  flexWrap: "wrap",
+  justifyContent: "center",
+  alignItems: "center"
+}}>
+  
+  <div style={{ width: "45%", textAlign: "center" }}>
+    <img src="/Ability.png" alt="Ability Tábla" width="100%" style={{ borderRadius: "8px" }} />
+  </div>
+</div>
+
+- id: Egyedi azonosító az adatok könnyebb kezeléséhez.
+- name: A képesség neve.
+- damage: A képesség sebzése használatkor.
+- type: A képesség típusa.
+
+### Inventory:
+
+<div style={{
+  display: "flex",
+  gap: "20px",
+  flexWrap: "wrap",
+  justifyContent: "center",
+  alignItems: "center"
+}}>
+  
+  <div style={{ width: "45%", textAlign: "center" }}>
+    <img src="/Inventory.png" alt="Inventory Tábla" width="100%" style={{ borderRadius: "8px" }} />
+  </div>
+</div>
+
+- id: Egyedi azonosító az adatok könnyebb kezeléséhez.
+- ownedFeyling: A felhasználó által birtokolt Feylingek.
+- ownedItem: A felhasználó által birtokolt tárgyak.
+- user: A felhasználó azonosítása / hozzá csatolása.
+
+### OwnedItem:
+
+<div style={{
+  display: "flex",
+  gap: "20px",
+  flexWrap: "wrap",
+  justifyContent: "center",
+  alignItems: "center"
+}}>
+  
+  <div style={{ width: "45%", textAlign: "center" }}>
+    <img src="/OwnedItem.png" alt="OwnedItem Tábla" width="100%" style={{ borderRadius: "8px" }} />
+  </div>
+</div>
+
+- userid: A felhasználó egyéni azonosítója, ezzel jelölve azt, hogy megvan neki.
+- itemid: Az item egyéni azonosítója, amelyik megvan a felhasználónak.
+- amount: Ez jelzi azt, hogy mennyi tárgya van (itt lehet több is egyféléből).
+
+
+### Item:
+
+<div style={{
+  display: "flex",
+  gap: "20px",
+  flexWrap: "wrap",
+  justifyContent: "center",
+  alignItems: "center"
+}}>
+  
+  <div style={{ width: "45%", textAlign: "center" }}>
+    <img src="/Item.png" alt="Item Tábla" width="100%" style={{ borderRadius: "8px" }} />
+  </div>
+</div>
+
+- id: Egyedi azonosító az adatok könnyebb kezeléséhez.
+- name: A fegyver neve.
+- itemAbility: A fegyver képessége.
