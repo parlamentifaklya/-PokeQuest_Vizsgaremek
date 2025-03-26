@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route} from 'react-router-dom';
 import MainMenu from './components/MainMenu';
 import Settings from './components/Settings';
 import WelcomeWindow from './components/WelcomeWindow';
@@ -20,13 +20,14 @@ import { FeylingProvider } from './context/FeylingContext';
 import Tutorial from './Tutorial';
 
 const App: React.FC = () => {
+  
   return (
     <FeylingProvider>
       <AudioProvider>
         <ToastContainer />
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<WelcomeWindow/>}/>
+            <Route path="/welcome" element={<WelcomeWindow/>}/>
             <Route path="/login" element={<Login/>}/>
             <Route path="/mainmenu" element={<MainMenu/>}/>
             <Route path="/register" element={<Register/>}/>

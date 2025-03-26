@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { loginData, GetInventory } from '../services/ApiServices';
 import { decodeJWT } from '../services/TokenService'; // Import the decodeJWT function
 import styles from './Login.module.css';
+import Button from '../modules/Button';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -95,14 +96,11 @@ const Login: React.FC = () => {
         />
 
         {error && <p className={styles.errorMessage}>{error}</p>}
-
-        <button className={styles.buttonTemp} type="button" onClick={handleButtonClick}>
-          Login
-        </button>
-
         <p className={styles.registerText}>
           Don't have an account? <a href="/register">Sign Up</a>
         </p>
+        <Button text='Login' onClick={handleButtonClick}/>
+        <Button text='Back' route='/welcome'/>
       </div>
     </div>
   );

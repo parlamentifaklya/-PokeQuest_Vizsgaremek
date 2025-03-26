@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { registerData } from '../services/ApiServices';
 import styles from './Register.module.css';
+import Button from '../modules/Button';
 
 const Register = () => {
   const [username, setUsername] = useState('');
@@ -111,13 +112,12 @@ const Register = () => {
 
         {error && <p className={styles.errorMessage}>{error}</p>}
 
-        <button className={styles.buttonTemp} type="button" onClick={handleButtonClick} disabled={isSubmitting}>
-          Register
-        </button>
-
         <p className={styles.loginText}>
           Already have an account? <a href="/login">Login</a>
         </p>
+
+        <Button text='Register' onClick={handleButtonClick} disabled={isSubmitting}/>
+        <Button text='Back' route='/welcome'/>
       </div>
     </div>
   );

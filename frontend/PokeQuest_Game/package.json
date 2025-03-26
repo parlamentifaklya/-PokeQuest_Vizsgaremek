@@ -9,7 +9,7 @@
     "lint": "eslint .",
     "serve": "vite preview",
     "preview": "vite preview",
-    "start": "vite --port 3000"
+    "start": "vite --port 3000 --open /welcome"
   },
   "dependencies": {
     "crypto-js": "^4.2.0",

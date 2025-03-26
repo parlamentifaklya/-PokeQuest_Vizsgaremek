@@ -6,579 +6,635 @@ import { GetAllAbility, GetAllFeylings } from '../../../../services/ApiServices'
 import { Feyling } from '../../../../types/Feyling';
 import { Ability } from '../../../../types/Ability';
 import { useNavigate } from 'react-router-dom';
-import { updateUserOnVictory } from '../../../../services/ApiServices'; // Import the updateUserOnVictory function
+import { updateUserOnVictory } from '../../../../services/ApiServices';
 import Header from '../../../../modules/Header';
-import {toast, ToastContainer} from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 
+// Constants
+const FEYLING_IMAGE_SIZE = 200;
+const ABILITY_IMAGE_SIZE = 75;
+
+// Helper function to convert FeylingsFromLocalStorage to Feyling type
+const convertToFeyling = (feylingFromStorage: any): Feyling => ({
+  id: feylingFromStorage.feylingId,
+  name: feylingFromStorage.feylingName,
+  description: feylingFromStorage.feylingDescription,
+  img: feylingFromStorage.feylingImg,
+  typeId: feylingFromStorage.feylingType,
+  abilityId: feylingFromStorage.feylingAbility,
+  isUnlocked: feylingFromStorage.feylingIsUnlocked,
+  hp: feylingFromStorage.feylingHp,
+  atk: feylingFromStorage.feylingAtk,
+  weakAgainstId: feylingFromStorage.feylingWeakAgainst,
+  strongAgainstId: feylingFromStorage.feylingStrongAgainst,
+  itemId: feylingFromStorage.Item,
+  sellPrice: feylingFromStorage.feylingSellPrice
+});
+
+// Game Scene Class
+class GameScene extends Phaser.Scene {
+  private gameLogic: GameLogic;
+  private playerSprite!: Phaser.GameObjects.Image;
+  private enemySprite!: Phaser.GameObjects.Image;
+  private playerAbilitySprite!: Phaser.GameObjects.Image;
+  private enemyAbilitySprite!: Phaser.GameObjects.Image;
+  private nextTurnText!: Phaser.GameObjects.Text;
+  private playerHealthText!: Phaser.GameObjects.Text;
+  private enemyHealthText!: Phaser.GameObjects.Text;
+  private playerTurnPointsText!: Phaser.GameObjects.Text;
+  private enemyTurnPointsText!: Phaser.GameObjects.Text;
+  private tooltipBackground!: Phaser.GameObjects.Graphics;
+  private playerAbilityCooldownText!: Phaser.GameObjects.Text;
+  private enemyAbilityCooldownText!: Phaser.GameObjects.Text;
+  private playerDamageText!: Phaser.GameObjects.Text;
+  private enemyDamageText!: Phaser.GameObjects.Text;
+  private tooltipText!: Phaser.GameObjects.Text;
+
+  constructor(gameLogic: GameLogic) {
+    super('GameScene');
+    this.gameLogic = gameLogic;
+  }
+
+  preload() {
+    this.load.image('background', 'bg.png');
+    
+    // Load player assets
+    this.load.image('player', this.gameLogic.playerFeyling?.img || 'defaultImage.png');
+    if (this.gameLogic.ability?.img) {
+      this.load.image('ability', this.gameLogic.ability.img);
+    } else {
+      this.load.image('ability', 'defaultAbilityImage.png');
+    }
+    
+    // Load enemy assets
+    this.load.image('enemy', this.gameLogic.enemyFeyling?.img || 'defaultEnemyImg.png');
+    if (this.gameLogic.enemyAbility?.img) {
+      this.load.image('enemyAbility', this.gameLogic.enemyAbility.img);
+    } else {
+      this.load.image('enemyAbility', 'defaultAbilityImage.png');
+    }
+  }
+
+  create() {
+    // Background
+    this.add.image(500, 300, 'background').setDisplaySize(1000, 600);
+
+    // Player and Enemy sprites
+    this.playerSprite = this.add.image(200, 300, 'player').setDisplaySize(FEYLING_IMAGE_SIZE, FEYLING_IMAGE_SIZE);
+    this.enemySprite = this.add.image(800, 300, 'enemy').setDisplaySize(FEYLING_IMAGE_SIZE, FEYLING_IMAGE_SIZE);
+
+    // Add borders
+    this.addBorder(this.playerSprite, 0x00ff00);
+    this.addBorder(this.enemySprite, 0xff0000);
+
+    // Tooltip setup
+    this.tooltipBackground = this.add.graphics();
+    this.tooltipText = this.add.text(0, 0, '', { 
+      fontSize: '18px', 
+      color: '#fff',
+      backgroundColor: '#000000',
+      padding: { x: 10, y: 5 }
+    }).setAlpha(0);
+    this.tooltipText.setWordWrapWidth(200);
+
+    // Setup ability sprites
+    this.setupAbilitySprite(true);  // Player ability
+    this.setupAbilitySprite(false); // Enemy ability
+
+    // Create UI elements
+    this.createUIElements();
+    
+    // Make player sprite interactive
+    this.playerSprite.setInteractive().on('pointerdown', () => this.gameLogic.handleAttack());
+
+    // Update loop
+    this.events.on('update', this.update.bind(this));
+  }
+
+  private addBorder(sprite: Phaser.GameObjects.Image, color: number) {
+    const border = this.add.graphics();
+    border.lineStyle(4, color, 1);
+    border.strokeRect(
+      sprite.x - sprite.displayWidth / 2,
+      sprite.y - sprite.displayHeight / 2,
+      sprite.displayWidth,
+      sprite.displayHeight
+    );
+  }
+
+  private setupAbilitySprite(isPlayer: boolean) {
+    const abilityData = isPlayer ? this.gameLogic.ability : this.gameLogic.enemyAbility;
+    const xPos = isPlayer ? 200 : 800;
+    const color = isPlayer ? 0x00ff00 : 0xff0000;
+    const abilityKey = isPlayer ? 'ability' : 'enemyAbility';
+
+    const abilitySprite = this.add.image(xPos, 380, abilityKey)
+      .setDisplaySize(ABILITY_IMAGE_SIZE, ABILITY_IMAGE_SIZE)
+      .setInteractive();
+
+    // Add border
+    const border = this.add.graphics();
+    border.lineStyle(4, color, 1);
+    border.strokeRect(
+      abilitySprite.x - ABILITY_IMAGE_SIZE / 2,
+      abilitySprite.y - ABILITY_IMAGE_SIZE / 2,
+      ABILITY_IMAGE_SIZE,
+      ABILITY_IMAGE_SIZE
+    );
+
+    // Set up interactivity
+    if (isPlayer) {
+      this.playerAbilitySprite = abilitySprite;
+      abilitySprite
+        .on('pointerdown', () => this.gameLogic.handleAbility())
+        .on('pointerover', () => {
+          if (abilityData) this.showTooltip(abilityData, abilitySprite);
+        })
+        .on('pointerout', () => this.hideTooltip());
+    } else {
+      this.enemyAbilitySprite = abilitySprite;
+      abilitySprite
+        .on('pointerover', () => {
+          if (abilityData) this.showTooltip(abilityData, abilitySprite);
+        })
+        .on('pointerout', () => this.hideTooltip());
+    }
+
+    // Add cooldown text
+    const cooldownText = this.add.text(xPos, 450, '', { 
+      fontSize: '16px', 
+      color: '#fff',
+      backgroundColor: '#000000'
+    }).setOrigin(0.5);
+    
+    if (isPlayer) {
+      this.playerAbilityCooldownText = cooldownText;
+    } else {
+      this.enemyAbilityCooldownText = cooldownText;
+    }
+  }
+
+  private createUIElements() {
+    // Next turn button
+    this.nextTurnText = this.add.text(500, 550, 'End Turn', { 
+      fontSize: '32px', 
+      color: '#fff',
+      backgroundColor: '#333333',
+      padding: { x: 20, y: 10 }
+    })
+    .setOrigin(0.5)
+    .setInteractive()
+    .on('pointerdown', () => this.gameLogic.handleNextTurn());
+
+    // Health and turn points displays
+    this.playerHealthText = this.add.text(50, 20, `HP: ${this.gameLogic.playerHP}`, { 
+      fontSize: '24px', 
+      color: '#fff',
+      backgroundColor: '#000000'
+    });
+    
+    this.enemyHealthText = this.add.text(850, 20, `HP: ${this.gameLogic.enemyHP}`, { 
+      fontSize: '24px', 
+      color: '#fff',
+      backgroundColor: '#000000'
+    }).setOrigin(1, 0);
+    
+    this.playerTurnPointsText = this.add.text(50, 50, `TP: ${this.gameLogic.playerTurnPoints}`, { 
+      fontSize: '20px', 
+      color: '#fff',
+      backgroundColor: '#000000'
+    });
+    
+    this.enemyTurnPointsText = this.add.text(850, 50, `TP: ${this.gameLogic.enemyTurnPoints}`, { 
+      fontSize: '20px', 
+      color: '#fff',
+      backgroundColor: '#000000'
+    }).setOrigin(1, 0);
+
+    // Damage texts
+    this.playerDamageText = this.add.text(50, 80, '', { 
+      fontSize: '20px', 
+      color: this.gameLogic.playerDamageTextColor,
+      backgroundColor: '#000000'
+    });
+    
+    this.enemyDamageText = this.add.text(850, 80, '', { 
+      fontSize: '20px', 
+      color: this.gameLogic.enemyDamageTextColor,
+      backgroundColor: '#000000'
+    }).setOrigin(1, 0);
+  }
+
+  private showTooltip(item: Ability | Feyling, sprite: Phaser.GameObjects.Image) {
+    const text = `${item.name}\n\n${item.description}`;
+    const x = sprite.x;
+    const y = sprite.y - sprite.displayHeight / 2 - 10;
+    
+    this.tooltipText.setText(text);
+    this.tooltipText.setPosition(x - this.tooltipText.width / 2, y - this.tooltipText.height);
+    this.tooltipText.setAlpha(1);
+  }
+
+  private hideTooltip() {
+    this.tooltipText.setAlpha(0);
+  }
+
+  update() {
+    // Update health and turn points
+    this.playerHealthText.setText(`HP: ${this.gameLogic.playerHP}`);
+    this.enemyHealthText.setText(`HP: ${this.gameLogic.enemyHP}`);
+    this.playerTurnPointsText.setText(`TP: ${this.gameLogic.playerTurnPoints}`);
+    this.enemyTurnPointsText.setText(`TP: ${this.gameLogic.enemyTurnPoints}`);
+    
+    // Update damage texts
+    if (this.gameLogic.playerDamageTextVisible) {
+      this.playerDamageText.setText(this.gameLogic.playerDamageTextToShow)
+        .setColor(this.gameLogic.playerDamageTextColor)
+        .setAlpha(1);
+    } else {
+      this.playerDamageText.setAlpha(0);
+    }
+    
+    if (this.gameLogic.enemyDamageTextVisible) {
+      this.enemyDamageText.setText(this.gameLogic.enemyDamageTextToShow)
+        .setColor(this.gameLogic.enemyDamageTextColor)
+        .setAlpha(1);
+    } else {
+      this.enemyDamageText.setAlpha(0);
+    }
+
+    // Update next turn button visibility
+    this.nextTurnText.setVisible(
+      this.gameLogic.turn === 'Player' && 
+      this.gameLogic.playerTurnPoints <= 0 &&
+      this.gameLogic.playerHP > 0 &&
+      this.gameLogic.enemyHP > 0
+    );
+
+    // Update ability cooldowns
+    this.playerAbilityCooldownText.setText(
+      this.gameLogic.playerAbilityCooldown > 0 ? 
+      `Cooldown: ${this.gameLogic.playerAbilityCooldown}` : 'Ready!'
+    );
+    
+    this.enemyAbilityCooldownText.setText(
+      this.gameLogic.enemyAbilityCooldown > 0 ? 
+      `Cooldown: ${this.gameLogic.enemyAbilityCooldown}` : 'Ready!'
+    );
+
+    // Check for game end
+    if (this.gameLogic.checkGameEnd()) {
+      this.playerSprite.disableInteractive();
+      if (this.playerAbilitySprite) this.playerAbilitySprite.disableInteractive();
+      this.nextTurnText.disableInteractive();
+    }
+  }
+}
+
+// Game Logic Class
+class GameLogic {
+  // Game state
+  turn: 'Player' | 'Enemy' = 'Player';
+  playerHP = 0;
+  enemyHP = 0;
+  playerTurnPoints = 4;
+  enemyTurnPoints = 3;
+  playerAbilityCooldown = 0;
+  enemyAbilityCooldown = 0;
+  playerDamageTextToShow = '';
+  enemyDamageTextToShow = '';
+  playerDamageTextColor = '#ffffff';
+  enemyDamageTextColor = '#ffffff';
+  playerDamageTextVisible = false;
+  enemyDamageTextVisible = false;
+  victoryHandled = false;
+  toastShown = false;
+
+  // Game entities
+  playerFeyling: Feyling | null = null;
+  enemyFeyling: Feyling | null = null;
+  abilities: Ability[] = [];
+  ability: Ability | null = null;
+  enemyAbility: Ability | null = null;
+
+  // Dependencies
+  private navigate: (path: string) => void;
+  private showToast: (type: 'success' | 'error', message: string) => void;
+
+  constructor(
+    initialPlayerFeyling: Feyling | null,
+    navigate: (path: string) => void,
+    showToast: (type: 'success' | 'error', message: string) => void
+  ) {
+    this.playerFeyling = initialPlayerFeyling;
+    this.playerHP = initialPlayerFeyling?.hp || 100;
+    this.navigate = navigate;
+    this.showToast = showToast;
+  }
+
+  initialize(playerFeyling: Feyling, enemyFeyling: Feyling, abilities: Ability[]) {
+    console.log('Initializing game with:', { playerFeyling, enemyFeyling });
+    
+    this.playerFeyling = playerFeyling;
+    this.enemyFeyling = enemyFeyling;
+    this.abilities = abilities;
+    
+    // Set abilities
+    this.ability = this.getAbility(playerFeyling.abilityId);
+    this.enemyAbility = this.getAbility(enemyFeyling.abilityId);
+    
+    console.log('Player ability:', this.ability);
+    console.log('Enemy ability:', this.enemyAbility);
+    
+    // Set initial HP
+    this.playerHP = playerFeyling.hp;
+    this.enemyHP = enemyFeyling.hp;
+    
+    // Reset game state
+    this.turn = 'Player';
+    this.playerTurnPoints = 4;
+    this.enemyTurnPoints = 3;
+    this.playerAbilityCooldown = 0;
+    this.enemyAbilityCooldown = 0;
+    this.victoryHandled = false;
+    this.toastShown = false;
+  }
+
+  private getAbility(abilityId: number | undefined): Ability | null {
+    if (!abilityId) return null;
+    const foundAbility = this.abilities.find(ability => ability.id === abilityId);
+    console.log(`Looking for ability ${abilityId}, found:`, foundAbility);
+    return foundAbility || null;
+  }
+
+  handleAttack() {
+    if (this.turn !== 'Player' || this.playerTurnPoints < 1 || this.enemyHP <= 0 || this.playerHP <= 0) return;
+
+    const damage = this.playerFeyling?.atk || 10;
+    this.enemyHP = Math.max(this.enemyHP - damage, 0);
+    
+    this.enemyDamageTextToShow = `-${damage}`;
+    this.enemyDamageTextColor = '#ff0000';
+    this.playerTurnPoints -= 1;
+    this.enemyDamageTextVisible = true;
+
+    setTimeout(() => {
+      this.enemyDamageTextVisible = false;
+    }, 1000);
+
+    this.checkGameEnd();
+  }
+
+  handleAbility() {
+    if (!this.ability || this.turn !== 'Player' || this.playerTurnPoints < 2 || 
+        this.playerAbilityCooldown > 0 || this.enemyHP <= 0 || this.playerHP <= 0) {
+      return;
+    }
+
+    const { damage, healthPoint } = this.ability;
+
+    if (healthPoint > 0) {
+      this.playerHP = Math.min(this.playerHP + healthPoint, this.playerFeyling?.hp || 100);
+      this.playerDamageTextToShow = `+${healthPoint}`;
+      this.playerDamageTextColor = '#00ff00';
+      this.playerDamageTextVisible = true;
+    }
+
+    if (damage > 0) {
+      this.enemyHP = Math.max(this.enemyHP - damage, 0);
+      this.enemyDamageTextToShow = `-${damage}`;
+      this.enemyDamageTextColor = '#ff0000';
+      this.enemyDamageTextVisible = true;
+    }
+
+    this.playerAbilityCooldown = this.ability.rechargeTime || 0;
+    this.playerTurnPoints -= 2;
+
+    setTimeout(() => {
+      this.playerDamageTextVisible = false;
+      this.enemyDamageTextVisible = false;
+    }, 1000);
+
+    this.checkGameEnd();
+  }
+
+  handleNextTurn() {
+    if (this.turn === 'Player' && this.playerTurnPoints <= 0 && this.enemyHP > 0 && this.playerHP > 0) {
+      this.turn = 'Enemy';
+      
+      if (this.playerAbilityCooldown > 0) {
+        this.playerAbilityCooldown -= 1;
+      }
+
+      this.enemyTurn();
+    }
+  }
+
+  enemyTurn() {
+    if (this.enemyHP <= 0 || this.playerHP <= 0) return;
+
+    let pointsLeft = this.enemyTurnPoints;
+    
+    // Enemy ability
+    if (pointsLeft >= 2 && this.enemyAbilityCooldown === 0 && this.enemyAbility) {
+      const { damage, healthPoint } = this.enemyAbility;
+      
+      console.log('Enemy using ability:', this.enemyAbility);
+      
+      if (damage > 0) {
+        this.playerHP = Math.max(this.playerHP - damage, 0);
+        this.playerDamageTextToShow = `-${damage}`;
+        this.playerDamageTextColor = '#ff0000';
+        this.playerDamageTextVisible = true;
+      }
+      
+      if (healthPoint > 0) {
+        this.enemyHP = Math.min(this.enemyHP + healthPoint, this.enemyFeyling?.hp || 100);
+        this.enemyDamageTextToShow = `+${healthPoint}`;
+        this.enemyDamageTextColor = '#00ff00';
+        this.enemyDamageTextVisible = true;
+      }
+      
+      this.enemyAbilityCooldown = this.enemyAbility.rechargeTime || 0;
+      pointsLeft -= 2;
+    }
+    
+    // Enemy attacks
+    while (pointsLeft > 0 && this.playerHP > 0) {
+      const damage = this.enemyFeyling?.atk || 10;
+      this.playerHP = Math.max(this.playerHP - damage, 0);
+      this.playerDamageTextToShow = `-${damage}`;
+      this.playerDamageTextColor = '#ff0000';
+      this.playerDamageTextVisible = true;
+      pointsLeft -= 1;
+    }
+    
+    setTimeout(() => {
+      this.playerDamageTextVisible = false;
+      this.enemyDamageTextVisible = false;
+    }, 1000);
+
+    // Reset for player turn
+    this.enemyTurnPoints = 3;
+    this.playerTurnPoints = 4;
+    this.turn = 'Player';
+    
+    // Update cooldowns
+    if (this.enemyAbilityCooldown > 0) {
+      this.enemyAbilityCooldown -= 1;
+    }
+    if (this.playerAbilityCooldown > 0) {
+      this.playerAbilityCooldown -= 1;
+    }
+
+    this.checkGameEnd();
+  }
+
+  async handleVictory() {
+    if (this.victoryHandled) return;
+    this.victoryHandled = true;
+
+    const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+    const userId = userData.sub;
+
+    if (!userId) {
+      console.error('User ID is missing or invalid');
+      return;
+    }
+
+    userData['CoinAmount'] = (parseInt(userData['CoinAmount'] || '0') + 200).toString();
+    userData['User Level'] = (parseInt(userData['User Level'] || '1') + 1).toString();
+    localStorage.setItem('userData', JSON.stringify(userData));
+
+    this.showToast('success', 'You Win! +1 level +200 gem 🎉');
+    await updateUserOnVictory(userId, 1, 200);
+  }
+
+  handleDefeat() {
+    if (this.toastShown) return;
+    this.toastShown = true;
+    this.showToast('error', 'You Lose!');
+  }
+
+  checkGameEnd(): boolean {
+    if (this.enemyHP <= 0 && !this.victoryHandled) {
+      this.handleVictory();
+      return true;
+    } else if (this.playerHP <= 0 && !this.toastShown) {
+      this.handleDefeat();
+      return true;
+    }
+    return false;
+  }
+}
+
+// Main Game Component
 const Game: React.FC = () => {
   const gameRef = useRef<HTMLDivElement | null>(null);
   const gameInstance = useRef<Phaser.Game | null>(null);
+  const gameLogicRef = useRef<GameLogic | null>(null);
   const { selectedFeyling } = useFeyling();
-  const navigate = useNavigate();  // For navigation
-  const [turn, setTurn] = useState<'Player' | 'Enemy'>('Player');
-  const [playerHP, setPlayerHP] = useState<number>(selectedFeyling?.feylingHp ?? 100);
-  const [enemyHP, setEnemyHP] = useState<number>(100);
-  const [playerTurnPoints, setPlayerTurnPoints] = useState<number>(4);
-  const [enemyTurnPoints, setEnemyTurnPoints] = useState<number>(3);
-  const [enemyFeyling, setEnemyFeyling] = useState<Feyling | null>(null);
+  const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(true);
-  const [abilities, setAbilities] = useState<Ability[]>([]);
-  const [playerFeyling, setPlayerFeyling] = useState<Feyling | null>(null);
 
-  const [tooltipText, setTooltipText] = useState<string>('');
-  const [tooltipPosition, setTooltipPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
-
-  const [playerAbilityCooldown, setPlayerAbilityCooldown] = useState<number>(0);  // Store cooldown in state
-  const [enemyAbilityCooldown, setEnemyAbilityCooldown] = useState<number>(0);    // Store cooldown in state
-
-  const [playerDamageTextToShow, setPlayerDamageText] = useState<string>('');
-  const [enemyDamageTextToShow, setEnemyDamageText] = useState<string>('');
-  const [playerDamageTextColor, setPlayerDamageTextColor] = useState<string>('');
-  const [enemyDamageTextColor, setEnemyDamageTextColor] = useState<string>('');
-  const [playerDamageTextVisible, setPlayerDamageTextVisible] = useState<boolean>(false);
-  const [enemyDamageTextVisible, setEnemyDamageTextVisible] = useState<boolean>(false);
-
-  const toastRef = useRef<boolean>(false);
-
-
-  const FEYLING_IMAGE_SIZE = 200; // Set the fixed size for all images (adjust this as needed)
-  const ABILITY_IMAGE_SIZE = 75;
-
-  const victoryHandledRef = useRef<boolean>(false);
-
-  const isCleanupNeeded = useRef<boolean>(false);
-  
-
-  // Fetch abilities
+  // Initialize game logic
   useEffect(() => {
-    const fetchAbilities = async () => {
-      try {
-        const data = await GetAllAbility();
-        setAbilities(data);
-      } catch (error) {
-        console.error('Failed to fetch Abilities:', error);
+    const initialPlayerFeyling = selectedFeyling ? convertToFeyling(selectedFeyling) : null;
+    
+    gameLogicRef.current = new GameLogic(
+      initialPlayerFeyling,
+      navigate,
+      (type, message) => {
+        if (type === 'success') {
+          toast.success(message, {
+            position: "top-center",
+            autoClose: 3000,
+            hideProgressBar: false,
+            onClose: () => navigate('/gamemenu')
+          });
+        } else {
+          toast.error(message, {
+            position: "top-center",
+            autoClose: 3000,
+            hideProgressBar: false,
+            onClose: () => navigate('/gamemenu')
+          });
+        }
       }
-    };
-    fetchAbilities();
-  }, []);
+    );
+  }, [navigate, selectedFeyling]);
 
-  // Fetch feylings (player & enemy)
+  // Fetch game data
   useEffect(() => {
-    const fetchFeylings = async () => {
+    const fetchGameData = async () => {
       try {
-        const data = await GetAllFeylings();
-        if (data.length > 0) {
-          const foundPlayerFeyling = data.find((feyling) => feyling.id === selectedFeyling?.feylingId);
-          if (foundPlayerFeyling) {
-            setPlayerFeyling(foundPlayerFeyling);
-            setPlayerHP(foundPlayerFeyling.hp)
-            console.log(foundPlayerFeyling)
-          }
+        const [abilities, feylings] = await Promise.all([
+          GetAllAbility(),
+          GetAllFeylings()
+        ]);
 
-          const randomIndex = Math.floor(Math.random() * data.length);
-          setEnemyFeyling(data[randomIndex]);
-          setEnemyHP(data[randomIndex].hp);
+        if (feylings.length > 0) {
+          const playerFeyling = selectedFeyling?.feylingId 
+            ? feylings.find(f => f.id === selectedFeyling.feylingId)
+            : null;
+          
+          // Filter out the player's feyling from potential enemies
+          const potentialEnemies = feylings.filter(f => f.id !== selectedFeyling?.feylingId);
+          const enemyFeyling = potentialEnemies[Math.floor(Math.random() * potentialEnemies.length)];
+
+          console.log('Selected enemy:', enemyFeyling);
+
+          if (playerFeyling && enemyFeyling && gameLogicRef.current) {
+            gameLogicRef.current.initialize(playerFeyling, enemyFeyling, abilities);
+          }
         }
       } catch (error) {
-        console.error('Failed to fetch Feylings:', error);
+        console.error('Failed to fetch game data:', error);
       } finally {
         setLoading(false);
       }
     };
-    fetchFeylings();
-  }, [selectedFeyling?.feylingId]);
 
-  // Using `useEffect` to detect when enemy turn points hit 0 and switch turn
+    fetchGameData();
+  }, [selectedFeyling]);
+
+  // Initialize Phaser game
   useEffect(() => {
-    if (enemyTurnPoints <= 0 && turn === 'Enemy') {
-      console.log('Enemy turn is over. Switch to Player!');
-      setTurn('Player');
-      setEnemyTurnPoints((prev) => prev + 3)
+    if (!gameRef.current || !gameLogicRef.current || loading) return;
+
+    if (gameInstance.current) {
+      gameInstance.current.destroy(true);
+      gameInstance.current = null;
     }
-  }, [enemyTurnPoints, turn]);
-
-  const getAbility = (abilityId: number | undefined): Ability | null => {
-    return abilities.find((ability) => ability.id === abilityId) || null;
-  };
-
-  const ability = playerFeyling ? getAbility(playerFeyling.abilityId) : null;
-  const enemyAbility = enemyFeyling ? getAbility(enemyFeyling.abilityId) : null;
-
-  useEffect(() => {
-    if (!gameRef.current || gameInstance.current || !playerFeyling) return;
 
     const config: Phaser.Types.Core.GameConfig = {
       type: Phaser.AUTO,
       width: 1000,
       height: 600,
       parent: gameRef.current,
-      scene: {
-        key: 'MainScene',
-        preload: preload,
-        create: create,
-        update: update,
-      },
+      scene: [new GameScene(gameLogicRef.current)],
+      backgroundColor: '#000000'
     };
 
     gameInstance.current = new Phaser.Game(config);
 
-    let playerSprite: Phaser.GameObjects.Image;
-    let enemySprite: Phaser.GameObjects.Image;
-    let playerAbilitySprite: Phaser.GameObjects.Image;
-    let enemyAbilitySprite: Phaser.GameObjects.Image;
-    let nextTurnText: Phaser.GameObjects.Text;
-    let playerHealthText: Phaser.GameObjects.Text;
-    let enemyHealthText: Phaser.GameObjects.Text;
-    let playerTurnPointsText: Phaser.GameObjects.Text;
-    let enemyTurnPointsText: Phaser.GameObjects.Text;
-
-    let tooltipBackground: Phaser.GameObjects.Graphics;
-    let playerAbilityCooldownText: Phaser.GameObjects.Text;
-    let enemyAbilityCooldownText: Phaser.GameObjects.Text;
-
-    let playerHealText: Phaser.GameObjects.Text;
-    let playerDamageText: Phaser.GameObjects.Text;
-    let enemyHealText: Phaser.GameObjects.Text;
-    let enemyDamageText: Phaser.GameObjects.Text;
-
-    function preload(this: Phaser.Scene) {
-      this.load.image('background', 'bg.png');
-      this.load.image('player', playerFeyling?.img || 'defaultImage.png');
-      this.load.image('enemy', enemyFeyling?.img || 'defaultEnemyImg.png');
-      if (ability?.img) this.load.image('ability', ability.img);
-      else this.load.image('ability', 'defaultAbilityImage.png');
-      if (enemyAbility?.img) this.load.image('enemyAbility', enemyAbility.img);
-      else this.load.image('enemyAbility', 'defaultAbilityImage.png');
-    }
-
-    function create(this: Phaser.Scene) {
-      this.add.image(500, 300, 'background').setDisplaySize(1000, 600);
-
-      // Player and Enemy sprites with fixed size
-      playerSprite = this.add.image(200, 300, 'player').setDisplaySize(FEYLING_IMAGE_SIZE, FEYLING_IMAGE_SIZE);
-      enemySprite = this.add.image(800, 300, 'enemy').setDisplaySize(FEYLING_IMAGE_SIZE, FEYLING_IMAGE_SIZE);
-
-      // Borders around images
-      const playerBorder = this.add.graphics();
-      playerBorder.lineStyle(4, 0x00ff00, 1); // Green border for the player
-      playerBorder.strokeRect(playerSprite.x - FEYLING_IMAGE_SIZE / 2, playerSprite.y - FEYLING_IMAGE_SIZE / 2, FEYLING_IMAGE_SIZE, FEYLING_IMAGE_SIZE);
-
-      const enemyBorder = this.add.graphics();
-      enemyBorder.lineStyle(4, 0xff0000, 1); // Red border for the enemy
-      enemyBorder.strokeRect(enemySprite.x - FEYLING_IMAGE_SIZE / 2, enemySprite.y - FEYLING_IMAGE_SIZE / 2, FEYLING_IMAGE_SIZE, FEYLING_IMAGE_SIZE);
-
-      // Tooltip background
-      tooltipBackground = this.add.graphics();
-      tooltipBackground.fillStyle(0x000000, 0.7);
-      tooltipBackground.fillRect(0, 0, 200, 50);
-
-      // Player Ability image with fixed size
-      if (ability?.img) {
-        playerAbilitySprite = this.add.image(200, 380, 'ability').setDisplaySize(ABILITY_IMAGE_SIZE, ABILITY_IMAGE_SIZE);
-        playerAbilitySprite.setInteractive().on('pointerdown', handleAbility);
-        playerAbilitySprite.setInteractive().on('pointerover', () => showTooltip(this, ability, playerAbilitySprite));
-        playerAbilitySprite.setInteractive().on('pointerout', hideTooltip);
-
-        // Adding a border around the ability image
-        const playerAbilityBorder = this.add.graphics();
-        playerAbilityBorder.lineStyle(4, 0x00ff00, 1); // Green border for player ability
-        playerAbilityBorder.strokeRect(playerAbilitySprite.x - ABILITY_IMAGE_SIZE / 2, playerAbilitySprite.y - ABILITY_IMAGE_SIZE / 2, ABILITY_IMAGE_SIZE, ABILITY_IMAGE_SIZE);
-      }
-
-      // Enemy Ability image with fixed size
-      if (enemyAbility?.img) {
-        enemyAbilitySprite = this.add.image(800, 380, 'enemyAbility').setDisplaySize(ABILITY_IMAGE_SIZE, ABILITY_IMAGE_SIZE);
-        enemyAbilitySprite.setInteractive().on('pointerover', () => showTooltip(this, enemyAbility, enemyAbilitySprite));
-        enemyAbilitySprite.setInteractive().on('pointerout', hideTooltip);
-
-        // Adding a border around the enemy ability image
-        const enemyAbilityBorder = this.add.graphics();
-        enemyAbilityBorder.lineStyle(4, 0xff0000, 1); // Red border for enemy ability
-        enemyAbilityBorder.strokeRect(enemyAbilitySprite.x - ABILITY_IMAGE_SIZE / 2, enemyAbilitySprite.y - ABILITY_IMAGE_SIZE / 2, ABILITY_IMAGE_SIZE, ABILITY_IMAGE_SIZE);
-      }
-
-      // Ability cooldown texts
-      playerAbilityCooldownText = this.add.text(200, 450, '', { fontSize: '16px', color: '#fff' });
-      enemyAbilityCooldownText = this.add.text(800, 450, '', { fontSize: '16px', color: '#fff' });
-
-      // Next Turn Button
-      nextTurnText = this.add.text(500, 550, 'Next Turn', { fontSize: '32px', color: '#fff' })
-        .setOrigin(0.5)
-        .setInteractive()
-        .on('pointerdown', handleNextTurn);
-
-      // Health and TP info
-      playerHealthText = this.add.text(50, 20, `HP: ${playerHP}`, { fontSize: '16px', color: '#fff' });
-      enemyHealthText = this.add.text(850, 20, `HP: ${enemyHP}`, { fontSize: '16px', color: '#fff' });
-      playerTurnPointsText = this.add.text(50, 40, `TP: ${playerTurnPoints}`, { fontSize: '16px', color: '#fff' });
-      enemyTurnPointsText = this.add.text(850, 40, `TP: ${enemyTurnPoints}`, { fontSize: '16px', color: '#fff' });
-
-      playerDamageText = this.add.text(50, 60, '', { fontSize: '16px', color: playerDamageTextColor });
-      enemyDamageText = this.add.text(850, 60, '', { fontSize: '16px', color: enemyDamageTextColor });
-
-      // Tooltip Text (initially hidden)
-      const tooltip = this.add.text(0, 0, tooltipText, { fontSize: '18px', color: '#fff' }).setAlpha(0);
-
-      tooltip.setWordWrapWidth(200);
-
-      // Update tooltip position and visibility in each frame
-      this.events.on('update', () => {
-        tooltip.setText(tooltipText);
-        tooltip.setPosition(tooltipPosition.x, tooltipPosition.y);
-        tooltip.setAlpha(tooltipText ? 1 : 0);
-
-        tooltipBackground.setPosition(tooltipPosition.x - 10, tooltipPosition.y - 10);
-        tooltipBackground.clear();
-        tooltipBackground.fillRect(0, 0, tooltip.width + 20, tooltip.height + 20);
-      });
-
-      // Make the player sprite interactive (click to attack)
-      playerSprite.setInteractive().on('pointerdown', handleAttack);
-    }
-
-    function update(this: Phaser.Scene) {
-      playerHealthText.setText(`HP: ${playerHP}`);
-      enemyHealthText.setText(`HP: ${enemyHP}`);
-      playerTurnPointsText.setText(`TP: ${playerTurnPoints}`);
-      enemyTurnPointsText.setText(`TP: ${enemyTurnPoints}`);
-      playerDamageText.setText(playerDamageTextToShow);
-      enemyDamageText.setText(enemyDamageTextToShow);
-      setEnemyDamageTextVisible(true);
-      setPlayerDamageTextVisible(true);
-
-      // Update the damage/heal texts to show red for damage and green for healing
-      if (playerDamageTextVisible) {
-        playerDamageText.setText(playerDamageTextToShow);
-      } else {
-        playerDamageText.setText('');
-      }
-    
-      if (enemyDamageTextVisible) {
-        enemyDamageText.setText(enemyDamageTextToShow);
-      } else {
-        enemyDamageText.setText('');
-      }
-    
-      setTimeout(() => {
-        playerDamageText.setText('');
-        enemyDamageText.setText('');
-      }, 100);
-
-      // Check for victory or defeat
-      if (enemyHP <= 0 && !victoryHandledRef.current) {
-        victoryHandledRef.current = true;
-        handleVictory(this);
-        return;
-      } else if (playerHP <= 0) {
-        handleDefeat(this);
-        return;
-      }
-
-      // The cooldown texts are now updated based on the current state, but not every frame.
-      updateAbilityCooldowns();
-    }
-
-    function updateAbilityCooldowns() {
-      // Update player cooldown text
-      if (playerAbilityCooldown > 0) {
-        playerAbilityCooldownText.setText(`Cooldown: ${playerAbilityCooldown}`);
-      } else {
-        playerAbilityCooldownText.setText('Ready');
-      }
-    
-      // Update enemy cooldown text
-      if (enemyAbilityCooldown > 0) {
-        enemyAbilityCooldownText.setText(`Cooldown: ${enemyAbilityCooldown}`);
-      } else {
-        enemyAbilityCooldownText.setText('Ready');
-      }
-    }
-
-    function handleAttack() {
-      if (turn === 'Player' && playerTurnPoints >= 1) {
-        let damage = playerFeyling?.atk ?? 10;
-        setEnemyHP((prev) => {
-          const newHP = Math.max(prev - damage, 0);
-          return newHP;
-        });
-        
-        setEnemyDamageText(`-${damage} dmg`);
-        setEnemyDamageTextColor('#ff0000');
-        setTimeout(() => {
-          setEnemyDamageText('');
-          setEnemyDamageTextVisible(false);
-        }, 100);
-        setPlayerTurnPoints((prev) => prev - 1);
-      }
-    }
-
-    function handleAbility() {
-      if (ability && turn === 'Player' && playerTurnPoints >= 2 && playerAbilityCooldown === 0) {
-        const { damage, healthPoint } = ability;
-    
-        // Update player and enemy HP
-        if (healthPoint > 0 && damage > 0) {
-          setPlayerHP((prev) => {
-            const newHP = Math.min(prev + healthPoint, playerFeyling?.hp || 100);
-            return newHP;
-          });
-    
-          setEnemyHP((prev) => {
-            const newHP = Math.max(prev - damage, 0);
-            return newHP;
-          });
-    
-          setPlayerDamageTextColor('#00ff00');
-          setPlayerDamageText(`+${healthPoint} hp`);
-          setPlayerDamageTextVisible(true);
-    
-          setEnemyDamageTextColor('#ff0000');
-          setEnemyDamageText(`-${damage} dmg`);
-          setEnemyDamageTextVisible(true);
-    
-          setTimeout(() => {
-            setPlayerDamageText('');
-            setPlayerDamageTextVisible(false);
-          }, 100);
-    
-          setTimeout(() => {
-            setEnemyDamageText('');
-            setEnemyDamageTextVisible(false);
-          }, 100);
-        } else if (healthPoint > 0) {
-          setPlayerHP((prev) => {
-            const newHP = Math.min(prev + healthPoint, playerFeyling?.hp || 100);
-            return newHP;
-          });
-    
-          setPlayerDamageTextColor('#00ff00');
-          setPlayerDamageText(`+${healthPoint} hp`);
-    
-          setTimeout(() => {
-            setPlayerDamageText('');
-            setPlayerDamageTextVisible(false);
-          }, 100);
-        } else if (damage > 0) {
-          setEnemyHP((prev) => {
-            const newHP = Math.max(prev - damage, 0);
-            return newHP;
-          });
-    
-          setEnemyDamageTextColor('#ff0000');
-          setEnemyDamageText(`-${damage} dmg`);
-    
-          setTimeout(() => {
-            setEnemyDamageText('');
-            setEnemyDamageTextVisible(false);
-          }, 100);
-        }
-    
-        // Set cooldown for the player’s ability
-        setPlayerAbilityCooldown(ability.rechargeTime || 0);
-    
-        // Deduct 2 points from the player's turn points
-        setPlayerTurnPoints((prev) => prev - 2);
-      } else {
-        console.log("Ability is on cooldown!");
-      }
-    }
-    
-    
-    function handleNextTurn() {
-      if (turn === 'Player') {
-        setPlayerTurnPoints((prev) => prev + 4);  // Reset player turn points
-        setTurn('Enemy');  // Switch to Enemy turn
-        
-        // Update player ability cooldown
-        if (playerAbilityCooldown > 0) setPlayerAbilityCooldown((prev) => prev - 1);
-    
-        // Ensure enemy takes their turn only once
-        enemyTurn();
-      }
-      
-      if (turn === 'Enemy') {
-        setEnemyTurnPoints((prev) => prev + 3);  // Reset enemy turn points
-        if (enemyAbilityCooldown > 0) setEnemyAbilityCooldown((prev) => prev - 1);
-      }
-    }
-    
-    function enemyTurn() {
-      setEnemyTurnPoints((prev) => {
-        let newEnemyTurnPoints = prev;
-        if (enemyFeyling && newEnemyTurnPoints >= 2 && enemyAbilityCooldown === 0 && enemyAbility) {
-          const { damage, healthPoint } = enemyAbility; // Use enemy's ability
-    
-          if (damage > 0) {
-            setPlayerHP((prev) => Math.max(prev - damage, 0));
-            setPlayerDamageText(`-${damage} dmg`);
-            setPlayerDamageTextColor('#ff0000');
-            setTimeout(() => {
-              setPlayerDamageText('');
-              setPlayerDamageTextVisible(false);
-            }, 100);
-          }
-          if (healthPoint > 0) {
-            setEnemyHP((prev) => Math.min(prev + healthPoint, enemyFeyling.hp || 100));
-            setEnemyDamageText(`+${healthPoint} hp`);
-            setEnemyDamageTextColor('#00ff00');
-            setTimeout(() => {
-              setEnemyDamageText('');
-              setEnemyDamageTextVisible(false);
-            }, 100);
-          }
-    
-          setEnemyAbilityCooldown(enemyAbility.rechargeTime || 0); // Set the cooldown for the enemy ability
-          newEnemyTurnPoints -= 2;  // Decrement by 2 for using an ability
-          console.log('Enemy used ability!');
-        }
-    
-        while (newEnemyTurnPoints > 0 && enemyFeyling) {
-          const damage = enemyFeyling.atk;
-          setPlayerHP((prev) => Math.max(prev - damage, 0));
-          newEnemyTurnPoints -= 1;  // Decrement by 1 for attacking
-          console.log('Enemy attacked!');
-          setPlayerDamageText(`-${damage} dmg`);
-          setPlayerDamageTextColor('#ff0000');
-          setTimeout(() => {
-            setPlayerDamageText('');
-            setPlayerDamageTextVisible(false);
-          }, 100);
-          if (newEnemyTurnPoints <= 0) {
-            break;
-          }
-        }
-    
-        console.log('Updated Enemy Turn Points after attack/ability:', newEnemyTurnPoints);
-        return newEnemyTurnPoints;  // Return the updated value to React
-      });
-    
-      console.log('Enemy Turn Points at the start of enemyTurn():', enemyTurnPoints);
-    }
-    
-    async function handleVictory(scene: Phaser.Scene) {
-      if (!scene || !scene.sys.isActive()) {
-        console.error('Scene is not active. Cannot display victory text.');
-        return;
-      }
-    
-      console.log('victory called');
-
-      const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-      const userId = userData.sub;
-
-      if (!userId) {
-        console.error('User ID is missing or invalid');
-        return;
-      }
-
-      userData['CoinAmount'] = (parseInt(userData['CoinAmount'] || '0') + 200).toString();
-      userData['User Level'] = (parseInt(userData['User Level'] || '1') + 1).toString();
-      localStorage.setItem('userData', JSON.stringify(userData));
-
-      const victoryText = scene.add.text(500, 300, 'You Win!', { fontSize: '32px', color: '#00ff00' }).setOrigin(0.5);
-
-      toast.success('You Win! +1 level +200 gem 🎉', {
-        position: "top-center",
-        autoClose: 3000,
-        hideProgressBar: false,
-        onClose: () => {
-          console.log("Navigating to /gamemenu...");
-          navigate('/gamemenu'); 
-        }
-      });
-
-      await updateUserOnVictory(userId, 1, 200);
-
-      console.log(victoryText);
-      scene.tweens.add({
-        targets: victoryText,
-        alpha: 0,
-        duration: 3000,
-        ease: 'Linear',
-        onComplete: () => {
-          victoryText.destroy(); // Clean up the text after fade-out
-          isCleanupNeeded.current = true; // Flag for cleanup
-        },
-      });
-    
-      // This delayed call can also be used for cleanup if needed
-      scene.time.delayedCall(3000, () => {
-        victoryText.setAlpha(0);
-        isCleanupNeeded.current = true;
-      });
-    }
-
-    function handleDefeat(scene: Phaser.Scene) {
-      const defeatText = scene.add.text(500, 300, 'You Lose!', { fontSize: '32px', color: '#ff0000' }).setOrigin(0.5);
-
-      if (toastRef.current) {
-        return;
-      }
-      toastRef.current = true;
-
-      toast.error('You Lose!', {
-        position: "top-center",
-        autoClose: 3000,
-        hideProgressBar: false,
-        onClose: () => {
-          console.log("Navigating to /gamemenu...");
-          navigate('/gamemenu');
-        }
-      });
-
-      defeatText.setAlpha(1);
-      scene.tweens.add({
-        targets: defeatText,
-        alpha: 0,
-        duration: 3000,
-        ease: 'Linear',
-        onComplete: () => {
-          defeatText.destroy();
-          isCleanupNeeded.current = true;
-        },
-      });
-    
-      // Delay and fade out the defeat text, then navigate
-      scene.time.delayedCall(3000, () => {
-        defeatText.setAlpha(0);
-        isCleanupNeeded.current = true;
-      });
-    }
-
-    function showTooltip(scene: Phaser.Scene, item: Ability | Feyling, sprite: Phaser.GameObjects.Image) {
-      const text = `${item?.name || 'No Name'}: ${item?.description || 'No Description'}`;
-      const x = sprite.x;
-      const y = sprite.y - sprite.height / 2 - 20;
-      setTooltipText(text);
-      setTooltipPosition({ x, y });
-    }
-
-    function hideTooltip() {
-      setTooltipText('');
-    }
-
-    if (isCleanupNeeded.current) {
-      gameInstance.current?.destroy(true);
-      gameInstance.current = null;
-      isCleanupNeeded.current = false; // Reset cleanup flag
-    }
-
     return () => {
-      gameInstance.current?.destroy(true);
-      gameInstance.current = null;
-      isCleanupNeeded.current = false; // Reset cleanup flag
-    }
-  }, [turn, enemyHP, playerHP, playerFeyling, enemyFeyling, playerTurnPoints, enemyTurnPoints, tooltipText, tooltipPosition, playerAbilityCooldown, enemyAbilityCooldown]);
+      if (gameInstance.current) {
+        gameInstance.current.destroy(true);
+        gameInstance.current = null;
+      }
+    };
+  }, [loading]);
 
   if (loading) {
-    return <p>Loading Feylings...</p>;
+    return <p>Loading game...</p>;
   }
 
   return (
     <>
-      <Header/>
-      <div className={styles.gameWrapper} ref={gameRef}/>
-      <ToastContainer/>
+      <Header />
+      <div className={styles.gameWrapper} ref={gameRef} />
+      <ToastContainer />
     </>
   );
 };
