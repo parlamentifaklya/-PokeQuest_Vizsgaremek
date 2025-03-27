@@ -13,6 +13,19 @@ import { toast, ToastContainer } from 'react-toastify';
 // Constants
 const FEYLING_IMAGE_SIZE = 200;
 const ABILITY_IMAGE_SIZE = 75;
+const BASE_UPLOAD_URL = 'http://localhost:5130/api/Uploads/';
+
+// Improved image URL handling
+const getImageUrl = (url: string | undefined): string => {
+  // If no URL is provided, return a default image path
+  if (!url) return 'defaultImage.png';
+
+  // If the URL is a full URL, return it directly
+  if (url.startsWith('http')) return url;
+
+  // If it's a relative path, prepend the base upload URL
+  return `${BASE_UPLOAD_URL}${url.replace(/^\//, '')}`;
+};
 
 // Helper function to convert FeylingsFromLocalStorage to Feyling type
 const convertToFeyling = (feylingFromStorage: any): Feyling => ({
@@ -56,22 +69,56 @@ class GameScene extends Phaser.Scene {
   }
 
   preload() {
+    // Load background
     this.load.image('background', 'bg.png');
     
-    // Load player assets
-    this.load.image('player', this.gameLogic.playerFeyling?.img || 'defaultImage.png');
-    if (this.gameLogic.ability?.img) {
-      this.load.image('ability', this.gameLogic.ability.img);
-    } else {
-      this.load.image('ability', 'defaultAbilityImage.png');
-    }
-    
-    // Load enemy assets
-    this.load.image('enemy', this.gameLogic.enemyFeyling?.img || 'defaultEnemyImg.png');
-    if (this.gameLogic.enemyAbility?.img) {
-      this.load.image('enemyAbility', this.gameLogic.enemyAbility.img);
-    } else {
-      this.load.image('enemyAbility', 'defaultAbilityImage.png');
+    // Attempt to load images with error handling
+    try {
+      // Player Feyling image
+      const playerImgUrl = getImageUrl(this.gameLogic.playerFeyling?.img);
+      this.load.image('player', playerImgUrl)
+        .on('filecomplete', () => console.log('Player image loaded:', playerImgUrl))
+        .on('filefailed', () => {
+          console.warn('Failed to load player image:', playerImgUrl);
+          this.load.image('player', 'defaultFeyling.png');
+        });
+      
+      // Player Ability image
+      if (this.gameLogic.ability?.img) {
+        const abilityImgUrl = getImageUrl(this.gameLogic.ability.img);
+        this.load.image('ability', abilityImgUrl)
+          .on('filecomplete', () => console.log('Ability image loaded:', abilityImgUrl))
+          .on('filefailed', () => {
+            console.warn('Failed to load ability image:', abilityImgUrl);
+            this.load.image('ability', 'defaultAbility.png');
+          });
+      } else {
+        this.load.image('ability', 'defaultAbility.png');
+      }
+      
+      // Enemy Feyling image
+      const enemyImgUrl = getImageUrl(this.gameLogic.enemyFeyling?.img);
+      this.load.image('enemy', enemyImgUrl)
+        .on('filecomplete', () => console.log('Enemy image loaded:', enemyImgUrl))
+        .on('filefailed', () => {
+          console.warn('Failed to load enemy image:', enemyImgUrl);
+          this.load.image('enemy', 'defaultFeyling.png');
+        });
+      
+      // Enemy Ability image
+      if (this.gameLogic.enemyAbility?.img) {
+        const enemyAbilityImgUrl = getImageUrl(this.gameLogic.enemyAbility.img);
+        this.load.image('enemyAbility', enemyAbilityImgUrl)
+          .on('filecomplete', () => console.log('Enemy Ability image loaded:', enemyAbilityImgUrl))
+          .on('filefailed', () => {
+            console.warn('Failed to load enemy ability image:', enemyAbilityImgUrl);
+            this.load.image('enemyAbility', 'defaultAbility.png');
+          });
+      } else {
+        this.load.image('enemyAbility', 'defaultAbility.png');
+      }
+    } catch (error) {
+      console.error('Error in preload:', error);
     }
   }
 
@@ -333,8 +380,6 @@ class GameLogic {
   }
 
   initialize(playerFeyling: Feyling, enemyFeyling: Feyling, abilities: Ability[]) {
-    console.log('Initializing game with:', { playerFeyling, enemyFeyling });
-    
     this.playerFeyling = playerFeyling;
     this.enemyFeyling = enemyFeyling;
     this.abilities = abilities;
@@ -342,9 +387,6 @@ class GameLogic {
     // Set abilities based on the feylings' ability IDs
     this.ability = this.getAbilityById(playerFeyling.abilityId);
     this.enemyAbility = this.getAbilityById(enemyFeyling.abilityId);
-    
-    console.log('Player ability:', this.ability);
-    console.log('Enemy ability:', this.enemyAbility);
     
     // Set initial HP based on feylings' stats
     this.playerHP = playerFeyling.hp;
@@ -373,7 +415,6 @@ class GameLogic {
       return abilityIdNum === id;
     });
 
-    console.log(`Looking for ability ${id} (type: ${typeof id}), found:`, foundAbility);
     return foundAbility || null;
   }
 
@@ -448,8 +489,6 @@ class GameLogic {
     // Enemy ability
     if (pointsLeft >= 2 && this.enemyAbilityCooldown === 0 && this.enemyAbility) {
       const { damage, healthPoint } = this.enemyAbility;
-      
-      console.log('Enemy using ability:', this.enemyAbility);
       
       if (damage > 0) {
         this.playerHP = Math.max(this.playerHP - damage, 0);
@@ -546,6 +585,7 @@ const Game: React.FC = () => {
   const { selectedFeyling } = useFeyling();
   const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(true);
+  const [enemyFeyling, setEnemyFeyling] = useState<Feyling | null>(null);
 
   // Initialize game logic
   useEffect(() => {
@@ -574,7 +614,7 @@ const Game: React.FC = () => {
     );
   }, [navigate, selectedFeyling]);
 
-  // Fetch game data
+  // Fetch game data and initialize
   useEffect(() => {
     const fetchGameData = async () => {
       try {
@@ -588,14 +628,22 @@ const Game: React.FC = () => {
             ? feylings.find(f => f.id === selectedFeyling.feylingId)
             : null;
           
+          if (!playerFeyling) {
+            console.error('Player feyling not found');
+            return;
+          }
+
           // Filter out the player's feyling from potential enemies
           const potentialEnemies = feylings.filter(f => f.id !== selectedFeyling?.feylingId);
-          const enemyFeyling = potentialEnemies[Math.floor(Math.random() * potentialEnemies.length)];
+          const selectedEnemyFeyling = potentialEnemies[Math.floor(Math.random() * potentialEnemies.length)];
 
-          console.log('Selected enemy:', enemyFeyling);
+          console.log('Selected enemy:', selectedEnemyFeyling);
 
-          if (playerFeyling && enemyFeyling && gameLogicRef.current) {
-            gameLogicRef.current.initialize(playerFeyling, enemyFeyling, abilities);
+          // Set the enemy feyling in state
+          setEnemyFeyling(selectedEnemyFeyling);
+
+          if (playerFeyling && selectedEnemyFeyling && gameLogicRef.current) {
+            gameLogicRef.current.initialize(playerFeyling, selectedEnemyFeyling, abilities);
           }
         }
       } catch (error) {
@@ -610,7 +658,7 @@ const Game: React.FC = () => {
 
   // Initialize Phaser game
   useEffect(() => {
-    if (!gameRef.current || !gameLogicRef.current || loading) return;
+    if (!gameRef.current || !gameLogicRef.current || loading || !enemyFeyling) return;
 
     if (gameInstance.current) {
       gameInstance.current.destroy(true);
@@ -634,7 +682,7 @@ const Game: React.FC = () => {
         gameInstance.current = null;
       }
     };
-  }, [loading]);
+  }, [loading, enemyFeyling]);
 
   if (loading) {
     return <p>Loading game...</p>;
