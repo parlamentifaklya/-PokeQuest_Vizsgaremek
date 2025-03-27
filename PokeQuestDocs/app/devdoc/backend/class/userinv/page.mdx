@@ -1,0 +1,33 @@
+# Felhasználó tárhelye
+
+## Struktúra
+
+```
+public class UserInventory
+{
+    public int Id { get; set; } // Primary key for UserInventory
+    public List<OwnedFeyling> OwnedFeylings { get; set; } = new List<OwnedFeyling>();
+    public List<OwnedItem> OwnedItems { get; set; } = new List<OwnedItem>();
+
+    public string UserId { get; set; } // Foreign key to User
+    public virtual User User { get; set; } // Navigation property back to User
+}
+```
+Ez a kód a **UserInventory** nevű osztályt definiálja, amely egy felhasználó tárhelyét reprezentálja.
+
+
+## A legfontosabb elemek:
+
+- **Id**: Egyedi azonosító *(primary key)*, a UserInventory entitás számára.
+
+- **OwnedFeylings**: Egy lista, amely a felhasználó birtokában lévő Feyling példányokat tárolja.
+
+- **OwnedItems**: Egy lista, amely a felhasználó birtokában lévő Item példányokat tárolja.
+
+- **UserId**: Az idegen kulcs, amely a kapcsolódó User entitásra hivatkozik.
+
+- **User**: A navigációs tulajdonság, amely lehetővé teszi a kapcsolódó User entitás elérését.
+
+- **HealthPoint**: A képességhez tartozó életerő (ha van ilyen hatása).
+
+Ez az osztály tehát a felhasználó tárhelyét és tartalmait tárolja, amely tartalmazza a felhasználó birtokában lévő Feyling-eket és Item-eket, valamint a felhasználóval való kapcsolatot.

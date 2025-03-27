@@ -1,0 +1,83 @@
+# Feyling
+
+## Struktúra
+
+```
+ public class Feyling
+ {
+     [Key]
+     public int Id { get; set; } // Primary key
+
+     [Required] // Ensures that Name is required
+     public string Name { get; set; }
+
+     public string Description { get; set; }
+
+     public string Img { get; set; }
+
+     // Foreign key for Type
+     public int TypeId { get; set; } // Assuming Type is another entity with a primary key
+     [ForeignKey("TypeId")]
+     public virtual Type Type { get; set; } // Navigation property
+
+     // Foreign key for Ability
+     public int AbilityId { get; set; } // Assuming Ability is another entity with a primary key
+     [ForeignKey("AbilityId")]
+     public virtual Ability Ability { get; set; } // Navigation property
+
+     public bool IsUnlocked { get; set; }
+
+     public int Hp { get; set; }
+
+     public int Atk { get; set; }
+
+     // Foreign key for Item
+     public int? ItemId { get; set; } // Assuming Item is another entity with a primary key
+     [ForeignKey("ItemId")]
+     public virtual Item? Item { get; set; } // Navigation property
+
+     // Foreign key for WeakAgainst
+     public int WeakAgainstId { get; set; } // Assuming WeakAgainst is another entity with a primary key
+     [ForeignKey("WeakAgainstId")]
+     public virtual Type WeakAgainst { get; set; } // Navigation property
+
+     // Foreign key for StrongAgainst
+     public int StrongAgainstId { get; set; } // Assuming StrongAgainst is another entity with a primary key
+     [ForeignKey("StrongAgainstId")]
+     public virtual Type StrongAgainst { get; set; } // Navigation property
+
+     public int SellPrice { get; set; }
+ }
+```
+Ez a kód a **Feyling** nevű osztályt definiálja, amely egy karaktert reprezentál a játékban.
+
+
+## A legfontosabb elemek:
+
+- **Id**: Egyedi azonosító *(primary key)*, amely a Feylinget az adatbázisban egyedileg azonosítja.
+
+- **Name**: A Feyling neve, kötelező mező.
+
+- **Description**: A Feyling leírása.
+
+- **Img**: A Feylinghez tartozó kép URL-je.
+
+- **TypeId**: A Feyling típusa, amely egy külső Type entitásra hivatkozik *(idegen kulcs)*.
+
+- **AbilityId**: A Feyling képessége, amely egy külső Ability entitásra hivatkozik *(idegen kulcs)*.
+
+- **IsUnlocked**: Meghatározza, hogy a Feyling megvan-e már a felhasználónak.
+
+- **Hp**: A Feyling életereje.
+
+- **Atk**: A Feyling támadóereje.
+
+- **ItemId**: Az opcionális Item entitás, amely egy tárgyra hivatkozik, amely a Feylinghez tartozik *(idegen kulcs, nullable)*.
+
+- **WeakAgainstId**: Az idegen kulcs egy másik Type entitásra, amely meghatározza, hogy a Feyling mely típusok ellen gyenge.
+
+- **StrongAgainstId**: Az idegen kulcs egy másik Type entitásra, amely meghatározza, hogy a Feyling mely típusok ellen erős.
+
+- **SellPrice**: A Feyling eladási ára.
+
+A **ForeignKey** attribútumok segítségével az osztály kapcsolódik más entitásokhoz, mint például Type, Ability, Item, és más típusokkal való kapcsolatokat (gyenge és erős típusok). Az osztály tehát különböző adatokat tárol a Feyling karakterről, beleértve a képességeit, erősségeit, gyengeségeit és árát.

@@ -1,0 +1,24 @@
+# Felhasználó
+
+## Struktúra
+
+```
+public class User : IdentityUser
+{
+    public int UserLevel { get; set; }
+    public UserInventory Inventory { get; set; } // Each user has one inventory
+    public int CoinAmount { get; set; } // Ingame currency amount
+}
+```
+Ez a kód a **User** nevű osztályt definiálja, amely egy felhasználót reprezentál a játékban. Az osztály az IdentityUser osztályból származik, így örökli a felhasználói hitelesítéshez szükséges alapvető tulajdonságokat (például felhasználónév, jelszó és annak titkosítása, email, stb.). 
+
+
+## A legfontosabb elemek:
+
+- **UserLevel**: A felhasználó szintje, amely a játékban való előrehaladását jelzi.
+
+- **Inventory**: A felhasználó egyetlen tárhelye, amely a birtokolt tárgyakat és Feylingeket tárolja.
+
+- **CoinAmount**: A felhasználó rendelkezésére álló játékbeli valuta mennyisége.
+
+Ez az osztály tehát a felhasználó adatainak tárolására szolgál, beleértve a szintet, a pénzt és a tárhelyét.

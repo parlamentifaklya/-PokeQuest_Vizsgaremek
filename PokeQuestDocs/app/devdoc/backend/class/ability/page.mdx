@@ -1,0 +1,55 @@
+# Képesség
+
+## Struktúra
+
+```
+public class Ability
+{
+    [Key] // This attribute specifies that Id is the primary key
+    public int Id { get; set; }
+
+    [Required] // This attribute specifies that Name is required
+    public string Name { get; set; }
+
+    public string Img { get; set; }
+
+    public string Description { get; set; }
+
+    public int Damage { get; set; }
+
+    public int HealthPoint {  get; set; }
+
+    public int RechargeTime {  get; set; }
+
+    // Foreign key for Type
+    public int TypeId { get; set; } // Assuming Type is another entity with a primary key
+    [ForeignKey("TypeId")]
+    public virtual Type Type { get; set; } // Navigation property
+}
+```
+Ez a kód az **Ability** nevű osztályt definiálja, amely egy képességet reprezentál a játékban. Az osztály különböző tulajdonságokat tartalmaz, amelyek a képesség jellemzőit írják le.
+
+
+## A legfontosabb elemek:
+
+- **Id**: Egyedi azonosító *(primary key)*, amely egyedi módon azonosítja a képességet az adatbázisban.
+
+- **Name**: A képesség neve, amely kötelező mező.
+
+- **Img**: A képességhez tartozó kép URL-je.
+
+- **Description**: A képesség leírása.
+
+- **Damage**: A képesség által okozott sebzés.
+
+- **HealthPoint**: A képességhez tartozó életerő (ha van ilyen hatása).
+
+>[!NOTE]
+>
+> Némelyik képesség tud életerőt visszatölteni, ezért kell ezt megadni. Ha nincs, akkor 0 az értéke.
+
+- **RechargeTime**: A képesség újratöltődési ideje.
+
+- **TypeId**: A képesség típusa, amely egy külső Type entitásra hivatkozik. A Type az osztály másik entitása, és a TypeId egy idegen kulcs, amely összekapcsolja a két entitást.
+
+A **[ForeignKey]** attribútum a **Type** osztályra hivatkozik, amely a képesség típusát reprezentálja, és lehetővé teszi az adatok közötti kapcsolatot.

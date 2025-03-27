@@ -1,0 +1,39 @@
+# Tárgy
+
+## Struktúra
+
+```
+public class Item
+{
+    [Key] // This attribute specifies that Id is the primary key
+    public int Id { get; set; }
+
+    [Required] // This attribute specifies that Name is required
+    public string Name { get; set; }
+
+    public string Description { get; set; }
+    public string Img { get; set; }
+    public string ItemAbility { get; set; }
+    public int Rarity { get; set; }
+}
+```
+Ez a kód az **Item** nevű osztályt definiálja, amely egy tárgyat reprezentál egy játékban.
+
+
+## A legfontosabb elemek:
+
+- **Id**: Egyedi azonosító *(primary key)*, amely az adatbázisban egyedileg azonosítja a tárgyat.
+
+- **Name**: A tárgy neve, amely kötelező mező.
+
+- **Description**: A tárgy leírása.
+
+- **Img**: A tárgyhoz tartozó kép URL-je.
+
+- **ItemAbility**: A tárgyhoz kapcsolódó képesség vagy hatás.
+
+- **Rarity**: A tárgy ritkaságának szintje, amely meghatározhatja a tárgy értékét vagy különlegességét.
+
+Ez az osztály tehát a tárgyak adatainak tárolására és kezelésére szolgál, beleértve azok nevét, leírását, képességeit, ritkaságát és a hozzá tartozó képet.
+
+

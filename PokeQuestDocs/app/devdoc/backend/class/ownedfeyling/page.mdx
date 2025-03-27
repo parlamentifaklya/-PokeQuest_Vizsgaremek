@@ -1,0 +1,32 @@
+# Birtokolt Feyling
+
+## Struktúra
+
+```
+public class OwnedFeyling
+{
+    public int Id { get; set; } // Primary key for OwnedFeyling
+
+    public int FeylingId { get; set; } // Foreign key to Feyling
+    public Feyling Feyling { get; set; } // Navigation property
+
+    public int UserInventoryId { get; set; } // Foreign key to UserInventory
+    public virtual UserInventory UserInventory { get; set; } // Navigation property back to UserInventory
+}
+```
+Ez a kód az **OwnedFeyling** nevű osztályt definiálja, amely azt reprezentálja, hogy egy Feyling (karakter) egy felhasználó UserInventory (felhasználói tárhely) részévé vált.
+
+
+## A legfontosabb elemek:
+
+- **Id**: Egyedi azonosító *(primary key)* az OwnedFeyling entitás számára.
+
+- **FeylingId**: Az idegen kulcs, amely a hozzá tartozó **Feyling** entitásra hivatkozik.
+
+- **Feyling**: A navigációs tulajdonság, amely lehetővé teszi a kapcsolódó Feyling entitás elérését.
+
+- **UserInventoryId**: Az idegen kulcs, amely a **UserInventory** entitásra hivatkozik.
+
+- **UserInventory**: A navigációs tulajdonság, amely lehetővé teszi a kapcsolódó UserInventory entitás elérését.
+
+Ez az osztály tehát a felhasználók tárhelyében lévő Feyling példányokat tárolja, összekapcsolva az adott felhasználóval és a kiválasztott karakterrel.

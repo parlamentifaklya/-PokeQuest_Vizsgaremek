@@ -7,4 +7,5 @@ export default {
   devs: "Fejlesztőknek",
   testdoc: "Tesztdokumentáció",
   summary: "Összegzés 📜",
+  devdoc: "Fejlesztői dokumentáció",
 };

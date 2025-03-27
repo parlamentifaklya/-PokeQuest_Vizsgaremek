@@ -1,0 +1,32 @@
+# Birtokolt tárgy
+
+## Struktúra
+
+```
+public class OwnedItem
+{
+    public int Id { get; set; } // Primary key for OwnedItem
+    public Item item { get; set; }
+    public int ItemId { get; set; } // Foreign key to Item
+    public int Amount { get; set; } // Navigation property
+
+    public int UserInventoryId { get; set; } // Foreign key to UserInventory
+    public virtual UserInventory UserInventory { get; set; } // Navigation property back to UserInventory
+}
+```
+Ez a kód az **OwnedItem** nevű osztályt definiálja, amely azt reprezentálja, hogy egy Item (tárgy) egy felhasználó UserInventory (felhasználói tárhely) részévé vált.
+
+
+## A legfontosabb elemek:
+
+- **Id**: Egyedi azonosító (primary key) az OwnedItem entitás számára.
+
+- **Item**: A kapcsolódó Item entitás, amely a tárgy adatokat tartalmazza.
+
+- **ItemId**: Az idegen kulcs, amely a hozzá tartozó Item entitásra hivatkozik.
+
+- **Amount**: A tárgy mennyisége, amely a felhasználónál található.
+
+- **UserInventoryId**: Az idegen kulcs, amely a UserInventory entitásra hivatkozik.
+
+- **UserInventory**: A navigációs tulajdonság, amely lehetővé teszi a kapcsolódó UserInventory entitás elérését.
