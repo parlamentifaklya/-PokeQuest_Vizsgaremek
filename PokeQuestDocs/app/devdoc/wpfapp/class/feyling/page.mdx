@@ -1,0 +1,101 @@
+# Feyling
+
+A Feyling osztály a játékban egy lény vagy karakter jellemzőit tárolja, beleértve a típusát, képességét, erősségeit, gyengeségeit és más fontos adatokat.
+
+## Struktúra
+
+```
+public class Feyling
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public string Description { get; set; }
+    public string Img { get; set; }
+    public int TypeId { get; set; }
+    public int AbilityId { get; set; }
+    public bool IsUnlocked { get; set; }
+    public int Hp { get; set; }
+    public int Atk { get; set; }
+    public int? ItemId { get; set; }
+    public int WeakAgainstId { get; set; }
+    public int StrongAgainstId { get; set; }
+    public int SellPrice { get; set; }
+}
+
+```
+Ez a kód a **Feyling** nevű osztályt definiálja, amely egy játékban szereplő karaktert vagy lényt modellez.
+
+
+## Feyling osztály
+
+- **Id**: Egyedi azonosító.
+
+- **Name**: A Feyling neve.
+
+- **Description**: Rövid leírás a Feylingről.
+
+- **Img**: A Feyling képének elérési útja.
+
+- **TypeId**: A Feyling típusának azonosítója.
+
+- **AbilityId**: A Feyling képességének azonosítója.
+
+- **IsUnlocked**: Jelzi, hogy a Feyling feloldva van-e.
+
+- **Hp**: A Feyling életereje.
+
+- **Atk**: A Feyling támadóereje.
+
+- **ItemId**:  Az opcionális tárgy azonosítója, amelyet a Feyling hordhat.
+
+- **WeakAgainstId**: Az azonosítója annak az elemnek, amely ellen gyenge.
+
+- **StrongAgainstId**: Az azonosítója annak az elemnek, amely ellen erős.
+
+- **SellPrice**: A Feyling eladási ára.
+
+## FeylingService
+
+A FeylingService osztály egy HTTP kliensszolgáltatást biztosít, amely képes kommunikálni egy API-val, hogy lekérje a Feyling objektumokat.
+
+
+
+```
+public class FeylingService
+{
+    private readonly HttpClient _httpClient;
+
+    public FeylingService()
+    {
+        _httpClient = new HttpClient { BaseAddress = new Uri("http://localhost:5130/") }; // Update to match your API URL
+    }
+
+    public async Task<List<Feyling>> GetAllFeylingsAsync()
+    {
+        var response = await _httpClient.GetAsync("api/Feylings/GetAllFeylings");
+        response.EnsureSuccessStatusCode(); // Throws exception if not successful
+
+        return await response.Content.ReadFromJsonAsync<List<Feyling>>();
+    }
+
+    public async Task<Feyling> GetFeylingByIdAsync(int id)
+    {
+        var response = await _httpClient.GetAsync($"api/Feylings/GetFeyling/{id}");
+        if (!response.IsSuccessStatusCode)
+        {
+            return null;
+        }
+
+        return await response.Content.ReadFromJsonAsync<Feyling>();
+    }
+}
+
+```
+
+## Fő funkciói
+
+- **GetAllFeylingsAsync**: Lekéri az összes Feylinget az API-ból és visszaadja azokat egy Feyling típusú listában.
+
+- **GetFeylingByIdAsync**: Lekéri a specifikus Feylinget az API-ból az adott ID alapján. Ha a kérés nem sikeres, null-t ad vissza.
+
+A szolgáltatás az API címének megfelelően HTTP kéréseket küld, és JSON formátumban kapott adatokat Feyling objektumokká konvertálja.

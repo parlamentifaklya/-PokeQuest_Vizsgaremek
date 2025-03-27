@@ -1,12 +1,15 @@
 {
   "version": 2,
-<<<<<<< HEAD
-  "dgSpecHash": "QflaGS66tdw=",
-=======
-  "dgSpecHash": "Z/rk6BMtamw=",
->>>>>>> 7f28fbc87e9643411b82d339de6096ee75f2ec96
+  "dgSpecHash": "DVSikn5wL9s=",
   "success": true,
-  "projectFilePath": "C:\\Users\\harci\\Desktop\\-PokeQuest_Vizsgaremek\\wpfapp\\PokeQuestWPF\\PokeQuestWPF.csproj",
+  "projectFilePath": "C:\\Users\\szilagyi.dominik\\Desktop\\-PokeQuest_Vizsgaremek\\wpfapp\\PokeQuestWPF\\PokeQuestWPF.csproj",
   "expectedPackageFiles": [],
-  "logs": []
+  "logs": [
+    {
+      "code": "Undefined",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Problem reading the cache file C:\\Users\\szilagyi.dominik\\Desktop\\-PokeQuest_Vizsgaremek\\wpfapp\\PokeQuestWPF\\obj\\project.nuget.cache : Invalid property identifier character: <. Path 'version', line 3, position 0."
+    }
+  ]
 }

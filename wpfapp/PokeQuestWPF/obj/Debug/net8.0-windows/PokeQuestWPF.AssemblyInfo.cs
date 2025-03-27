@@ -14,11 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PokeQuestWPF")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-<<<<<<< HEAD
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+24d26f83c168a7ac76ad5d66aaefb1e13c774700")]
-=======
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+be8238715c4b8c9ec40474ca09181d02f410d501")]
->>>>>>> 7f28fbc87e9643411b82d339de6096ee75f2ec96
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e376b305f832cd1bc1ad253e7d3dbda3665e0b56")]
 [assembly: System.Reflection.AssemblyProductAttribute("PokeQuestWPF")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PokeQuestWPF")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

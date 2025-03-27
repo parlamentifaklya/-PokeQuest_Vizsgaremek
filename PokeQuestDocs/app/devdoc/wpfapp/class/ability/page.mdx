@@ -1,0 +1,65 @@
+# Képesség
+
+Az osztályok egy API-tól történő képesség adatlekérést és a válasz megfelelő kezelését biztosítják.
+
+## Struktúra
+
+```
+public class Ability
+{
+    public int Id { get; set; }
+    public int Damage { get; set; }
+    public int? HealthPoint { get; set; } // Nullable, ignored if 0
+    public int RechargeTime { get; set; }
+}
+
+public class AbilityService
+{
+    private readonly HttpClient _httpClient;
+
+    public AbilityService()
+    {
+        _httpClient = new HttpClient { BaseAddress = new Uri("http://localhost:5130/") };
+    }
+
+    public async Task<Ability> GetAbilityByIdAsync(int id)
+    {
+        var response = await _httpClient.GetAsync($"api/Ability/GetAbility/{id}");
+        if (!response.IsSuccessStatusCode)
+        {
+            MessageBox.Show($"Failed to fetch ability with ID {id}.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            return null;
+        }
+
+        var ability = await response.Content.ReadFromJsonAsync<Ability>();
+        if (ability != null && ability.HealthPoint == 0)
+        {
+            ability.HealthPoint = null; // Ignore HealthPoint if it's 0
+        }
+        return ability;
+    }
+
+}
+```
+Ez a kód az **Ability** nevű osztályt definiálja, amely egy képességet reprezentál az alkalmazásban. Az osztály különböző tulajdonságokat tartalmaz, amelyek a képesség jellemzőit írják le.
+
+
+## Ability osztály
+
+Egy képesség modellje, amely az alábbi tulajdonságokat tartalmazza:
+
+- **Id**: A képesség egyedi azonosítója.
+
+- **Damage**: A képesség által okozott sebzés.
+
+- **HealthPoint**: A képesség által gyógyított életerő (nullable, ha 0, akkor figyelmen kívül hagyva).
+
+- **RechargeTime**: A képesség újratöltési ideje.
+
+## AbilityService
+
+Egy szolgáltatás, amely a képességek adatainak lekérdezésére szolgál HTTP kérésekkel.
+
+- A konstruktor létrehozza a HttpClient-et, amely a "http://localhost:5130/" alapcímet használja.
+
+- A **GetAbilityByIdAsync** metódus egy aszinkron HTTP GET kérést küld, hogy lekérje a képesség adatait az API-ból az adott id alapján. Ha a válasz sikeres, akkor a JSON válasz alapján létrehoz egy Ability objektumot, és ha a HealthPoint 0, akkor azt null-ra állítja.

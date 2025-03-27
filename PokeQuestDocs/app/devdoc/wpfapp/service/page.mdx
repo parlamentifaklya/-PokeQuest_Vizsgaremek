@@ -1,0 +1,36 @@
+# Képkonvertáló
+
+Az  **ImagePathConverter** osztály egy **IValueConverter** implementáció, amely a WPF alkalmazásokban használt adatkonverziók során működik.
+
+## Struktúra
+
+```
+public class ImagePathConverter : IValueConverter
+{
+    private const string BaseUrl = "http://localhost:5130/api/";
+
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+
+        if (value == null)
+            return null;
+
+        string relativePath = value.ToString();
+        string fullImageUrl = BaseUrl  +  relativePath.Replace("\\", "/");
+
+        return new BitmapImage(new Uri(fullImageUrl));
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        return null; // Not used in this scenario
+    }
+}
+```
+Ez a kód az **Ability** nevű osztályt definiálja, amely egy képességet reprezentál az alkalmazásban. Az osztály különböző tulajdonságokat tartalmaz, amelyek a képesség jellemzőit írják le.
+
+
+## Fő funkció
+
+- **Convert**: A bemeneti relatív képútvonalat (pl. "images/pokemon.png") teljes URL-lé alakítja. Az alap URL (BaseUrl) hozzáadásával és a backslash karakterek (\) előtti lecserélésével (/) létrehoz egy teljes URL-t, amelyet a BitmapImage objektumra konvertál, hogy a képet meg lehessen jeleníteni.
+
