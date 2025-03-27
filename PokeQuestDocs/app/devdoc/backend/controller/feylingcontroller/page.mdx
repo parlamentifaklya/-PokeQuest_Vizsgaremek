@@ -1,0 +1,72 @@
+# FeylingKezelő
+
+A FeylingsController egy API vezérlő, amely a "Feylingek" kezelésére szolgál.
+
+A vezérlő biztosítja, hogy csak a megfelelő jogosultsággal rendelkező felhasználók (adminisztrátorok) hajthassák végre a feylingek létrehozását, frissítését vagy törlését. Az API kapcsolódó entitásokra (pl. Type, Ability, Item) is ellenőrzéseket végez a műveletek előtt.
+
+A képfeltöltéshez az ImageUploadService szolgáltatás segíti a fájlok kezelését.
+
+
+## Struktúra
+
+```
+[HttpGet("{id}")]
+public async Task<IActionResult> GetFeyling(int id)
+```
+
+**GetFeyling** : Lekérdezi egy adott feyling adatait az ID alapján.
+
+```
+[HttpGet]
+public async Task<IActionResult> GetAllFeylings()
+```
+
+**GetAllFeylings**: Lekérdezi az összes feylinget.
+
+```
+[Authorize(Roles = "Admin")]
+[HttpPost]
+public async Task<ActionResult<Feyling>> CreateFeyling([FromForm] CreateFeylingDto dto)
+```
+
+**CreateFeyling**: Létrehoz egy új feylinget képfájl feltöltésével. Csak adminisztrátorok férhetnek hozzá. Ellenőrzi, hogy a kapcsolódó típusok, képességek és tárgyak léteznek-e a rendszerben.
+
+
+```
+[Authorize(Roles = "Admin")]
+[HttpPut("{id}")]
+public async Task<ActionResult> UpdateFeyling(int id, [FromForm] CreateFeylingDto dto)
+```
+
+**UpdateFeyling**: Frissíti egy meglévő feyling adatait, beleértve a képfájl frissítését.
+```
+[Authorize(Roles = "Admin")]
+[HttpDelete]
+public async Task<ActionResult> DeleteFeyling(int id)
+```
+
+**DeleteFeyling**: Törli egy feylinget az ID alapján. Csak adminisztrátorok férhetnek hozzá.
+
+```
+[HttpPost("unlock/{userInventoryId}/{feylingId}")]
+public async Task<IActionResult> UnlockFeyling(int userInventoryId, int feylingId)
+```
+
+**UnlockFeyling**: Felold egy feylinget egy felhasználó számára, vagy eladja azt a játékosnak, ha már birtokolja.
+
+
+```
+[HttpGet("owned/{userInventoryId}")]
+public async Task<IActionResult> GetUnlockedFeylings(int userInventoryId)
+```
+
+**GetUnlockedFeylings**: Lekérdezi az összes feloldott feylinget egy adott felhasználó inventoryjában.
+
+
+```
+[HttpPut("equip/{feylingId}/{itemId}")]
+public async Task<IActionResult> EquipItem(int feylingId, int itemId)
+```
+
+**EquipItem**: Felszerel egy tárgyat egy feylinghez.
+

@@ -1,0 +1,46 @@
+# TípusKezelő
+
+A TypeController API vezérlő a típusok (elemi típusok) kezelésére szolgál a PokeQuest alkalmazásban.
+
+A vezérlő biztosítja a képfeltöltést az ImageUploadService használatával, és csak adminisztrátorok számára engedélyezi a típusok módosítását és törlését.
+
+## Struktúra
+
+```
+[HttpGet("{id}")]
+public async Task<IActionResult> GetType(int id)
+```
+
+**GetType** : Lekérdezi egy adott típus adatait az ID alapján.
+
+```
+[HttpGet]
+public async Task<IActionResult> GetAllTypes()
+```
+
+**GetAllTypes**: Lekérdezi az összes típust az adatbázisból.
+
+```
+[Authorize(Roles = "Admin")]
+[HttpPost]
+public async Task<ActionResult<Models.Type>> CreateType([FromForm] Models.Type type, IFormFile? img)
+```
+
+**CreateType**: Létrehoz egy új típust, opcionálisan képfájl feltöltésével (csak adminisztrátorok számára).
+
+
+```
+[Authorize(Roles = "Admin")]
+[HttpPut("{id}")]
+public async Task<ActionResult> UpdateType(int id, [FromForm] Models.Type updatedType, IFormFile? img)
+```
+
+**UpdateType**: Frissíti egy meglévő típus adatait, opcionálisan új képfájl feltöltésével (csak adminisztrátorok számára).
+
+```
+[Authorize(Roles = "Admin")]
+[HttpDelete("{id}")]
+public async Task<ActionResult> DeleteType(int id)
+```
+
+**DeleteType**: Törli a megadott ID-jú típust (csak adminisztrátorok számára).

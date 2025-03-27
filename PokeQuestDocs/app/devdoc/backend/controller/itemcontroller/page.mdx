@@ -1,0 +1,46 @@
+# TárgyKezelő
+
+A ItemController API vezérlő az "itemek" (tárgyak) kezelésére szolgál a PokeQuest alkalmazásban. Az alábbi funkciókat biztosítja:
+
+A vezérlő a képfeltöltést az ImageUploadService segítségével kezeli, és biztosítja, hogy csak adminisztrátorok végezhetnek módosításokat és törléseket.
+
+## Struktúra
+
+```
+[HttpGet]
+public async Task<IActionResult> GetItem(int id)
+```
+
+**GetItem** : Lekérdezi egy adott tárgy adatait az ID alapján.
+
+```
+[HttpGet("all")]
+public async Task<IActionResult> GetAllItems()
+```
+
+**GetAllItems**: Lekérdezi az összes tárgyat az adatbázisból.
+
+```
+[Authorize(Roles = "Admin")]
+[HttpPost]
+public async Task<ActionResult<Item>> CreateItem([FromForm] Item item, IFormFile file)
+```
+
+**CreateItem**: Létrehoz egy új tárgyat (opcionálisan képfájllal). Csak adminisztrátorok használhatják. A kép feltöltése után a fájl elérési útvonalát menti el.
+
+
+```
+[Authorize(Roles = "Admin")]
+[HttpPut("{id}")]
+public async Task<IActionResult> UpdateItem(int id, [FromForm] Item updatedItem, IFormFile file)
+```
+
+**UpdateItem**: Frissíti egy meglévő tárgy adatait (opcionálisan új képfájl feltöltésével). Csak adminisztrátorok használhatják.
+
+```
+[Authorize(Roles = "Admin")]
+[HttpDelete("{id}")]
+public async Task<ActionResult> DeleteItem(int id)
+```
+
+**DeleteItem**: Törli a megadott ID-jú tárgyat. Csak adminisztrátorok használhatják.

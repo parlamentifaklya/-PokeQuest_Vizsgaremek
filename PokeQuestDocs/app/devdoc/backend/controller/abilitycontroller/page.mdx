@@ -1,0 +1,49 @@
+# KépességKezelő
+
+Az AbilityController egy API vezérlő, amely a "képességek" (Abilities) kezelésére szolgál.
+
+A képességekhez tartozó adatokat az Ability entitás tartalmazza, és az ImageUploadService segítségével képfájlok tölthetők fel a képességekhez. A CreateAbilityDto DTO (Data Transfer Object) tartalmazza a képességek létrehozásához szükséges adatokat, beleértve a fájlfeltöltést és az egyéb képesség jellemzőket (pl. név, leírás, sebzés, stb.).
+
+Az API-t CORS (Cross-Origin Resource Sharing) és jogosultsági szabályok (csak adminisztrátoroknak) is védik.
+
+
+## Struktúra
+
+```
+[HttpGet("{id}")]
+public async Task<IActionResult> GetAbility(int id)
+```
+
+**GetAbility** : Lekérdezi egy adott képesség adatait az ID alapján.
+
+```
+[HttpGet]
+public async Task<IActionResult> GetAllAbilities()
+```
+
+**GetAllAbilities**: Lekérdezi az összes képességet.
+
+```
+[Authorize(Roles = "Admin")]
+[HttpPost]
+public async Task<ActionResult<Ability>> CreateAbility([FromForm] CreateAbilityDto dto)
+```
+
+**CreateAbility**: Létrehoz egy új képességet, opcionálisan képfájl feltöltésével. Csak adminisztrátorok férhetnek hozzá.
+
+
+```
+[Authorize(Roles = "Admin")]
+[HttpDelete]
+public async Task<ActionResult> DeleteAbility(int id)
+```
+
+**DeleteAbility**: Töröl egy képességet az ID alapján. Csak adminisztrátorok férhetnek hozzá.
+
+```
+[Authorize(Roles = "Admin")]
+[HttpPut("{id}")]
+public async Task<ActionResult> UpdateAbility(int id, [FromForm] CreateAbilityDto dto)
+```
+
+**UpdateAbility**: Frissít egy meglévő képességet, opcionálisan frissítve a képfájlt. Csak adminisztrátorok férhetnek hozzá.

@@ -1,0 +1,127 @@
+# Felhasználókezelő
+
+A UserController a PokeQuest API felhasználói funkcióit kezeli.
+
+A vezérlő biztosítja, hogy az adminisztrátorok csak az általuk engedélyezett műveleteket hajtsák végre, mint például a felhasználók adatainak frissítése, az inventory módosítása vagy új Feylingek és tárgyak hozzáadása.
+
+A vezérlő biztosítja, hogy csak az adminisztrátorok végezhessenek bizonyos műveleteket, mint például felhasználók frissítése, törlése, vagy új admin létrehozása. Emellett a felhasználók regisztrálásakor automatikusan létrehozza számukra az inventárt és véletlenszerűen három kezdő tárgyat és Feylinget rendel hozzájuk.
+
+## Struktúra
+
+```
+[HttpPost]
+public async Task<IActionResult> Register([FromBody] RegisterModel model)
+```
+
+**Regisztráció** : Felhasználók regisztrálhatnak felhasználónévvel, email-címmel és jelszóval. A rendszer létrehozza az új felhasználót, hozzárendeli a "User" szerepet, generál egy inventárt, és véletlenszerűen három kezdő Feylinget és tárgyat rendel hozzá.
+
+```
+[HttpPost]
+public async Task<IActionResult> Login([FromBody] LoginModel model)
+```
+
+**Bejelentkezés**: A felhasználók email-cím és jelszó alapján bejelentkezhetnek. A rendszer JWT tokent generál, amely tartalmazza a felhasználó adatait és szerepeit, és ezt visszaadja, hogy a felhasználó a továbbiakban engedélyezett kéréseket küldhessen.
+
+```
+[Authorize(Roles = "Admin")]
+[HttpPut("{id}")]
+public async Task<ActionResult> UpdateUser(string id, [FromBody] User user)
+```
+
+**Felhasználói adatok frissítése**: Adminisztrátorok frissíthetik a felhasználók adatait, mint a felhasználónév, email, jelszó és inventár.
+
+
+```
+[Authorize(Roles = "Admin")]
+[HttpDelete("{id}")]
+public async Task<ActionResult> DeleteUser(string id)
+```
+
+**Felhasználó törlése**: Adminisztrátorok törölhetnek felhasználókat az ID-juk alapján.
+
+```
+[Authorize(Roles = "Admin")]
+[HttpPost]
+public async Task<IActionResult> CreateAdmin([FromBody] RegisterModel model)
+```
+
+**Adminisztrátor létrehozása**: Adminisztrátorok új admin felhasználót hozhatnak létre, aki automatikusan megkapja az "Admin" szerepet.
+
+
+
+
+```
+[HttpGet("level")]
+public IActionResult GetUserLevel()
+private int GetUserLevel(ClaimsPrincipal user)
+```
+
+**Felhasználó szintjének lekérése**: A bejelentkezett felhasználó szintjét adja vissza a token alapján.
+
+
+```
+[Authorize(Roles = "Admin")]
+[HttpPost]
+public async Task<IActionResult> CreateAdmin([FromBody] RegisterModel model)
+```
+
+**Adminisztrátor létrehozása**: Adminisztrátorok új admin felhasználót hozhatnak létre, aki automatikusan megkapja az "Admin" szerepet.
+
+
+```
+[HttpGet("{id}")]
+public async Task<ActionResult<IEnumerable<User>>> GetUser(string id)
+```
+
+**Felhasználó adatainak lekérése**: Lekéri egy adott felhasználó adatait az ID alapján.
+
+
+```
+[Authorize(Roles = "Admin")]
+[HttpGet]
+public async Task<ActionResult<IEnumerable<User>>> GetUsers(int page = 1, int pageSize = 10)
+```
+
+**Felhasználói lista lekérése**: Adminisztrátorok számára elérhető, listázza a felhasználókat oldalonként, szerepekkel együtt.
+
+```
+[HttpGet("inventory/{userId}")]
+public async Task<IActionResult> GetInventory(string userId)
+```
+
+**Inventár lekérése**: Lekéri a felhasználó inventoryját, beleértve a tárgyakat és Feylingeket.
+
+
+```
+[HttpPost]
+public IActionResult AddItemToInventory([FromBody] AddItemRequest request)
+```
+
+**Tárgy hozzáadása az inventoryhoz**: Új tárgyat ad a felhasználó inventoryjához.
+
+
+```
+[HttpPost]
+public IActionResult AddFeylingToInventory([FromBody] AddFeylingRequest request)
+```
+
+**Feyling hozzáadása az inventoryhoz**: Feylinget ad a felhasználó inventoryjához.
+
+```
+[HttpPost]
+public async Task<IActionResult> UpdateCoinAmount([FromBody] CoinUpdateRequest request)
+```
+
+**Coin mennyiség frissítése**: Frissíti a felhasználó coin mennyiségét, például chest nyitásakor.
+
+```
+[HttpPatch]
+public async Task<IActionResult> UpdateUserOnVictory([FromBody] UpdateUserLevelAndCoins updateRequest)
+```
+
+**Felhasználói szint és coinok frissítése**: Frissíti a felhasználó szintjét és coin mennyiségét egy győzelem után.
+
+
+
+
+
