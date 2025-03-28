@@ -2,5 +2,5 @@
 
 export default{
     installation: "Telepítés és indítás (admin felület) 📦",
-    using_the_page:"Admin felület használata 💻",
+    using_the_page:"Admin felület bemutatása",
 };

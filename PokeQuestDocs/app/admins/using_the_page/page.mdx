@@ -1,0 +1,39 @@
+# Adminfelület bemutatása
+
+Ez a Flutter alkalmazás kódja egy Admin Panel felülethez, amely lehetővé teszi a rendszergazdák számára, hogy kezeljék a felhasználókat és adminokat, valamint bizonyos adminisztrációs funkciókat végezzenek. Az alkalmazás a következő funkciókkal rendelkezik:
+
+A kód biztosítja a felhasználók kezelését, admin jogok kezelését, és a megfelelő API-kat hívja meg az adatok betöltéséhez és frissítéséhez.
+
+## Fő funkciók
+
+Token alapú hitelesítés: Az alkalmazás egy JWT (JSON Web Token) token alapján ellenőrzi a felhasználó hitelesítését, és ha a token lejárt, akkor automatikusan újra bejelentkezést kér.
+
+**Felhasználók kezelése**:
+
+- Az adminok és a normál felhasználók listázása.
+
+- Felhasználói adatok frissítése (például név és email cím módosítása).
+
+- Felhasználók törlése.
+
+- Adminok létrehozása: Az admin felületen keresztül új admin felhasználókat lehet létrehozni a megfelelő adatok megadásával (név, email, jelszó).
+
+**Navigációs menü**:
+
+Az adminok navigálhatnak a különböző adminisztrációs képernyőkre, mint például:
+
+- Manage Types: Tipusok kezelése.
+
+- Manage Abilities: Képességek kezelése.
+
+- Manage Items: Tárgyak kezelése.
+
+- Manage Feylings: Feylings-ek kezelése.
+
+- Kijelentkezés: Az adminok kijelentkezhetnek a rendszerből, és a JWT tokent törlik.
+
+**UI elemek**:
+
+- Listák a felhasználókról és adminokról.
+
+- Részletes információk minden felhasználóról, például név, email cím és egyéb adminisztrációs lehetőségek (szerkesztés, törlés).
