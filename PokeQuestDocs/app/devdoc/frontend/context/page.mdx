@@ -1,0 +1,35 @@
+# Kontextusok
+
+## AudioContext
+
+Ez a React-komponens egy hangkezelő kontextust biztosít az alkalmazás számára.
+
+- **Globális hangerőkezelés**: A volume állapotot tárolja és frissíti.
+
+- **Helyi tárolás (localStorage)**: Megőrzi a hangerő beállítását, így újratöltés után is megmarad.
+
+- **AudioContext inicializálás**: Ellenőrzi, hogy a böngésző támogatja-e az AudioContext API-t (de nem használja aktívan).
+
+- **Kontextus biztosítása**: A useAudioContext hook segítségével a hangerőállapot bárhonnan elérhető az alkalmazásban.
+
+## AuthContext
+
+Ez a React autentikációs kontextus kezeli a bejelentkezést és kijelentkezést.
+
+- **Felhasználó hitelesítése**: Egy isAuthenticated állapotot tárol, ami jelzi, hogy a felhasználó be van-e jelentkezve.
+
+- **Bejelentkezés (login)**: Elmenti a token-t a localStorage-ba és frissíti az állapotot.
+
+- **Kijelentkezés (logout)**: Törli a token-t és kijelentkezteti a felhasználót.
+
+- **Kontextus biztosítása**: A useAuth hook segítségével bárhonnan elérhető az autentikációs állapot.
+
+#FeylingContext
+
+Ez a Feyling-kezelő kontextus, amely egy játék vagy alkalmazás Feyling nevű entitásait tárolja és kezeli.
+
+- **Kiválasztott Feyling (selectedFeyling)**: Tárolja az aktuálisan kiválasztott Feylinget.
+
+- **Feyling-ek tulajdonlása (ownedFeylings)**: Betölti a felhasználó által birtokolt Feylingeket a localStorage-ból.
+
+- **Állapotkezelés**: A useFeyling hook segítségével bármelyik komponens elérheti és frissítheti az adatokat.

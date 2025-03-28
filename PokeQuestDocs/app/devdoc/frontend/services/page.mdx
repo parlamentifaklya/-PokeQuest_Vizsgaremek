@@ -1,0 +1,34 @@
+# Szolgáltatások
+
+## ApiServices
+
+Ez egy backendhez kapcsolódó segédfájl, amely kommunikál a szerverrel, kezeli az adatokat, és frissíti a felhasználói állapotot.
+
+Ez a fájl API-hívásokat kezelő segédfüggvényeket tartalmaz a játék számára.
+
+### Felhasználókezelés
+
+- **Bejelentkezés (loginData) és **regisztráció** (registerData)
+
+- **Felhasználói szint és pénzmennyiség frissítése** (updateUserOnVictory, updateCoinAmount)
+
+### Adatok lekérése
+
+- **Tárgyak** (GetAllItems), **Feylingek** (GetAllFeylings), **képességek** (GetAllAbility) és **típusok** (GetAllTypes) betöltése az API-ból
+
+### Inventory kezelése
+
+- **Felhasználói tárgyak lekérése** (GetInventory)
+
+- **Tárgy** (addItemToInventoryAndUpdateStorage) és **Feyling** (addFeylingToInventoryAndUpdateStorage) hozzáadása az inventoryhoz
+
+- **Inventory és localStorage frissítése** az új adatokkal
+
+## TokenService
+
+Ez a függvény JWT token dekódolását végzi.
+
+- Ellenőrzi, hogy a token 3 részből áll-e (header, payload, signature).
+- Base64Url dekódolás segítségével kiolvassa a fejlécet (header) és a törzset (payload).
+- A dekódolt adatokat JSON formátumba alakítja és kiírja a konzolra.
+- Visszaadja a dekódolt header és payload objektumokat.
