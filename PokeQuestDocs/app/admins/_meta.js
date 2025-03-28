@@ -3,5 +3,4 @@
 export default{
     installation: "Telepítés és indítás (admin felület) 📦",
     using_the_page:"Admin felület használata 💻",
-    troubleshooting: "Hibaelhárítás 👾",
 };

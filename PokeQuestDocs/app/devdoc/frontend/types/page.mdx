@@ -1,0 +1,81 @@
+# Típusok 
+
+## Ability
+
+- **Id**: Egyedi azonosító, amely egyedi módon azonosítja a képességet az adatbázisban.
+
+- **Name**: A képesség neve, amely kötelező mező.
+
+- **Img**: A képességhez tartozó kép URL-je.
+
+- **Description**: A képesség leírása.
+
+- **Damage**: A képesség által okozott sebzés.
+
+- **HealthPoint**: A képességhez tartozó életerő (ha van ilyen hatása).
+
+- **RechargeTime**: A képesség töltődési ideje.
+
+- **TypeId**: A képesség típusa.
+
+## Feyling
+
+- **Id**: Egyedi azonosító, amely a Feylinget az adatbázisban egyedileg azonosítja.
+
+- **Name**: A Feyling neve, kötelező mező.
+
+- **Description**: A Feyling leírása.
+
+- **Img**: A Feylinghez tartozó kép URL-je.
+
+- **TypeId**: A Feyling típusa, amely egy külső Type entitásra hivatkozik *(idegen kulcs)*.
+
+- **AbilityId**: A Feyling képessége, amely egy külső Ability entitásra hivatkozik *(idegen kulcs)*.
+
+- **IsUnlocked**: Meghatározza, hogy a Feyling megvan-e már a felhasználónak.
+
+- **Hp**: A Feyling életereje.
+
+- **Atk**: A Feyling támadóereje.
+
+- **ItemId**: Az opcionális Item entitás, amely egy tárgyra hivatkozik, amely a Feylinghez tartozik *(idegen kulcs, nullable)*.
+
+- **WeakAgainstId**: Az idegen kulcs egy másik Type entitásra, amely meghatározza, hogy a Feyling mely típusok ellen gyenge.
+
+- **StrongAgainstId**: Az idegen kulcs egy másik Type entitásra, amely meghatározza, hogy a Feyling mely típusok ellen erős.
+
+- **SellPrice**: A Feyling eladási ára.
+
+## Item
+
+- **Id**: Egyedi azonosító *(primary key)*, amely az adatbázisban egyedileg azonosítja a tárgyat.
+
+- **Name**: A tárgy neve, amely kötelező mező.
+
+- **Description**: A tárgy leírása.
+
+- **Img**: A tárgyhoz tartozó kép URL-je.
+
+- **ItemAbility**: A tárgyhoz kapcsolódó képesség vagy hatás.
+
+- **Rarity**: A tárgy ritkaságának szintje, amely meghatározhatja a tárgy értékét vagy különlegességét.
+
+- **Quantity**: A tárgy darabszáma.
+
+## Type
+
+- **Id**: Egyedi azonosító *(primary key)*, amely egyedi módon azonosítja a típust az adatbázisban.
+
+- **Name**: A típus neve, kötelező mező.
+
+- **Img**: A típushoz tartozó kép URL-je.
+
+## User
+
+- **UserName**: A felhasználó neve.
+
+- **UserLevel**: A felhasználó szintje, amely a játékban való előrehaladását jelzi.
+
+- **Inventory**: A felhasználó egyetlen tárhelye, amely a birtokolt tárgyakat és Feylingeket tárolja.
+
+- **CoinAmount**: A felhasználó rendelkezésére álló játékbeli valuta mennyisége.

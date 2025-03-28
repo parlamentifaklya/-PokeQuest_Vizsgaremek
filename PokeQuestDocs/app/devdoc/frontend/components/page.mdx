@@ -2,18 +2,156 @@
 
 ## Navigációs Oldalak
 
-- **Login**: 
-- **MainMenu**:
-- **Register**:
-- **Settings**:
-- **WelcomeWindow**:
+- **Login**
+- **MainMenu**
+- **Register**
+- **Settings**
+- **WelcomeWindow**
 
 ## Játékoldalak
 
-- **Chests**:
-- **Equip**:
-- **Feylings**:
-- **Inventory**:
-- **Start-FeylingSelect**:
-- **Game**:
+- **Chests**
+- **Equip**
+- **Feylings**
+- **Inventory**
+- **Start-FeylingSelect**
+- **Game**
+
+## Fontosabb / érdekesebb funkciók
+
+### Chests
+
+- Feylingek betöltése: Az API-ból lekéri az elérhető Feylingeket, majd megkeveri azokat.
+
+- Ellenőrzi, hogy a játékosnak van-e elég gemje (minimum 100 gem szükséges).
+
+- Levonja a gemeket a játékos egyenlegéből és frissíti az adatokat az adatbázisban.
+
+- Véletlenszerűen kiválaszt egy Feylinget a listából.
+
+- Egy görgethető sávon jeleníti meg a Feylingeket.
+
+- A kiválasztott tárgyra fókuszál egy animált görgetéssel.
+
+- Egy felugró értesítésben (Toastify) jelzi a megszerzett tárgyat.
+
+- Ha a játékos már birtokolja a kapott Feylinget, annak eladási árát hozzáadja a gem egyenlegéhez.
+
+- Ha újdonság, bekerül a játékos inventory-jába (adatbázis és localStorage frissítése).
+
+- Sikeres ládanyitás után frissíti az oldalt és visszaviszi a játékost a főmenübe.
+
+### Game
+
+**Game Logic**
+
+A GameLogic osztály egy alapvető játéklogikát valósít meg, amely lehetővé teszi a körökre osztott harcot két Feyling között (egy játékos és egy ellenség).
+
+- Kezeli a játékos és az ellenség életerejét (HP), képesség újratöltési idejét és pontjait minden körben.
+
+- Követi, hogy melyik fél (játékos vagy ellenség) következik a következő körben.
+
+- Tárolja a támadási szövegeket és azok megjelenítését.
+
+- A képességek (pl. támadások vagy gyógyítások) alapján történik a játékos és az ellenség akcióinak kezelése.
+
+- Az ellenfél és a játékos saját képességei alapján kezeli a harcot.
+
+- Beállítja a feylingek adatait és az induló állapotokat (HP, képességek, pontok, stb.).
+
+- Inicializálja a játékos és ellenség feylingjét és azok képességeit.
+
+- A navigate funkcióval navigál a játékos a következő oldalra.
+
+- A showToast funkcióval értesítéseket (sikeres vagy hibaüzenet) jelenít meg a játékos számára.
+
+**Frissítés**
+
+Ez a metódus biztosítja, hogy a játék minden szükséges adatát és vizuális elemeit folyamatosan frissítse, miközben biztosítja, hogy a játékos és az ellenség közötti harc előrehaladjon.
+
+- Frissíti a játékos és az ellenség HP-ját (életerő) és TP-ját (kör pontok).
+
+- Frissíti a játékos és ellenség által okozott sebzés szövegeit, és azok színét.
+
+- Ha a sebzés szövegek láthatóak, akkor frissíti azokat; ha nem, akkor eltünteti.
+
+- Beállítja, hogy a következő kör gomb csak akkor látszódjon, ha a játékosnak már nincs több kör pontja, és mindkét fél életben van.
+
+- Frissíti a játékos és az ellenség képesség újratöltési idejét, hogy jelezze, ha a képesség használható vagy még várni kell rá.
+
+- Ellenőrzi, hogy a játék véget ért-e (győzelem vagy vereség), és ha igen, letiltja a további interakciókat (pl. a játékos képességét, következő kör gombját).
+
+**Létrehozás**
+
+Ez a metódus előkészíti a játék kezdetét, felállítja a vizuális elemeket és az interaktív funkciókat, hogy a játékos elkezdhessen játszani.
+
+```
+update() {
+    // Update health and turn points
+    this.playerHealthText.setText(`HP: ${this.gameLogic.playerHP}`);
+    this.enemyHealthText.setText(`HP: ${this.gameLogic.enemyHP}`);
+    this.playerTurnPointsText.setText(`TP: ${this.gameLogic.playerTurnPoints}`);
+    this.enemyTurnPointsText.setText(`TP: ${this.gameLogic.enemyTurnPoints}`);
+    
+    // Update damage texts
+    if (this.gameLogic.playerDamageTextVisible) {
+      this.playerDamageText.setText(this.gameLogic.playerDamageTextToShow)
+        .setColor(this.gameLogic.playerDamageTextColor)
+        .setAlpha(1);
+    } else {
+      this.playerDamageText.setAlpha(0);
+    }
+    
+    if (this.gameLogic.enemyDamageTextVisible) {
+      this.enemyDamageText.setText(this.gameLogic.enemyDamageTextToShow)
+        .setColor(this.gameLogic.enemyDamageTextColor)
+        .setAlpha(1);
+    } else {
+      this.enemyDamageText.setAlpha(0);
+    }
+
+    // Update next turn button visibility
+    this.nextTurnText.setVisible(
+      this.gameLogic.turn === 'Player' && 
+      this.gameLogic.playerTurnPoints <= 0 &&
+      this.gameLogic.playerHP > 0 &&
+      this.gameLogic.enemyHP > 0
+    );
+
+    // Update ability cooldowns
+    this.playerAbilityCooldownText.setText(
+      this.gameLogic.playerAbilityCooldown > 0 ? 
+      `Cooldown: ${this.gameLogic.playerAbilityCooldown}` : 'Ready!'
+    );
+    
+    this.enemyAbilityCooldownText.setText(
+      this.gameLogic.enemyAbilityCooldown > 0 ? 
+      `Cooldown: ${this.gameLogic.enemyAbilityCooldown}` : 'Ready!'
+    );
+
+    // Check for game end
+    if (this.gameLogic.checkGameEnd()) {
+      this.playerSprite.disableInteractive();
+      if (this.playerAbilitySprite) this.playerAbilitySprite.disableInteractive();
+      this.nextTurnText.disableInteractive();
+    }
+  }
+```
+
+- Beállítja a háttérképet a képernyő közepére, és meghatározza a méretét.
+
+- Hozzáadja a játékos és az ellenség szpritéit a játékhoz, és beállítja azok méretét.
+
+- Zöld (játékos) és piros (ellenség) színű határokat ad a játékos és az ellenség szpritékhez.
+
+- Létrehozza a tooltip (segédszöveges információ) hátterét és szöveges elemeit, amelyeket a játékban használhatunk a felhasználói interakciókhoz.
+
+- Beállítja a játékos és az ellenség képességét jelző szpritéket.
+
+- Létrehozza a felhasználói felület elemeit (pl. gombok, szövegek stb.).
+
+- Interaktívvá teszi a játékos szpritet, így a játékos tud rákattintani, hogy támadjon.
+
+- Beállítja az update metódust, hogy folyamatosan frissítse a játék állapotát minden egyes ciklusban.
+
 

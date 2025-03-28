@@ -2,7 +2,6 @@
 export default {
     backend: "Backend 🔧",
     frontend: "Frontend 🌐",
-    mobileapp: "MobilApp 📱",
     wpfapp: "WpfApp 🖥️",
   };
   
