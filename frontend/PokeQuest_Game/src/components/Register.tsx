@@ -25,24 +25,26 @@ const Register = () => {
   const handleRegister = async () => {
     if (!username || !email || !password || !confirmPassword) {
       setError('All fields are required.');
+      setIsSubmitting(false); // Re-enable the button
       return;
     }
-
+  
     if (password !== confirmPassword) {
       setError('Passwords do not match.');
+      setIsSubmitting(false); // Re-enable the button
       return;
     }
-
+  
     const payload = {
       username,
       email,
       password,
     };
-
+  
     try {
       const data = await registerData('User/Register', payload);
       console.log('API Response:', data);
-
+  
       if (data && data.success) {
         console.log('User registered successfully!');
         setRegistrationSuccess(true);
@@ -52,9 +54,10 @@ const Register = () => {
     } catch (err) {
       setError('Error during registration.');
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false); // Re-enable the button after the process is complete
     }
   };
+  
 
   const handleButtonClick = () => {
     setIsSubmitting(true);
