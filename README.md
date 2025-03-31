@@ -25,3 +25,41 @@ npm i
 ```
 npm run dev
 ```
+
+# Játék Indítása
+
+## Backend (Adatbázis)
+
+>[!WARNING]
+>
+> Az adatbázisnak futnia kell mielőtt elindítjuk a játékot, és ne is zárjuk be amíg használjuk.
+
+A dokumentáció letöltésénél már leklónoztad a repositoryt.
+
+1. Nyisd meg a klónozott mappát, manuálisan fájlkezelőből.
+
+2. Amikor bent vagy a -PokeQuest_Vizsgaremek mappában akkor a `backend` mappában, azon belül a `PokeQuestApi_New` mappában nyisd meg a `PokeQuestApi_New.sln` fájlt és futtasd http-n.
+
+>[!NOTE]
+>
+> Várd meg míg az összes NugetPackage-t felismeri a Visual Studio, .Net 9-nél régebbi verzióval nem fog működni.
+
+## Frontend (Játék)
+
+1. Amikor bent vagy a -PokeQuest_Vizsgaremek mappában akkor a `frontend` mappában, azon belül a `PokeQuest_Game` mappát nyisd meg Visual Studio Code-ban.
+
+
+2. Amikor megnyílt a Visual Studo Code, egy új terminálban töltsd le a függőségeket a következő paranccsal:
+```
+npm install
+```
+2. Futtasd le a programot a következő paranccsal:
+```
+npm start
+``` 
+3. Ez után nyisd meg a terminálban megjelenő localhost linket (CTRL + bal klikk)
+
+```
+http://localhost:3000
+``` 
+
